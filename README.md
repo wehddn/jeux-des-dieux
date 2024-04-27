@@ -2,6 +2,10 @@
 
 You must have Node.js installed - version 16.0.0
 
+# Install React Router
+
+npm i -D react-router-dom
+
 ## Available Scripts
 
 In the project directory, you can run:
