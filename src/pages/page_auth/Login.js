@@ -68,15 +68,15 @@ const Login = () => {
           </Form.Group>
 
           <div className="d-grid gap-2">
-            <Button variant="primary" type="Submit" className="button-custom">ENTRÉE</Button>
+            <Button variant="primary" type="Submit" className="button-custom">ENTRER</Button>
           </div>
         </Form>
         <div className="d-grid gap-2">
-          <Button variant="primary" className="button-custom" onClick={handleGoogleSignIn}>GOOGLE</Button>
+          <Button variant="primary" className="button-custom" onClick={handleGoogleSignIn}>ENTRER AVEC GOOGLE</Button>
         </div>
       </div>
       <div className="d-grid gap-2">
-          <Link to="/signup" variant="primary" className="button-custom">PASSE OUBLIÉ</Link>
+          <Link to="/signup" variant="primary" className="button-custom">S'INSCRIRE</Link>
       </div>
     </>
   );
