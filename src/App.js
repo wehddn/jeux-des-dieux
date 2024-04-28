@@ -5,8 +5,9 @@ import "./App.css";
 import Home from "./pages/Home";
 import Login from "./pages/page_auth/Login";
 import Signup from "./pages/page_auth/Signup";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { UserAuthContextProvider, useUserAuth } from "./context/UserAuthContext";
+import VerifyPage from "./pages/page_auth/VerifyPage";
+import { ProtectedRoute, UnverifiedRoute } from "./components/ProtectedRoute";
+import { UserAuthContextProvider } from "./context/UserAuthContext";
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
                   />
                   <Route path="/" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
+                  <Route path="/verify" element={<VerifyPage />} />
                 </Routes>
               </UserAuthContextProvider>
             </Col>

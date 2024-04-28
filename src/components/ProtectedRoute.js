@@ -5,10 +5,22 @@ const ProtectedRoute = ({ children }) => {
   const { user } = useUserAuth();
 
   console.log("Check user in Private: ", user);
-  if (!user) {
+  if (!user ) {
     return <Navigate to="/" />;
+  } else if (user && !user.emailVerified) {
+    return <Navigate to="/verify" />;
   }
   return children;
 };
 
-export default ProtectedRoute;
+const UnverifiedRoute = ({ children }) => {
+  const { user } = useUserAuth();
+
+  console.log("Check user in Private: ", user);
+  if (user && !user.emailVerified ) {
+    return <Navigate to="/verify" />;
+  }
+  return children;
+};
+
+export { ProtectedRoute, UnverifiedRoute };

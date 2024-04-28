@@ -9,12 +9,13 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { logIn, googleSignIn } = useUserAuth();
+  const { logIn, googleSignIn, user, loading } = useUserAuth();
   const navigate = useNavigate();
-  const { user } = useUserAuth();
 
   useEffect(() => {
-    if (user) {
+    console.log("try to redirect");
+    if (!loading && user) {
+      console.log("user here");
       navigate('/home');
     }
   }, [user, navigate]);
@@ -71,14 +72,14 @@ const Login = () => {
           </Form.Group>
 
           <div className="d-grid gap-2">
-            <Button variant="primary" type="Submit" className="button-custom">ENTRÉE</Button>
+            <Button variant="primary" type="Submit" className="button-custom">ENTRER</Button>
           </div>
         </Form>
         <div className="d-grid gap-2">
-          <Button variant="primary" className="button-custom" onClick={handleGoogleSignIn}>GOOGLE</Button>
+          <Button variant="primary" className="button-custom" onClick={handleGoogleSignIn}>ENTRER AVEC GOOGLE</Button>
         </div>
         <div className="d-grid gap-2">
-          <Button variant="primary" className="button-custom" onClick={handleForgotPassword}>PASSE OUBLIÉ</Button>
+          <Button variant="primary" className="button-custom" onClick={handleForgotPassword}>S'INSCRIRE</Button>
         </div>
       </div>
     </>
