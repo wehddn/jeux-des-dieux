@@ -32,12 +32,8 @@ const VerifyPage = () => {
       <p>
         If you haven't received the email, please check your spam folder. If you need further assistance, please <Link to="/contact">contact us</Link>.
       </p>
-      <div className="d-grid gap-2">
-
-      <Button variant="primary" onClick={handleLogout}>
-        Log out
-      </Button>
-      
+      <div className="d-flex justify-content-center align-items-center row">
+        <Button variant="primary" className="button-custom" onClick={handleLogout}>DÉCONNECTER</Button>
       </div>
     </div>
   );

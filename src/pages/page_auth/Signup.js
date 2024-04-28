@@ -49,11 +49,11 @@ const Signup = () => {
             />
           </Form.Group>
 
-          <div className="d-grid gap-2">
+          <div className="d-flex justify-content-center align-items-center row">
             <Button variant="primary" type="Submit" className="button-custom">S'INSCIRE</Button>
           </div>
         </Form>
-        <div className="d-grid gap-2">
+        <div className="d-flex justify-content-center align-items-center row">
           <Button variant="primary" className="button-custom" onClick={goToLogin}>ENTRÉE</Button>
         </div>
       </div>

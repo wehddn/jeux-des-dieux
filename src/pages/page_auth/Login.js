@@ -45,6 +45,10 @@ const Login = () => {
     navigate("/signup");
   };
 
+  const newPassword = () => {
+    navigate("/#");
+  };
+
   return (
     <>
       <div className="p-4 d-flex justify-content-center align-items-center row">
@@ -71,15 +75,14 @@ const Login = () => {
             />
           </Form.Group>
 
-          <div className="d-grid gap-2">
+          <div className="d-flex justify-content-center align-items-center row">
             <Button variant="primary" type="Submit" className="button-custom">ENTRER</Button>
           </div>
         </Form>
-        <div className="d-grid gap-2">
-          <Button variant="primary" className="button-custom" onClick={handleGoogleSignIn}>ENTRER AVEC GOOGLE</Button>
-        </div>
-        <div className="d-grid gap-2">
+        <div className="d-flex justify-content-center align-items-center row" style={{ padding: 0 }}>
+          <Button variant="primary" className="button-custom" onClick={handleGoogleSignIn}>CONNECTER AVEC GOOGLE</Button>
           <Button variant="primary" className="button-custom" onClick={handleForgotPassword}>S'INSCRIRE</Button>
+          <Button variant="primary" className="button-custom" onClick={newPassword}>MOT DE PASS OUBLIÉ</Button>
         </div>
       </div>
     </>
