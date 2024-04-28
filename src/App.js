@@ -3,8 +3,8 @@ import { Container, Row, Col } from "react-bootstrap";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
+import Login from "./pages/page_auth/Login";
+import Signup from "./pages/page_auth/Signup";
 import { LoggedRoute, VerifiedRoute } from "./components/ProtectedRoute";
 import { UserAuthContextProvider } from "./context/UserAuthContext";
 
@@ -28,7 +28,7 @@ function App() {
                 path="/verify"
                 element={
                   <VerifiedRoute>
-                    <Verify />
+                    
                   </VerifiedRoute>
                 }
               />
