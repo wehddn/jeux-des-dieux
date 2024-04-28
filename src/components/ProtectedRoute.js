@@ -13,14 +13,4 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-const UnverifiedRoute = ({ children }) => {
-  const { user } = useUserAuth();
-
-  console.log("Check user in Private: ", user);
-  if (user && !user.emailVerified ) {
-    return <Navigate to="/verify" />;
-  }
-  return children;
-};
-
-export { ProtectedRoute, UnverifiedRoute };
+export { ProtectedRoute };
