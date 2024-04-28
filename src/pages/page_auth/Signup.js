@@ -16,7 +16,7 @@ const Signup = () => {
     setError("");
     try {
       await signUp(email, password);
-      navigate("/");
+      navigate("/verify");
     } catch (err) {
       setError(err.message);
     }

@@ -9,12 +9,13 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { logIn, googleSignIn } = useUserAuth();
+  const { logIn, googleSignIn, user, loading } = useUserAuth();
   const navigate = useNavigate();
-  const { user } = useUserAuth();
 
   useEffect(() => {
-    if (user) {
+    console.log("try to redirect");
+    if (!loading && user) {
+      console.log("user here");
       navigate('/home');
     }
   }, [user, navigate]);
