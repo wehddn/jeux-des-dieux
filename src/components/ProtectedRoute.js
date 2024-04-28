@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useUserAuth } from "../context/UserAuthContext";
-const LoggedRoute = ({ children }) => {
+const ProtectedRoute = ({ children }) => {
   const { user } = useUserAuth();
 
   console.log("Check user in Private: ", user);
@@ -11,14 +11,4 @@ const LoggedRoute = ({ children }) => {
   return children;
 };
 
-const VerifiedRoute = ({ children }) => {
-  const { user } = useUserAuth();
-
-  console.log("Check user in Private: ", user);
-  if (user && !user.emailVerified) {
-    return <Navigate to="/verify" />;
-  }
-  return children;
-};
-
-export { LoggedRoute, VerifiedRoute };
+export default ProtectedRoute;
