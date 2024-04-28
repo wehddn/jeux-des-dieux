@@ -6,32 +6,36 @@ import Home from "./pages/Home";
 import Login from "./pages/page_auth/Login";
 import Signup from "./pages/page_auth/Signup";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { UserAuthContextProvider } from "./context/UserAuthContext";
+import { UserAuthContextProvider, useUserAuth } from "./context/UserAuthContext";
 
 function App() {
 
   return (
-    <Container style={{ width: "400px" }}>
-      <Row>
-        <Col>
-          <UserAuthContextProvider>
-            <Routes>
-              <Route
-                path="/home"
-                element={
-                  <ProtectedRoute>
-                    <Home />
-                  </ProtectedRoute>
-                }
-              />
-              
-              <Route path="/" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-            </Routes>
-          </UserAuthContextProvider>
-        </Col>
-      </Row>
-    </Container>
+    <div className='App-header'>
+      <div className='App-overlay'></div>
+      <div className='App-content'>
+        <Container>
+          <Row>
+            <Col>
+              <UserAuthContextProvider>
+                <Routes>
+                  <Route
+                    path="/home"
+                    element={
+                      <ProtectedRoute>
+                        <Home />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="/" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                </Routes>
+              </UserAuthContextProvider>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+    </div>
   );
 }
 
