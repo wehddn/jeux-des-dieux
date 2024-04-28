@@ -6,7 +6,7 @@ import Home from "./pages/Home";
 import Login from "./pages/page_auth/Login";
 import Signup from "./pages/page_auth/Signup";
 import VerifyPage from "./pages/page_auth/VerifyPage";
-import { ProtectedRoute, UnverifiedRoute } from "./components/ProtectedRoute";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import { UserAuthContextProvider } from "./context/UserAuthContext";
 
 function App() {
