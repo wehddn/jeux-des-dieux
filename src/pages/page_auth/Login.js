@@ -40,6 +40,10 @@ const Login = () => {
     }
   };
 
+  const handleForgotPassword = () => {
+    navigate("/signup");
+  };
+
   return (
     <>
       <div className="p-4 d-flex justify-content-center align-items-center row">
@@ -73,9 +77,9 @@ const Login = () => {
         <div className="d-grid gap-2">
           <Button variant="primary" className="button-custom" onClick={handleGoogleSignIn}>GOOGLE</Button>
         </div>
-      </div>
-      <div className="d-grid gap-2">
-          <Link to="/signup" variant="primary" className="button-custom">PASSE OUBLIÉ</Link>
+        <div className="d-grid gap-2">
+          <Button variant="primary" className="button-custom" onClick={handleForgotPassword}>PASSE OUBLIÉ</Button>
+        </div>
       </div>
     </>
   );

@@ -22,15 +22,17 @@ const Signup = () => {
     }
   };
 
+  const goToLogin = () => {
+    navigate("/");
+  };
+
   return (
     <>
-      <div className="p-4 box">
-        <h2 className="mb-3">Firebase/ React Auth Signup</h2>
-        
+      <div className="p-4 box">        
         {error && <Alert variant="danger">{error}</Alert>}
 
         <Form onSubmit={handleSubmit}>
-
+          <h2 className="mb-3">MAIL</h2>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Control
               type="email"
@@ -38,7 +40,7 @@ const Signup = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </Form.Group>
-
+          <h2 className="mb-3">MOT DE PASSE</h2>
           <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Control
               type="password"
@@ -48,14 +50,12 @@ const Signup = () => {
           </Form.Group>
 
           <div className="d-grid gap-2">
-            <Button variant="primary" type="Submit">
-              Sign up
-            </Button>
+            <Button variant="primary" type="Submit" className="button-custom">S'INSCIRE</Button>
           </div>
         </Form>
-      </div>
-      <div className="p-4 box mt-3 text-center">
-        Already have an account? <Link to="/">Log In</Link>
+        <div className="d-grid gap-2">
+          <Button variant="primary" className="button-custom" onClick={goToLogin}>ENTRÉE</Button>
+        </div>
       </div>
     </>
   );
