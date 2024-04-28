@@ -70,14 +70,12 @@ const Login = () => {
             <Button variant="primary" type="Submit" className="button-custom">ENTRÉE</Button>
           </div>
         </Form>
-        <div className="d-grid gap-2" style={{ width: '100%' }}>
-          <div className="button-custom" style={{ padding: 0 }}>
-            <GoogleButton onClick={handleGoogleSignIn}/>
-          </div>
+        <div className="d-grid gap-2">
+          <Button variant="primary" className="button-custom" onClick={handleGoogleSignIn}>GOOGLE</Button>
         </div>
       </div>
-      <div className="d-grid gap-2" style={{ width: '100%' }}>
-          <Link to="/signup" className="button-custom">PASSE OUBLIÉ</Link>
+      <div className="d-grid gap-2">
+          <Link to="/signup" variant="primary" className="button-custom">PASSE OUBLIÉ</Link>
       </div>
     </>
   );
