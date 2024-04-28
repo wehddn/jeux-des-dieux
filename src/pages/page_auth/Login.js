@@ -67,15 +67,17 @@ const Login = () => {
           </Form.Group>
 
           <div className="d-grid gap-2">
-            <Button variant="primary" type="Submit">ENTRÉE</Button>
+            <Button variant="primary" type="Submit" className="button-custom">ENTRÉE</Button>
           </div>
         </Form>
-        <div className="d-grid gap-2">
-          <GoogleButton variant="primary" onClick={handleGoogleSignIn}/>
+        <div className="d-grid gap-2" style={{ width: '100%' }}>
+          <div className="button-custom" style={{ padding: 0 }}>
+            <GoogleButton onClick={handleGoogleSignIn}/>
+          </div>
         </div>
       </div>
-      <div className="p-2 text-center">
-       <Link to="/signup">PASSE OUBLIÉ</Link>
+      <div className="d-grid gap-2" style={{ width: '100%' }}>
+          <Link to="/signup" className="button-custom">PASSE OUBLIÉ</Link>
       </div>
     </>
   );

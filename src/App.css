@@ -33,3 +33,20 @@
   width: 40%; 
   color: white;
 }
+
+.button-custom {
+  font-size: 16px; 
+  font-weight: bold;
+  background-color: #4f4e4e;
+  color: white; 
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s; 
+}
+
+.button-custom:hover {
+  background-color: #272727;
+}
