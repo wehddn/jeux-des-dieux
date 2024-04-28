@@ -2,6 +2,7 @@
 import React from 'react';
 import { createContext, useContext, useEffect, useState } from "react";
 import {
+  sendEmailVerification,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
@@ -16,11 +17,18 @@ const userAuthContext = createContext();
 export function UserAuthContextProvider({ children }) {
   const [user, setUser] = useState({});
 
-  function logIn(email, password) {
-    return signInWithEmailAndPassword(auth, email, password);
+  async function logIn(email, password) {
+    const credential = await signInWithEmailAndPassword(auth, email, password);
+    if (!credential.user.emailVerified) {
+      throw new Error('Please verify your email before logging in.');
+    }
+    return credential;
   }
-  function signUp(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password);
+  
+  async function signUp(email, password) {
+    const credential = await createUserWithEmailAndPassword(auth, email, password);
+    await sendEmailVerification(credential.user);
+    return credential;
   }
   function logOut() {
     return signOut(auth);

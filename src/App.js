@@ -5,8 +5,8 @@ import "./App.css";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { UserAuthContextProvider, useUserAuth } from "./context/UserAuthContext";
+import { LoggedRoute, VerifiedRoute } from "./components/ProtectedRoute";
+import { UserAuthContextProvider } from "./context/UserAuthContext";
 
 function App() {
 
@@ -19,9 +19,17 @@ function App() {
               <Route
                 path="/home"
                 element={
-                  <ProtectedRoute>
+                  <LoggedRoute>
                     <Home />
-                  </ProtectedRoute>
+                  </LoggedRoute>
+                }
+              />
+              <Route
+                path="/verify"
+                element={
+                  <VerifiedRoute>
+                    <Verify />
+                  </VerifiedRoute>
                 }
               />
               <Route path="/" element={<Login />} />
