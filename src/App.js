@@ -7,6 +7,7 @@ import Login from "./pages/page_auth/Login";
 import Signup from "./pages/page_auth/Signup";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { UserAuthContextProvider, useUserAuth } from "./context/UserAuthContext";
+import Footer from './components/footer';
 
 function App() {
 
@@ -30,11 +31,12 @@ function App() {
                   <Route path="/" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
                 </Routes>
-              </UserAuthContextProvider>
+              </UserAuthContextProvider>      
             </Col>
           </Row>
         </Container>
       </div>
+      <Footer></Footer>
     </div>
   );
 }
