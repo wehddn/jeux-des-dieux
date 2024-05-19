@@ -5,8 +5,6 @@ import { useUserAuth } from "../context/UserAuthContext";
 import Friends from "../components/Friends.js"; 
 import { getOrCreateUser } from "../bd/Users.js";
 
-import MyComponent from "../components/index.js";
-
 const Home = () => {
   const { logOut, user } = useUserAuth();
   const [userProfile, setUserProfile] = useState(null);
@@ -37,24 +35,29 @@ const Home = () => {
 
   return (
     <>
-      <div className="p-4 box mt-3 text-center">
-        <h1>Home</h1>
+      <Button variant="primary" onClick={handleLogout}>Log out</Button>
+      <div className="text-center">
+        <h1>Profil</h1>
         {userProfile ? (
           <>
-            Welcome, {userProfile.name} <br />
-            {user && user.email}
-            <Friends userProfile={userProfile}></Friends>
+            <div className="row d-flex">
+              <div className="col-4">
+                Welcome, {userProfile.name} 
+                <br />
+                {user && user.email}
+              </div>
+              <div className="col-4">
+                <Friends userProfile={userProfile}></Friends>
+              </div>
+            </div>
           </>
         ) : (
           <p>Loading...</p>
         )}
-        <MyComponent></MyComponent>
       </div>
       <div className="d-grid gap-2">
 
-          <Button variant="primary" onClick={handleLogout}>
-            Log out
-          </Button>
+          
 
       </div>
     </>
