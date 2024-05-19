@@ -8,8 +8,8 @@ return (
 <div className='card d-flex'>
     <h2>Mes Amis</h2>
     <div className='row justify-content-center align-items-center'>
-        <Button className='col-5'>Trouver</Button>
-        <Button className='col-5'>Envoyer</Button>
+        <button className='col-5 btn_1'>Trouver</button>
+        <button className='col-5 btn_2'>Envoyer</button>
     </div>
     <div>
         {userProfile.friends && userProfile.friends.map((friendId, index) => (
