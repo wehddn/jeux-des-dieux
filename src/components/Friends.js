@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import { Frend } from '/Frend.js';
+import Friend from './Friend.js';
 
-const Frends = () => {
+const Friends = (userProfile) => {
 return (
 <div className='card'>
     <h2>Mes Amis</h2>
@@ -10,11 +10,13 @@ return (
         <Button>Trouver</Button>
         <Button>Envoyer</Button>
     </div>
-    array.forEach({{user.Frends}} => {
-        <Frend></Frend>
-    });
+    <div>
+        {userProfile.friends && userProfile.friends.map((friend, index) => (
+          <Friend user={friend}></Friend>
+        ))}
+    </div>
 </div>
 );
 }
 
-export default Frends;
+export default Friends;

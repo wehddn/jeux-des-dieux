@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { useUserAuth } from "../context/UserAuthContext";
+import Friends from "../components/Friends.js"; 
 import { getOrCreateUser } from "../bd/Users.js";
 
 import MyComponent from "../components/index.js";
@@ -42,6 +43,7 @@ const Home = () => {
           <>
             Welcome, {userProfile.name} <br />
             {user && user.email}
+            <Friends userProfile={userProfile}></Friends>
           </>
         ) : (
           <p>Loading...</p>
