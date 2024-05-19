@@ -1,7 +1,7 @@
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
-const getOrCreateUser = async (userId) => {
+const getOrCreateUser = async (userId, userEmail) => {
   const userRef = doc(db, 'Users', userId);
 
   try {
@@ -9,11 +9,11 @@ const getOrCreateUser = async (userId) => {
 
     if (userSnap.exists()) {
       const userData = userSnap.data();
-      return userData;
+      return {id: userId, email: userEmail, ...userData };
     } else {
       const newUser = { name: 'Player' };
       await setDoc(userRef, newUser);
-      return newUser;
+      return {id: userId, email: userEmail, newUser};
     }
   } catch (error) {
     console.error('Error accessing Firestore:', error);

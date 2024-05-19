@@ -10,6 +10,7 @@ const Home = () => {
   const { logOut, user } = useUserAuth();
   const [userProfile, setUserProfile] = useState(null);
   const userId = user.uid;
+  const userEmail = user.email;
 
   const navigate = useNavigate();
   const handleLogout = async () => {
@@ -24,7 +25,7 @@ const Home = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const userData = await getOrCreateUser(userId);
+        const userData = await getOrCreateUser(userId, userEmail);
         setUserProfile(userData);
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -32,7 +33,7 @@ const Home = () => {
     };
 
     fetchUser();
-  }, [userId]);
+  }, [userId, userEmail]);
 
   return (
     <>
