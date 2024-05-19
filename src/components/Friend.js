@@ -16,7 +16,7 @@ const Friend = ({ userId }) => {
     };
 
     fetchUser();
-  }, [userId]); 
+  }, [userId]);
 
   if (!userProfile) {
     return <React.Fragment></React.Fragment>;

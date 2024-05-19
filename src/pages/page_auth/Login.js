@@ -55,7 +55,7 @@ const Login = () => {
         {error && <Alert variant="danger">{error}</Alert>}
 
         <Form onSubmit={handleSubmit}>
-        
+
           <h2 className="mb-3">MAIL</h2>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Control
@@ -64,7 +64,7 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </Form.Group>
-          
+
           <h2 className="mb-3">MOT DE PASSE</h2>
           <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Control

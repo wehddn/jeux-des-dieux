@@ -28,7 +28,7 @@ const Signup = () => {
 
   return (
     <>
-      <div className="p-4 box">        
+      <div className="p-4 box">
         {error && <Alert variant="danger">{error}</Alert>}
 
         <Form onSubmit={handleSubmit}>

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { useUserAuth } from "../context/UserAuthContext";
-import Friends from "../components/Friends.js"; 
-import UserInfo from "../components/UserInfo.js"; 
+import Friends from "../components/Friends.js";
+import UserInfo from "../components/UserInfo.js";
 import { getOrCreateUser } from "../bd/Users.js";
 
 const Home = () => {
@@ -21,7 +21,7 @@ const Home = () => {
       console.log(error.message);
     }
   };
-  
+
   useEffect(() => {
     const fetchUser = async () => {
       try {

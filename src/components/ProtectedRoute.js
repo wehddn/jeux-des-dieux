@@ -5,7 +5,7 @@ const ProtectedRoute = ({ children }) => {
   const { user } = useUserAuth();
 
   console.log("Check user in Private: ", user);
-  if (!user ) {
+  if (!user) {
     return <Navigate to="/" />;
   } else if (user && !user.emailVerified) {
     return <Navigate to="/verify" />;
