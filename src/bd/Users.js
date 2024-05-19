@@ -20,4 +20,23 @@ const getOrCreateUserName = async (userId) => {
   }
 };
 
-export { getOrCreateUserName };
+const getUserPhoto = async (userId) => {
+    const userRef = doc(db, 'Users', userId);
+  
+    try {
+      const userSnap = await getDoc(userRef);
+  
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+        return userData.photo;
+      } else {
+        console.error('Error accessing user');
+        throw new Error('Error accessing user');
+      }
+    } catch (error) {
+      console.error('Error accessing Firestore:', error);
+      throw new Error('Error accessing Firestore');
+    }
+  };
+
+export { getOrCreateUserName, getUserPhoto };
