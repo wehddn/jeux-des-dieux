@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { useUserAuth } from "../context/UserAuthContext";
-import { getOrCreateUserName } from "../bd/Users.js";
+import { getOrCreateUser } from "../bd/Users.js";
 
 import MyComponent from "../components/index.js";
 
 const Home = () => {
   const { logOut, user } = useUserAuth();
-  const [userName, setUserName] = useState('');
+  const [userProfile, setUserProfile] = useState(null);
   const userId = user.uid;
 
   const navigate = useNavigate();
@@ -22,24 +22,30 @@ const Home = () => {
   };
   
   useEffect(() => {
-    const fetchUserName = async () => {
+    const fetchUser = async () => {
       try {
-        const name = await getOrCreateUserName(userId);
-        setUserName(name);
+        const userData = await getOrCreateUser(userId);
+        setUserProfile(userData);
       } catch (error) {
-        console.error('Error fetching or creating user name:', error);
+        console.error('Error fetching user data:', error);
       }
     };
 
-    fetchUserName();
+    fetchUser();
   }, [userId]);
 
   return (
     <>
       <div className="p-4 box mt-3 text-center">
         <h1>Home</h1>
-        Welcome, {userName} <br />
-        {user && user.email}
+        {userProfile ? (
+          <>
+            Welcome, {userProfile.name} <br />
+            {user && user.email}
+          </>
+        ) : (
+          <p>Loading...</p>
+        )}
         <MyComponent></MyComponent>
       </div>
       <div className="d-grid gap-2">

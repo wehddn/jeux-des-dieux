@@ -1,7 +1,7 @@
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
-const getOrCreateUserName = async (userId) => {
+const getOrCreateUser = async (userId) => {
   const userRef = doc(db, 'Users', userId);
 
   try {
@@ -9,10 +9,11 @@ const getOrCreateUserName = async (userId) => {
 
     if (userSnap.exists()) {
       const userData = userSnap.data();
-      return userData.name;
+      return userData;
     } else {
-      await setDoc(userRef, { name: 'Player' });
-      return 'Player';
+      const newUser = { name: 'Player' };
+      await setDoc(userRef, newUser);
+      return newUser;
     }
   } catch (error) {
     console.error('Error accessing Firestore:', error);
@@ -39,4 +40,4 @@ const getUserPhoto = async (userId) => {
     }
   };
 
-export { getOrCreateUserName, getUserPhoto };
+export { getOrCreateUser, getUserPhoto };
