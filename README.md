@@ -2,9 +2,7 @@
 
 You must have Node.js installed - version 16.0.0
 
-# Install React Router
-
-npm i -D react-router-dom
+Run `npm update` before start
 
 ## Available Scripts
 
