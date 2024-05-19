@@ -19,7 +19,7 @@ const Friend = ({ userId }) => {
   }, [userId]); 
 
   if (!userProfile) {
-    return <React.Fragment></React.Fragment>; // Возвращаем пустой элемент, если данные еще не загружены
+    return <React.Fragment></React.Fragment>;
   }
 
   return (
@@ -27,7 +27,6 @@ const Friend = ({ userId }) => {
       <h2>Mes Amis</h2>
       <div className='row d-flex'>
         <Button><i className='bx bx-x'></i></Button>
-        {console.log("userProfile", userProfile)}
         {userProfile.photo ? (
           <img className="photoProfil" src={`/photoProfil/${userProfile.photo}`} alt="Profile" />
         ) : (

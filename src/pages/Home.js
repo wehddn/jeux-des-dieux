@@ -3,6 +3,7 @@ import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { useUserAuth } from "../context/UserAuthContext";
 import Friends from "../components/Friends.js"; 
+import UserInfo from "../components/UserInfo.js"; 
 import { getOrCreateUser } from "../bd/Users.js";
 
 const Home = () => {
@@ -42,9 +43,7 @@ const Home = () => {
           <>
             <div className="row d-flex">
               <div className="col-4">
-                Welcome, {userProfile.name} 
-                <br />
-                {user && user.email}
+                <UserInfo userProfile={userProfile}></UserInfo>
               </div>
               <div className="col-4">
                 <Friends userProfile={userProfile}></Friends>
@@ -56,9 +55,6 @@ const Home = () => {
         )}
       </div>
       <div className="d-grid gap-2">
-
-          
-
       </div>
     </>
   );
