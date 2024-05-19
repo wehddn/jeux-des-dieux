@@ -4,11 +4,11 @@ import Friend from './Friend.js';
 
 const Friends = (userProfile) => {
 return (
-<div className='card'>
+<div className='card d-flex'>
     <h2>Mes Amis</h2>
-    <div className='row d-flex'>
-        <Button>Trouver</Button>
-        <Button>Envoyer</Button>
+    <div className='row justify-content-center align-items-center'>
+        <Button className='col-5'>Trouver</Button>
+        <Button className='col-5'>Envoyer</Button>
     </div>
     <div>
         {userProfile.friends && userProfile.friends.map((friend, index) => (
