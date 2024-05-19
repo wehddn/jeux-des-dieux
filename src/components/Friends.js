@@ -2,7 +2,8 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import Friend from './Friend.js';
 
-const Friends = (userProfile) => {
+const Friends = ({userProfile}) => {
+    
 return (
 <div className='card'>
     <h2>Mes Amis</h2>
@@ -11,8 +12,8 @@ return (
         <Button>Envoyer</Button>
     </div>
     <div>
-        {userProfile.friends && userProfile.friends.map((friend, index) => (
-          <Friend user={friend}></Friend>
+        {userProfile.friends && userProfile.friends.map((friendId, index) => (
+          <Friend key={index} userId={friendId}></Friend>
         ))}
     </div>
 </div>
