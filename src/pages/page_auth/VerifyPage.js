@@ -17,6 +17,10 @@ const VerifyPage = () => {
     }
   };
 
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
   useEffect(() => {
     if (user && user.emailVerified) {
       navigate('/home');
@@ -25,14 +29,15 @@ const VerifyPage = () => {
 
   return (
     <div className="p-4 box">
-      <h2 className="mb-3">Verify Your Email Address</h2>
+      <h2 className="mb-3">Vérifiez Votre Adresse E-Mail</h2>
       <p>
-        Thank you for signing up! An email has been sent to your email address. Please follow the instructions in the email to verify your account.
+        Merci de vous être inscrit! Un e-mail a été envoyé à votre adresse e-mail. Veuillez suivre les instructions dans l'e-mail pour vérifier votre compte.
       </p>
       <p>
-        If you haven't received the email, please check your spam folder. If you need further assistance, please <Link to="/contact">contact us</Link>.
+        Si vous n'avez pas reçu l'e-mail, veuillez vérifier votre dossier spam. Si vous avez besoin d'aide supplémentaire, veuillez <Link to="/contact">nous contacter</Link>.
       </p>
       <div className="d-flex justify-content-center align-items-center row">
+        <Button variant="primary" className="button-custom" onClick={handleRefresh}>J'AI CONFIRMÉ MON EMAIL</Button>
         <Button variant="primary" className="button-custom" onClick={handleLogout}>DÉCONNECTER</Button>
       </div>
     </div>
