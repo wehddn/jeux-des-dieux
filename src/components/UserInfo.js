@@ -51,7 +51,7 @@ const UserInfo = ({ userProfile }) => {
         </div>
       ) : (
         <div>
-          <p>{userProfile.name}</p>
+          <p>{userProfile.name || 'Player'}</p>
           <button onClick={handleEditClick}>Edit</button>
         </div>
       )}
