@@ -15,7 +15,7 @@ const Login = () => {
     console.log("try to redirect");
     if (!loading && user) {
       console.log("user here");
-      navigate('/home');
+      navigate('/profile');
     }
   }, [user, navigate, loading]);
 
@@ -24,7 +24,7 @@ const Login = () => {
     setError("");
     try {
       await logIn(email, password);
-      navigate("/home");
+      navigate("/profile");
     } catch (err) {
       setError(err.message);
     }
@@ -34,7 +34,7 @@ const Login = () => {
     e.preventDefault();
     try {
       await googleSignIn();
-      navigate("/home");
+      navigate("/profile");
     } catch (error) {
       console.log(error.message);
     }

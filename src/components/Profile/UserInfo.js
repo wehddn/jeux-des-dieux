@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { updateUserName, deleteUserProfile } from '../bd/Users';
+import { updateUserName, deleteUserProfile } from '../../bd/Users';
 
 const UserInfo = ({ userProfile }) => {
   const [newPseudo, setNewPseudo] = useState(userProfile.name);

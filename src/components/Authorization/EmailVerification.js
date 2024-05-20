@@ -4,7 +4,7 @@ import { useUserAuth } from "../../context/UserAuthContext";
 import { Button } from "react-bootstrap";
 
 
-const VerifyPage = () => {
+const EmailVerification = () => {
   const { logOut, user } = useUserAuth();
   const navigate = useNavigate();
 
@@ -23,7 +23,7 @@ const VerifyPage = () => {
 
   useEffect(() => {
     if (user && user.emailVerified) {
-      navigate('/home');
+      navigate('/profile');
     }
   }, [user, navigate]);
 
@@ -44,4 +44,4 @@ const VerifyPage = () => {
   );
 };
 
-export default VerifyPage;
+export default EmailVerification;

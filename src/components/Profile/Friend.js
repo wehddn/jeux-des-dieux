@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-import { getUser } from "../bd/Users.js";
+import { getUser } from "../../bd/Users.js";
 
 const Friend = ({ userId }) => {
   const [userProfile, setUserProfile] = useState(null);

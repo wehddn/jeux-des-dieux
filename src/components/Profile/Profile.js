@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router";
-import { useUserAuth } from "../context/UserAuthContext";
-import Friends from "../components/Friends.js";
-import UserInfo from "../components/UserInfo.js";
-import { getOrCreateUser } from "../bd/Users.js";
+import { useUserAuth } from "../../context/UserAuthContext.js";
+import Friends from "./Friends.js";
+import UserInfo from "./UserInfo.js";
+import { getOrCreateUser } from "../../bd/Users.js";
 
-const Home = () => {
+const Profile = () => {
   const { logOut, user } = useUserAuth();
   const [userProfile, setUserProfile] = useState(null);
   const userId = user.uid;
@@ -60,4 +60,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Profile;
