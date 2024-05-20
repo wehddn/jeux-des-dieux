@@ -56,10 +56,30 @@
   background-color: #F3F2EE;
 }
 
+button{
+  border: none;
+}
+
+.btn_1, .btn_2 {
+  background-size: cover;
+  color: #F3F2EE;
+  border: none;
+  padding: 0.5rem 2rem 0.5rem 2rem;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+}
+
 .btn_1{
-  background-image: url('/btn/btn_1.png');
+  background-image: url('/btn/btn_1.svg');
 }
 
 .btn_2{
-  background-image: url('/btn/btn_2.png');
+  background-image: url('/btn/btn_2.svg');
+}
+
+.fon_profil{
+  background-image: url('/fon/fon_profil.svg');
+  background-size: cover;
+  padding: 5rem 2rem 10.3rem 2rem;
 }
