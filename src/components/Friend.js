@@ -24,7 +24,6 @@ const Friend = ({ userId }) => {
 
   return (
     <div className='card'>
-      <h2>Mes Amis</h2>
       <div className='row d-flex'>
         <Button><i className='bx bx-x'></i></Button>
         {userProfile.photo ? (

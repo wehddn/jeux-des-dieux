@@ -7,9 +7,13 @@ const Friends = ({ userProfile }) => {
   return (
     <div className='card d-flex'>
       <h2>Mes Amis</h2>
-      <div className='row justify-content-center align-items-center'>
-        <button className='col-5 btn_1'>Trouver</button>
-        <button className='col-5 btn_2'>Envoyer</button>
+      <div className='row justify-content-center m-2'>
+        <div className='d-flex btn col-6 align-items-start p-0'>
+          <button className='btn_1'>Trouver</button>
+        </div>
+        <div className='d-flex btn col-6 align-items-end p-0'>
+          <button className='btn_2'>Envoyer</button>
+        </div>
       </div>
       <div>
         {userProfile.friends && userProfile.friends.map((friendId, index) => (

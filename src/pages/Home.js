@@ -38,12 +38,11 @@ const Home = () => {
   return (
     <>
       <Button variant="primary" onClick={handleLogout}>Log out</Button>
-      <div className="text-center">
-        <h1>Profil</h1>
+      <div className="fon_profil text-center">
         {userProfile ? (
           <>
             <div className="row d-flex">
-              <div className="col-4">
+              <div className="col-4 pl-4">
                 <UserInfo userProfile={userProfile}></UserInfo>
               </div>
               <div className="col-4">
