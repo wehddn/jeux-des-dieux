@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { updateUserName, deleteUserProfile } from '../../bd/Users';
+import { updateUserName } from '../../bd/Users';
 
 const UserInfo = ({ userProfile }) => {
   const [newPseudo, setNewPseudo] = useState(userProfile.name);
@@ -25,15 +25,6 @@ const UserInfo = ({ userProfile }) => {
       userProfile.name = newPseudo;
     } catch (error) {
       console.error('Error updating pseudo:', error);
-    }
-  };
-
-  const handleDeleteClick = async () => {
-    try {
-      await deleteUserProfile(userProfile.id);
-
-    } catch (error) {
-      console.error('Error deleting profile:', error);
     }
   };
 
@@ -87,7 +78,7 @@ const UserInfo = ({ userProfile }) => {
           <p className='m-2'>{userProfile.id}</p>
         </div>
       </div>
-      <button onClick={handleDeleteClick}>Supprimer Le Profil</button>
+      
     </div>
   );
 }
