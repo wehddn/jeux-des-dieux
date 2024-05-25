@@ -14,6 +14,11 @@ const UserInfo = ({ userProfile }) => {
   };
 
   const handleSaveClick = async () => {
+    if (userProfile.name === newPseudo) {
+      setIsEditing(false);
+      return;
+    }
+
     try {
       await updateUserName(userProfile.id, newPseudo);
       setIsEditing(false);

@@ -19,7 +19,7 @@ const Friend = ({ userId }) => {
   }, [userId]);
 
   if (!userProfile) {
-    return <React.Fragment></React.Fragment>;
+    return <React.Fragment/>;
   }
 
   return (
