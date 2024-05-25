@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { useUserAuth } from "../../context/UserAuthContext.js";
 import Stats from "./Stats.js";
 import Friends from "./Friends.js";
+import Header from "../base/Header/Header.js";
 import UserInfo from "./UserInfo.js";
 import { getOrCreateUser } from "../../bd/Users.js";
 
@@ -12,16 +12,6 @@ const Profile = () => {
   const [userProfile, setUserProfile] = useState(null);
   const userId = user.uid;
   const userEmail = user.email;
-
-  const navigate = useNavigate();
-  const handleLogout = async () => {
-    try {
-      await logOut();
-      navigate("/");
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -38,7 +28,7 @@ const Profile = () => {
 
   return (
     <>
-      <Button variant="primary" onClick={handleLogout}>Log out</Button>
+      <Header></Header>
       <div className="fon_profil text-center">
         {userProfile ? (
           <>
