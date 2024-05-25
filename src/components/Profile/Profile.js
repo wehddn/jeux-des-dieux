@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
 import { useUserAuth } from "../../context/UserAuthContext.js";
 import Stats from "./Stats.js";
 import Friends from "./Friends.js";
@@ -8,7 +7,7 @@ import UserInfo from "./UserInfo.js";
 import { getOrCreateUser } from "../../bd/Users.js";
 
 const Profile = () => {
-  const { logOut, user } = useUserAuth();
+  const { user } = useUserAuth();
   const [userProfile, setUserProfile] = useState(null);
   const userId = user.uid;
   const userEmail = user.email;
