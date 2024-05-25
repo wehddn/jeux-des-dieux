@@ -1,9 +1,10 @@
 import React from "react";
 
-const Stats = () => {
+const Stats = ({ userProfile }) => {
     return (
-        <div>
-        <h1>Stats</h1>
+        <div className="card">
+        <h1>Statistiques</h1>
+        <hr/>
         </div>
     );
     };

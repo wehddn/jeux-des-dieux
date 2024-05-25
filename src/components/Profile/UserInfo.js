@@ -55,6 +55,8 @@ const UserInfo = ({ userProfile }) => {
           <button onClick={handleEditClick}>Edit</button>
         </div>
       )}
+      <h5>Mail</h5>
+      <p>{userProfile.email}</p>
       <h5>Numéro Unique</h5>
       <p>{userProfile.id}</p>
       <button onClick={handleDeleteClick}>Supprimer Le Profil</button>

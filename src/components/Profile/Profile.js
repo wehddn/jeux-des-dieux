@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { useUserAuth } from "../../context/UserAuthContext.js";
+import Stats from "./Stats.js";
 import Friends from "./Friends.js";
 import UserInfo from "./UserInfo.js";
 import { getOrCreateUser } from "../../bd/Users.js";
@@ -47,6 +48,9 @@ const Profile = () => {
               </div>
               <div className="col-4">
                 <Friends userProfile={userProfile}></Friends>
+              </div>
+              <div className="col-4">
+                <Stats userProfile={userProfile}></Stats>
               </div>
             </div>
           </>

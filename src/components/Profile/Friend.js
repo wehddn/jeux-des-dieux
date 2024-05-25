@@ -25,12 +25,14 @@ const Friend = ({ userId }) => {
   return (
     <div className='card'>
       <div className='row d-flex'>
-        <Button><i className='bx bx-x'></i></Button>
-        {userProfile.photo ? (
-          <img className="photoProfil" src={`/photoProfil/${userProfile.photo}`} alt="Profile" />
-        ) : (
-          <img className="photoProfil" src="/photoProfil/photo.png" alt="Default Profile" />
-        )}
+        <div>
+          <Button><i className='bx bx-x'></i></Button>
+          {userProfile.photo ? (
+            <img className="photoProfil" src={`/photoProfil/${userProfile.photo}`} alt="Profile" />
+          ) : (
+            <img className="photoProfil" src="/photoProfil/photo.png" alt="Default Profile" />
+          )}
+        </div>
       </div>
       <p>{userProfile.name}</p>
     </div>

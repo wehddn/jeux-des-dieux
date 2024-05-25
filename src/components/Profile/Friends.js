@@ -14,6 +14,7 @@ const Friends = ({ userProfile }) => {
           <button className='btn_2'>Envoyer</button>
         </div>
       </div>
+      <hr/>
       <div>
         {userProfile.friends && userProfile.friends.map((friendId, index) => (
           <Friend key={index} userId={friendId}></Friend>
