@@ -31,7 +31,7 @@ const UserInfo = ({ userProfile }) => {
   return (
     <div className='card d-flex' style={{border: "none"}}>
       <div className='pt-4 d-flex justify-content-center'>
-        <img className="photoProfil" src={`/photoProfil/${userProfile.photo || 'photo.png'}`} alt="Profile" style={{ width: "15rem", height: "auto" }} />
+        <img className="photoProfil" src={`/photoProfil/${userProfile.photo}`} alt="Profile" style={{ width: "15rem", height: "auto" }} />
       </div>
       <div className='p-4'>
         <div className='d-flex justify-content-start'>
