@@ -4,18 +4,18 @@ import Friend from './Friend.js';
 const Friends = ({ userProfile }) => {
 
   return (
-    <div className='card d-flex'>
-      <h2>Mes Amis</h2>
-      <div className='row justify-content-center m-2'>
-        <div className='d-flex btn col-6 align-items-start p-0'>
+    <div className='card d-flex' style={{border: "none", backgroundColor: '#F3F2EE' }}>
+      <h2 className='pt-4'>Mes Amis</h2>
+      <div className='p-3 pt-4 row'>
+        <div className='d-flex justify-content-center col-6'>
           <button className='btn_1'>Trouver</button>
         </div>
-        <div className='d-flex btn col-6 align-items-end p-0'>
+        <div className='d-flex justify-content-center col-6'>
           <button className='btn_2'>Envoyer</button>
         </div>
       </div>
-      <hr/>
-      <div>
+      <hr style={{width: "90%", margin: "0 auto"}}/>
+      <div className='pt-4'>
         {userProfile.friends && userProfile.friends.map((friendId, index) => (
           <Friend key={index} userId={friendId}></Friend>
         ))}
