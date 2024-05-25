@@ -15,7 +15,7 @@ const Friends = ({ userProfile }) => {
         </div>
       </div>
       <hr style={{width: "90%", margin: "0 auto"}}/>
-      <div className='pt-4'>
+      <div className='row d-flex p-4 pt-4'>
         {userProfile.friends && userProfile.friends.map((friendId, index) => (
           <Friend key={index} userId={friendId}></Friend>
         ))}
