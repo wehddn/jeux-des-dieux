@@ -5,8 +5,8 @@ import { Button } from "react-bootstrap";
 
 const Header = () => {
     const { logOut } = useUserAuth();
-
     const navigate = useNavigate();
+    
     const handleLogout = async () => {
         try {
             await logOut();
