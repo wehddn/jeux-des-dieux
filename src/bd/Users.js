@@ -11,7 +11,7 @@ const getOrCreateUser = async (userId, userEmail) => {
       const userData = userSnap.data();
       return { id: userId, email: userEmail, ...userData };
     } else {
-      const newUser = { name: 'Player' };
+      const newUser = { name: 'Player', photo: 'photo.png'};
       await setDoc(userRef, newUser);
       return { id: userId, email: userEmail, newUser };
     }

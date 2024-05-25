@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from 'react-bootstrap';
 import { getUser } from "../../bd/Users.js";
 
 const Friend = ({ userId }) => {
@@ -30,7 +29,7 @@ const Friend = ({ userId }) => {
             <button className="col-2 d-flex align-items-start" style={{ border: "none", backgroundColor: "transparent" }}>
               <img src={`/btn/croix.svg`} alt="suppr." style={{ width: "2rem", height: "auto" }} ></img>
             </button>
-            <img className="col-10 photoProfil" src={`/photoProfil/${userProfile.photo || 'photo.png'}`} alt="Profile" style={{ width: "8rem", height: "auto" }} />
+            <img className="col-10 photoProfil" src={`/photoProfil/${userProfile.photo}`} alt="Profile" style={{ width: "8rem", height: "auto" }} />
           </div>
           <p>{userProfile.name}</p>
         </div>
