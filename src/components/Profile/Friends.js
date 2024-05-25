@@ -4,7 +4,7 @@ import Friend from './Friend.js';
 const Friends = ({ userProfile }) => {
 
   return (
-    <div className='card d-flex' style={{border: "none", backgroundColor: '#F3F2EE' }}>
+    <div className='card d-flex' style={{border: "none", backgroundColor: '#F3F2EE', height: '90vh'}}>
       <h2 className='pt-4'>Mes Amis</h2>
       <div className='p-3 pt-4 row'>
         <div className='d-flex justify-content-center col-6'>
