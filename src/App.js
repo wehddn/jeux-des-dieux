@@ -6,6 +6,7 @@ import "./components/Games/Game.css";
 import Profile from "./components/Profile/Profile";
 import Games from "./components/Games/Games";
 import Game from "./components/Games/Game";
+import GameRoom from "./components/Games/GameRoom"
 import Settings from "./components/Settings/Settings";
 import Login from "./components/Authorization/Login";
 import Signup from "./components/Authorization/Signup";
@@ -52,6 +53,14 @@ function App() {
                     element={
                       <ProtectedRoute>
                         <Game />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/games/gameroom"
+                    element={
+                      <ProtectedRoute>
+                        <GameRoom />
                       </ProtectedRoute>
                     }
                   />
