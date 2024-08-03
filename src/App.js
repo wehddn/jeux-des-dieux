@@ -2,7 +2,10 @@ import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
+import "./components/Games/Game.css";
 import Profile from "./components/Profile/Profile";
+import Games from "./components/Games/Games";
+import Game from "./components/Games/Game";
 import Settings from "./components/Settings/Settings";
 import Login from "./components/Authorization/Login";
 import Signup from "./components/Authorization/Signup";
@@ -33,6 +36,22 @@ function App() {
                     element={
                       <ProtectedRoute>
                         <Settings />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/games"
+                    element={
+                      <ProtectedRoute>
+                        <Games />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/games/game"
+                    element={
+                      <ProtectedRoute>
+                        <Game />
                       </ProtectedRoute>
                     }
                   />

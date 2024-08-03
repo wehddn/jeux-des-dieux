@@ -1,11 +1,22 @@
 import React from "react";
+import { useNavigate } from "react-router";
+import Header from "../base/Header/Header.js";
+import { Button } from "react-bootstrap";
 
 const Games = () => {
-    return (
-        <div>
+  const navigate = useNavigate();
+
+  return (
+    <>
+      <Header></Header>
+      <div>
         <h1>Games</h1>
-        </div>
-    );
-    };
+        <Button variant="primary" onClick={() => navigate("/games/game")}>
+          GAME
+        </Button>
+      </div>
+    </>
+  );
+};
 
 export default Games;

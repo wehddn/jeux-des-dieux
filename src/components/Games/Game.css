@@ -1,0 +1,92 @@
+.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url('/path-to-your-background-image.jpg'); /* путь к изображению */
+  background-size: cover; /* изображение покрывает весь фон */
+  background-position: center; /* изображение центрируется */
+  min-height: 100vh; /* задает минимальную высоту, чтобы фон покрывал весь экран */
+}
+  
+  .fields {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .player-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .player-label {
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  .card-slots {
+    display: flex;
+    justify-content: space-around;
+    width: 400px;
+  }
+  
+  .card-slot {
+    width: 60px;
+    height: 90px;
+    border: 2px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .deck-and-discard {
+    display: flex;
+    justify-content: space-around;
+    width: 300px;
+    margin-bottom: 20px;
+  }
+  
+  .deck, .discard-pile {
+    text-align: center;
+    margin: 10px;
+    width: 100px;
+    height: 140px;
+    border: 2px solid gray;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .hand {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .card {
+    width: 60px;
+    height: 90px;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  
+  .card-count {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: white;
+    border-radius: 50%;
+    padding: 2px 5px;
+    font-size: 0.8rem;
+  }
+  
+  .card-curse {
+    background-color: #20B2AA; /* Цвет морской волны */
+    border: 2px solid #000;
+  }

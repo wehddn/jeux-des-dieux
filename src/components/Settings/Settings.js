@@ -1,6 +1,7 @@
 import React from "react";
 import { deleteUserProfile } from "../../bd/Users";
 import { useUserAuth } from "../../context/UserAuthContext.js";
+import Header from "../base/Header/Header.js";
 
 const Settings = () => {
   const { user } = useUserAuth();
@@ -18,10 +19,13 @@ const Settings = () => {
   }
 
   return (
-    <div>
-      <h1>Settings</h1>
-      <button onClick={handleDeleteClick}>Supprimer Le Profil</button>
-    </div>
+    <>
+      <Header></Header>
+      <div>
+        <h1>Settings</h1>
+        <button onClick={handleDeleteClick}>Supprimer Le Profil</button>
+      </div>
+    </>
   );
 };
 
