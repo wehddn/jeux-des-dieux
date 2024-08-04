@@ -5,7 +5,7 @@ function Card({ card, onDragStart }) {
     <div
       className="card"
       draggable
-      onDragStart={(e) => onDragStart(e, card)}
+      onDragStart={(e) => onDragStart && onDragStart(e, card)}
     >
       {card.suit} {card.value}
     </div>

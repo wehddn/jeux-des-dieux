@@ -16,7 +16,7 @@ function PlayerField({ player, index, colors, onDropCard, onSlotClick, currentPl
               className="card-slot" 
               style={{ borderColor: color }}
               onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => onDropCard(e, slotIndex)}
+              onDrop={(e) => onDropCard(e, index, slotIndex)}
               onClick={() => onSlotClick(slotIndex)}
             >
               {cardsInSlot.map((card, i) => <Card key={i} card={card} />)}
