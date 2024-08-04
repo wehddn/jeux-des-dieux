@@ -1,3 +1,4 @@
+//Games
 const admin = require("firebase-admin");
 const { getFirestore } = require('firebase-admin/firestore');
 
@@ -8,26 +9,6 @@ admin.initializeApp({
 });
 
 const db = getFirestore();
-
-// Получение информации об игре или создание новой записи игры
-const getOrCreateGame = async (gameId, gameData) => {
-  const gameRef = db.collection('Games').doc(gameId);
-
-  try {
-    const gameSnap = await gameRef.get();
-
-    if (gameSnap.exists) {
-      const existingGameData = gameSnap.data();
-      return { id: gameId, ...existingGameData };
-    } else {
-      await gameRef.set(gameData);
-      return { id: gameId, ...gameData };
-    }
-  } catch (error) {
-    console.error('Error accessing Firestore:', error);
-    throw new Error('Error accessing Firestore');
-  }
-};
 
 // Получение данных игры
 const getGame = async (gameId) => {
@@ -90,4 +71,4 @@ const getGamesByFilter = async (field, operator, value) => {
   }
 };
 
-module.exports = { getOrCreateGame, getGame, updateGameData, deleteGame, getGamesByFilter };
+module.exports = { getGame, updateGameData, deleteGame, getGamesByFilter };

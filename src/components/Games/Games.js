@@ -1,19 +1,43 @@
-// Games.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import CreateGameModal from './CreateGameModal';
+import { getGamesList } from '../../bd/Games';
 
 function Games() {
   const [rooms, setRooms] = useState([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
 
   useEffect(() => {
-    // Здесь должна быть логика для получения списка комнат из вашего бэкенда или Firebase
-    // Пример с заглушкой:
-    setRooms([{ id: 'room1', name: 'Room 1' }, { id: 'room2', name: 'Room 2' }]);
+    // Загрузка списка игр из Firebase
+    const fetchGames = async () => {
+      try {
+        const games = await getGamesList();
+        setRooms(games);
+      } catch (error) {
+        console.error("Ошибка при загрузке списка игр:", error);
+      }
+    };
+
+    fetchGames();
   }, []);
 
   return (
     <div>
       <h1>Games</h1>
+      <button onClick={openModal}>Открыть модальное окно</button>
+      <CreateGameModal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Пример модального окна"
+      />
       <ul>
         {rooms.map(room => (
           <li key={room.id}>

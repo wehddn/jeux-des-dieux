@@ -1,7 +1,7 @@
 //index.js
 const express = require('express');
 const WebSocket = require('ws');
-const { getOrCreateGame, updateGameData } = require('./Games.js');
+const { getGame, updateGameData } = require('./Games.js');
 const app = express();
 const port = 3001;
 
@@ -22,7 +22,7 @@ wss.on('connection', (ws) => {
 
     if (type === 'join') {
       try {
-        const gameData = await getOrCreateGame(roomID, { players: [], started: false });
+        const gameData = await getGame(roomID);
         if (gameData.players.length < 2) {
           // Добавляем игрока в комнату
           const newPlayers = [...gameData.players, { id: userID }];
@@ -56,7 +56,7 @@ wss.on('connection', (ws) => {
   ws.on('close', async () => {
     if (roomID && userID) {
       try {
-        const gameData = await getOrCreateGame(roomID);
+        const gameData = await getGame(roomID);
         const updatedPlayers = gameData.players.filter(player => player.id !== userID);
         await updateGameData(roomID, { players: updatedPlayers });
 
