@@ -1,22 +1,28 @@
-import React from "react";
-import { useNavigate } from "react-router";
-import Header from "../base/Header/Header.js";
-import { Button } from "react-bootstrap";
+// Games.js
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
-const Games = () => {
-  const navigate = useNavigate();
+function Games() {
+  const [rooms, setRooms] = useState([]);
+
+  useEffect(() => {
+    // Здесь должна быть логика для получения списка комнат из вашего бэкенда или Firebase
+    // Пример с заглушкой:
+    setRooms([{ id: 'room1', name: 'Room 1' }, { id: 'room2', name: 'Room 2' }]);
+  }, []);
 
   return (
-    <>
-      <Header></Header>
-      <div>
-        <h1>Games</h1>
-        <Button variant="primary" onClick={() => navigate("/games/game")}>
-          GAME
-        </Button>
-      </div>
-    </>
+    <div>
+      <h1>Games</h1>
+      <ul>
+        {rooms.map(room => (
+          <li key={room.id}>
+            <Link to={`/room/${room.id}`}>{room.name}</Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
-};
+}
 
 export default Games;

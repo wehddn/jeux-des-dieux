@@ -1,39 +1,52 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom';
+import { useUserAuth } from "../../context/UserAuthContext.js";
 
 function GameRoom() {
-  const [counter, setCounter] = useState(0);
+  const { roomId } = useParams();
+  const { user } = useUserAuth();
+  const [status, setStatus] = useState('waiting');
   const ws = useRef(null);
 
   useEffect(() => {
-    // Установление соединения с WebSocket сервером
     ws.current = new WebSocket('ws://localhost:3001');
 
-    // Обработка входящих сообщений
-    ws.current.onmessage = (event) => {
-      const gameState = JSON.parse(event.data);
-      setCounter(gameState.counter);
+    ws.current.onopen = () => {
+      ws.current.send(JSON.stringify({
+        type: 'join',
+        room: roomId,
+        userId: user.uid
+      }));
     };
 
-    // Закрытие соединения при размонтировании компонента
+    ws.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.type === 'joined') {
+        setStatus('joined');
+      } else if (data.type === 'start') {
+        setStatus('started');
+      } else if (data.type === 'full') {
+        setStatus('full');
+      } else if (data.type === 'waiting') {
+        setStatus('waiting');
+      }
+    };
+
     return () => {
       if (ws.current) {
         ws.current.close();
       }
     };
-  }, []);
-
-  // Обработка нажатия на кнопку
-  const handleClick = () => {
-    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-      ws.current.send('increment');
-    }
-  };
+  }, [roomId, user]);
 
   return (
     <div>
-      <h1>Game Room</h1>
-      <p>Counter: {counter}</p>
-      <button onClick={handleClick}>Increase Counter</button>
+      <h1>Game Room {roomId}</h1>
+      {status === 'waiting' && <p>Waiting for players...</p>}
+      {status === 'joined' && <p>Player joined. Waiting for another player...</p>}
+      {status === 'started' && <p>The game has started!</p>}
+      {status === 'full' && <p>This room is full. You cannot join.</p>}
     </div>
   );
 }

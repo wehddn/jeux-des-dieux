@@ -10,6 +10,7 @@
     "boxicons": "^2.1.4",
     "express": "^4.19.2",
     "firebase": "^10.11.1",
+    "firebase-admin": "^12.3.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",
     "react-dom": "^18.2.0",

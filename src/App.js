@@ -56,14 +56,7 @@ function App() {
                       </ProtectedRoute>
                     }
                   />
-                  <Route
-                    path="/games/gameroom"
-                    element={
-                      <ProtectedRoute>
-                        <GameRoom />
-                      </ProtectedRoute>
-                    }
-                  />
+                  <Route path="/room/:roomId" element={<GameRoom />} />
                   <Route path="/" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/verify" element={<EmailVerification />} />
