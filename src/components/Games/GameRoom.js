@@ -3,11 +3,11 @@ import { useParams } from 'react-router-dom';
 import { useUserAuth } from "../../context/UserAuthContext.js";
 
 function GameRoom() {
-  const { roomId } = useParams();
+  const { id } = useParams();
   const { user } = useUserAuth();
   const [status, setStatus] = useState('waiting');
   const ws = useRef(null);
-  console.log("GameRoom", roomId);
+  console.log("GameRoom", id);
 
   useEffect(() => {
     ws.current = new WebSocket('ws://localhost:3001');
@@ -15,7 +15,7 @@ function GameRoom() {
     ws.current.onopen = () => {
       ws.current.send(JSON.stringify({
         type: 'join',
-        room: roomId,
+        room: id,
         userId: user.uid
       }));
     };
@@ -39,11 +39,11 @@ function GameRoom() {
         ws.current.close();
       }
     };
-  }, [roomId, user]);
+  }, [id, user]);
 
   return (
     <div>
-      <h1>Game Room {roomId}</h1>
+      <h1>Game Room {id}</h1>
       {status === 'waiting' && <p>Waiting for players...</p>}
       {status === 'joined' && <p>Player joined. Waiting for another player...</p>}
       {status === 'started' && <p>The game has started!</p>}

@@ -71,7 +71,6 @@ function PrivateRoute({ children }) {
   if (loading) {
     return <div>Loading...</div>;
   }
-  console.log("PrivateRoute", id);
 
   return (
     <>
@@ -80,7 +79,7 @@ function PrivateRoute({ children }) {
         <PasswordModal
           isOpen={showPasswordModal}
           onRequestClose={handlePasswordModalClose}
-          room={{ id }}
+          room={ id }
           onPasswordCorrect={handlePasswordCorrect} // Передача функции
         />
       )}

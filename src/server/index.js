@@ -21,6 +21,7 @@ wss.on('connection', (ws) => {
 
     if (type === 'join') {
       try {
+        console.log('before getGame:', gameId);
         const gameData = await getGame(gameId);
         if (gameData.players.length < 2) {
           // Добавляем игрока в комнату
@@ -55,6 +56,7 @@ wss.on('connection', (ws) => {
   ws.on('close', async () => {
     if (gameId && userID) {
       try {
+        console.log('before getGame:', gameId);
         const gameData = await getGame(gameId);
         const updatedPlayers = gameData.players.filter(player => player.id !== userID);
         await updateGameData(gameId, { players: updatedPlayers });
