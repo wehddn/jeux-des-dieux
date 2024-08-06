@@ -13,7 +13,7 @@ function PasswordModal({ isOpen, onRequestClose, room, onPasswordCorrect }) {
   console.log("PasswordModal1", room.id);
 
   const handleSubmit = async (e) => {
-    console.log("PasswordModal2", room.id);
+    console.log("PasswordModal", room.id);
 
     e.preventDefault();
 

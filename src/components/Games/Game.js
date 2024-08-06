@@ -8,7 +8,7 @@ function Game() {
     players: [],
     discardPile: []
   });
-  const [currentPlayer, setCurrentPlayer] = useState(0);
+  const [currentPlayer] = useState(0);
   const [selectedCard, setSelectedCard] = useState(null);
   const ws = useRef(null);
 

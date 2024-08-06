@@ -3,30 +3,21 @@ import { useParams } from 'react-router-dom';
 import { useUserAuth } from "../../context/UserAuthContext.js";
 
 function GameRoom() {
-  const { id: roomId } = useParams();
+  const { roomId } = useParams();
   const { user } = useUserAuth();
   const [status, setStatus] = useState('waiting');
   const ws = useRef(null);
   console.log("GameRoom", roomId);
 
   useEffect(() => {
-    if (!roomId) {
-      console.error('Room ID is undefined');
-      return;
-    }
-
     ws.current = new WebSocket('ws://localhost:3001');
 
     ws.current.onopen = () => {
-      if (user && user.uid) {
-        ws.current.send(JSON.stringify({
-          type: 'join',
-          room: roomId,
-          userId: user.uid
-        }));
-      } else {
-        console.error('User is not authenticated');
-      }
+      ws.current.send(JSON.stringify({
+        type: 'join',
+        room: roomId,
+        userId: user.uid
+      }));
     };
 
     ws.current.onmessage = (event) => {

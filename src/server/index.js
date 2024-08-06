@@ -18,7 +18,6 @@ wss.on('connection', (ws) => {
     const { type, room, userId, userEmail } = JSON.parse(message);
     gameId = room;
     userID = userId;
-    console.log("room ", room);
 
     if (type === 'join') {
       try {
