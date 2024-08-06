@@ -1,4 +1,3 @@
-//index.js
 const express = require('express');
 const WebSocket = require('ws');
 const { getGame, updateGameData } = require('./Games.js');
@@ -12,37 +11,38 @@ const server = app.listen(port, () => {
 const wss = new WebSocket.Server({ server });
 
 wss.on('connection', (ws) => {
-  let roomID;
+  let gameId;
   let userID;
 
   ws.on('message', async (message) => {
     const { type, room, userId, userEmail } = JSON.parse(message);
-    roomID = room;
+    gameId = room;
     userID = userId;
+    console.log("room ", room);
 
     if (type === 'join') {
       try {
-        const gameData = await getGame(roomID);
+        const gameData = await getGame(gameId);
         if (gameData.players.length < 2) {
           // Добавляем игрока в комнату
           const newPlayers = [...gameData.players, { id: userID }];
-          await updateGameData(roomID, { players: newPlayers });
+          await updateGameData(gameId, { players: newPlayers });
 
           // Сообщаем игроку, что он присоединился
-          ws.send(JSON.stringify({ type: 'joined', room: roomID }));
+          ws.send(JSON.stringify({ type: 'joined', room: gameId }));
 
           // Начало игры, если два игрока
           if (newPlayers.length === 2) {
-            await updateGameData(roomID, { started: true });
+            await updateGameData(gameId, { started: true });
             wss.clients.forEach((client) => {
               if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify({ type: 'start', room: roomID }));
+                client.send(JSON.stringify({ type: 'start', room: gameId }));
               }
             });
           }
         } else {
           // Комната заполнена
-          ws.send(JSON.stringify({ type: 'full', room: roomID }));
+          ws.send(JSON.stringify({ type: 'full', room: gameId }));
           ws.close();
         }
       } catch (error) {
@@ -54,17 +54,17 @@ wss.on('connection', (ws) => {
   });
 
   ws.on('close', async () => {
-    if (roomID && userID) {
+    if (gameId && userID) {
       try {
-        const gameData = await getGame(roomID);
+        const gameData = await getGame(gameId);
         const updatedPlayers = gameData.players.filter(player => player.id !== userID);
-        await updateGameData(roomID, { players: updatedPlayers });
+        await updateGameData(gameId, { players: updatedPlayers });
 
         if (updatedPlayers.length < 2) {
-          await updateGameData(roomID, { started: false });
+          await updateGameData(gameId, { started: false });
           wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
-              client.send(JSON.stringify({ type: 'waiting', room: roomID }));
+              client.send(JSON.stringify({ type: 'waiting', room: gameId }));
             }
           });
         }

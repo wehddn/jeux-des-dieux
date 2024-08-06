@@ -1,4 +1,3 @@
-//Games
 const admin = require("firebase-admin");
 const { getFirestore } = require('firebase-admin/firestore');
 
@@ -10,8 +9,12 @@ admin.initializeApp({
 
 const db = getFirestore();
 
-// Получение данных игры
 const getGame = async (gameId) => {
+  if (!gameId) {
+    console.error('Error: gameId не определен');
+    throw new Error('gameId не определен');
+  }
+
   const gameRef = db.collection('Games').doc(gameId);
 
   try {
@@ -28,7 +31,6 @@ const getGame = async (gameId) => {
   }
 };
 
-// Обновление данных игры
 const updateGameData = async (gameId, newGameData) => {
   const gameRef = db.collection('Games').doc(gameId);
 
@@ -40,7 +42,6 @@ const updateGameData = async (gameId, newGameData) => {
   }
 };
 
-// Удаление игры
 const deleteGame = async (gameId) => {
   const gameRef = db.collection('Games').doc(gameId);
 
@@ -53,7 +54,6 @@ const deleteGame = async (gameId) => {
   }
 };
 
-// Получение списка всех игр с фильтрацией
 const getGamesByFilter = async (field, operator, value) => {
   const gamesRef = db.collection('Games');
   const q = gamesRef.where(field, operator, value);
