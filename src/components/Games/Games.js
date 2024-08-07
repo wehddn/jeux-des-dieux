@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import CreateGameModal from "./CreateGameModal";
-import { getGamesList } from "../../bd/Games";
-import PasswordModal from "./PasswordModal"; // Импортируем новое модальное окно для ввода пароля
+import { getGamesList, getUser } from "../../bd/Games";
+import PasswordModal from "./PasswordModal";
 
 function Games() {
   const [rooms, setRooms] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [passwordModalIsOpen, setPasswordModalIsOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [players, setPlayers] = useState({});
   const navigate = useNavigate();
 
   const openModal = () => {
@@ -37,22 +38,37 @@ function Games() {
   };
 
   const joinRoom = (room) => {
-    console.log("Attempting to join room:", room);
     if (room.password) {
       openPasswordModal(room);
     } else {
-      console.log("Room is public, navigating to room", room.id);
       navigate(`/room/${room.id}`);
-      console.log("Navigated to room", `/room/${room.id}`);
     }
   };
 
+  const fetchPlayers = async (players) => {
+    const playerNames = await Promise.all(
+      players.map(async (player) => {
+        const playerData = await getUser(player.id);
+        return playerData ? playerData.name : "Unknown";
+      })
+    );
+    return playerNames;
+  };
+
   useEffect(() => {
-    // Загрузка списка игр из Firebase
     const fetchGames = async () => {
       try {
         const games = await getGamesList();
+        const playersData = {};
+
+        for (const game of games) {
+          if (Array.isArray(game.players)) {
+            playersData[game.id] = await fetchPlayers(game.players);
+          }
+        }
+
         setRooms(games);
+        setPlayers(playersData);
       } catch (error) {
         console.error("Ошибка при загрузке списка игр:", error);
       }
@@ -70,15 +86,35 @@ function Games() {
         onRequestClose={closeModal}
         contentLabel="Пример модального окна"
       />
-      <ul>
-        {rooms.map((room) => (
-          <li key={room.id}>
-            <button to="#" onClick={() => joinRoom(room)}>
-          {room.name} - {room.id}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Nom de jeu</th>
+            <th>Les joueurs</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {rooms.map((room) => (
+            <tr key={room.id}>
+              <td>
+                <img 
+                  src={room.password ? `${process.env.PUBLIC_URL}/games/fermer.png` : `${process.env.PUBLIC_URL}/games/ouver.png`} 
+                  alt={room.password ? "closed" : "open"} 
+                />
+              </td>
+              <td>{room.name}</td>
+              <td>{players[room.id] ? players[room.id].join(", ") : "Loading..."}</td>
+              <td>
+                <button onClick={() => joinRoom(room)}>
+                  <img src={`${process.env.PUBLIC_URL}/games/door.png`} alt="door" />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
       {selectedRoom && (
         <PasswordModal
           isOpen={passwordModalIsOpen}

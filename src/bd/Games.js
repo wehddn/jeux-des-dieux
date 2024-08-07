@@ -1,8 +1,25 @@
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 
-export const createGame = async ({ name, userId, isPrivate, password }) => {
+export const getUser = async (userId) => {
+  const userRef = doc(db, 'Users', userId);
 
+  try {
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      return userSnap.data();
+    } else {
+      console.error('No such user!');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error accessing Firestore:', error);
+    throw new Error('Error accessing Firestore');
+  }
+};
+
+export const createGame = async ({ name, userId, isPrivate, password }) => {
   try {
     const gameData = {
       name: name || "",
@@ -13,32 +30,6 @@ export const createGame = async ({ name, userId, isPrivate, password }) => {
 
     if (isPrivate && password) {
       gameData.password = password;
-    }
-    for (const [key, value] of Object.entries(gameData)) {
-      if (value === undefined) {
-        console.error(`Ошибка: Поле ${key} имеет недопустимое значение undefined`);
-        throw new Error(`Поле ${key} имеет недопустимое значение: undefined`);
-      }
-
-      if (typeof value === 'object' && value !== null) {
-        if (Array.isArray(value)) {
-          value.forEach((item, index) => {
-            for (const [subKey, subValue] of Object.entries(item)) {
-              if (subValue === undefined) {
-                console.error(`Ошибка: Поле ${key}[${index}].${subKey} имеет недопустимое значение undefined`);
-                throw new Error(`Поле ${key}[${index}].${subKey} имеет недопустимое значение: undefined`);
-              }
-            }
-          });
-        } else {
-          for (const [subKey, subValue] of Object.entries(value)) {
-            if (subValue === undefined) {
-              console.error(`Ошибка: Поле ${key}.${subKey} имеет недопустимое значение undefined`);
-              throw new Error(`Поле ${key}.${subKey} имеет недопустимое значение: undefined`);
-            }
-          }
-        }
-      }
     }
 
     const gameRef = await addDoc(collection(db, "Games"), gameData);
@@ -52,9 +43,11 @@ export const createGame = async ({ name, userId, isPrivate, password }) => {
 export const getGamesList = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, "Games"));
-    const gamesList = querySnapshot.docs.map(doc => ({
+    const gamesList = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       name: doc.data().name,
+      isPrivate: doc.data().isPrivate,
+      players: doc.data().players,
       password: doc.data().password,
     }));
     return gamesList;
