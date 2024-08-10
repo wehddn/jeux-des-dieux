@@ -6,6 +6,8 @@ function GameRoom() {
   const { id } = useParams();
   const { user } = useUserAuth();
   const [status, setStatus] = useState('waiting');
+  const [hand, setHand] = useState([]);
+  const [table, setTable] = useState([]);
   const ws = useRef(null);
   console.log("GameRoom", id);
 
@@ -22,15 +24,25 @@ function GameRoom() {
 
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      console.log("message : ", data.type);
 
       if (data.type === 'joined') {
         setStatus('joined');
       } else if (data.type === 'start') {
         setStatus('started');
+        setHand(data.hand);
+        setTable(data.table);
+        console.log("Your hand:", data.hand); // Выводим руку игрока в консоль
+        console.log("Game table:", data.table); // Выводим общий стол в консоль
       } else if (data.type === 'full') {
         setStatus('full');
       } else if (data.type === 'waiting') {
         setStatus('waiting');
+      } else if (data.type === 'rejoined') {
+        setHand(data.hand);
+        setTable(data.table);
+        console.log("Rejoined. Your hand:", data.hand); // Выводим руку игрока в консоль при повторном подключении
+        console.log("Game table:", data.table); // Выводим общий стол в консоль при повторном подключении
       }
     };
 
