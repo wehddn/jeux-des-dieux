@@ -9,7 +9,8 @@ function GameRoom() {
   const [hand, setHand] = useState([]);
   const [table, setTable] = useState([]);
   const ws = useRef(null);
-  console.log("GameRoom", id);
+  const hasJoined = useRef(false); // Track if the player has joined
+  const messageQueue = useRef([]); // Queue for messages before "joined" is processed
 
   useEffect(() => {
     ws.current = new WebSocket('ws://localhost:3001');
@@ -28,21 +29,20 @@ function GameRoom() {
 
       if (data.type === 'joined') {
         setStatus('joined');
-      } else if (data.type === 'start') {
-        setStatus('started');
-        setHand(data.hand);
-        setTable(data.table);
-        console.log("Your hand:", data.hand); // Выводим руку игрока в консоль
-        console.log("Game table:", data.table); // Выводим общий стол в консоль
-      } else if (data.type === 'full') {
-        setStatus('full');
-      } else if (data.type === 'waiting') {
-        setStatus('waiting');
-      } else if (data.type === 'rejoined') {
-        setHand(data.hand);
-        setTable(data.table);
-        console.log("Rejoined. Your hand:", data.hand); // Выводим руку игрока в консоль при повторном подключении
-        console.log("Game table:", data.table); // Выводим общий стол в консоль при повторном подключении
+        hasJoined.current = true; // Mark the player as joined
+
+        // Process any messages in the queue
+        messageQueue.current.forEach((queuedMessage) => {
+          handleIncomingMessage(queuedMessage);
+        });
+        messageQueue.current = []; // Clear the queue
+
+      } else if (!hasJoined.current) {
+        // If the player hasn't joined yet, queue the message
+        messageQueue.current.push(data);
+      } else {
+        // Handle messages normally after "joined" has been processed
+        handleIncomingMessage(data);
       }
     };
 
@@ -52,6 +52,25 @@ function GameRoom() {
       }
     };
   }, [id, user]);
+
+  const handleIncomingMessage = (data) => {
+    if (data.type === 'start') {
+      setStatus('started');
+      setHand(data.hand);
+      setTable(data.table);
+      console.log("Your hand:", data.hand);
+      console.log("Game table:", data.table);
+    } else if (data.type === 'full') {
+      setStatus('full');
+    } else if (data.type === 'waiting') {
+      setStatus('waiting');
+    } else if (data.type === 'rejoined') {
+      setHand(data.hand);
+      setTable(data.table);
+      console.log("Rejoined. Your hand:", data.hand);
+      console.log("Game table:", data.table);
+    }
+  };
 
   return (
     <div>
