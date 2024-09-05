@@ -5,7 +5,7 @@ import "./App.css";
 import "./components/Games/Game.css";
 import Profile from "./components/Profile/Profile";
 import Games from "./components/Games/Games";
-import Game from "./components/Games/Game";
+import Game from "./components/Games/Game/Game";
 import PrivateRoute from './components/Routes/PrivateRoute';
 import GameRoom from "./components/Games/GameRoom"
 import Settings from "./components/Settings/Settings";

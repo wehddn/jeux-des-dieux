@@ -1,5 +1,5 @@
 import React from 'react';
-import Card from './Card'; // Убедитесь, что у вас есть компонент Card
+import Card from './Card';
 
 function Hand({ cards, onDragStart, onCardClick, onCardDoubleClick }) {
   return (

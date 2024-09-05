@@ -9,8 +9,8 @@ function GameRoom() {
   const [hand, setHand] = useState([]);
   const [table, setTable] = useState([]);
   const ws = useRef(null);
-  const hasJoined = useRef(false); // Track if the player has joined
-  const messageQueue = useRef([]); // Queue for messages before "joined" is processed
+  const hasJoined = useRef(false);
+  const messageQueue = useRef([]);
 
   useEffect(() => {
     ws.current = new WebSocket('ws://localhost:3001');
@@ -29,19 +29,16 @@ function GameRoom() {
 
       if (data.type === 'joined') {
         setStatus('joined');
-        hasJoined.current = true; // Mark the player as joined
+        hasJoined.current = true;
 
-        // Process any messages in the queue
         messageQueue.current.forEach((queuedMessage) => {
           handleIncomingMessage(queuedMessage);
         });
-        messageQueue.current = []; // Clear the queue
+        messageQueue.current = []; 
 
       } else if (!hasJoined.current) {
-        // If the player hasn't joined yet, queue the message
         messageQueue.current.push(data);
       } else {
-        // Handle messages normally after "joined" has been processed
         handleIncomingMessage(data);
       }
     };
