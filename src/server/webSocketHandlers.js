@@ -1,5 +1,5 @@
 // webSocketHandlers.js
-const { getGame, updateGameData, createGame, deleteGame, updatePlayersInFirestore, deleteGameFromFirestore } = require('./gameManager');
+const { getGame, updateGameData, createGame, deleteGame, updatePlayersInFirestore, deleteGameFromFirestore, updateGameInFirestore } = require('./gameManager');
 const { generateDeck, drawInitialCards } = require('./deck');
 const WebSocket = require('ws');
 
@@ -124,16 +124,30 @@ async function handleClose(gameId, userID, wss) {
 
 function startGame(gameData, wss) {
   console.log(`Starting game ${gameData.id}`);
+  
+  gameData.started = true;
+
+  updatePlayersInFirestore(gameData.id, gameData.players);
+  updateGameInFirestore(gameData.id, gameData);
+
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN && client.room === gameData.id) {
-      client.send(JSON.stringify({
-        type: 'start',
-        room: gameData.id
-      }));
-      console.log(`Sent start game message to user ${client.userID}`);
+      const player = gameData.players.find(p => p.id === client.userID);
+      if (player) {
+        client.send(JSON.stringify({
+          type: 'start',
+          room: gameData.id,
+          hand: player.hand,
+          table: gameData.players.map(p => ({ id: p.id, table: p.table }))
+        }));
+        console.log(`Sent start game message to user ${client.userID}`);
+      } else {
+        console.error(`Player not found for userID: ${client.userID} in game ${gameData.id}`);
+      }
     }
   });
 }
+
 
 module.exports = {
   handleWebSocketConnection,

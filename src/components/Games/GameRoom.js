@@ -16,11 +16,13 @@ function GameRoom() {
     ws.current = new WebSocket('ws://localhost:3001');
 
     ws.current.onopen = () => {
-      ws.current.send(JSON.stringify({
-        type: 'join',
-        room: id,
-        userId: user.uid
-      }));
+      if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+        ws.current.send(JSON.stringify({
+          type: 'join',
+          room: id,
+          userId: user.uid
+        }));
+      }
     };
 
     ws.current.onmessage = (event) => {
@@ -43,8 +45,27 @@ function GameRoom() {
       }
     };
 
+    const handleBeforeUnload = () => {
+      if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+        ws.current.send(JSON.stringify({
+          type: 'leave',
+          room: id,
+          userId: user.uid
+        }));
+        ws.current.close();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
     return () => {
-      if (ws.current) {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+        ws.current.send(JSON.stringify({
+          type: 'leave',
+          room: id,
+          userId: user.uid
+        }));
         ws.current.close();
       }
     };

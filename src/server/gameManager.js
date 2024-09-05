@@ -44,11 +44,22 @@ async function deleteGameFromFirestore(gameId) {
   }
 }
 
+async function updateGameInFirestore(gameId, gameData) {
+  try {
+    await db.collection('Games').doc(gameId).update({ started: gameData.started });
+    console.log(`Game ${gameId} started status updated in Firestore.`);
+  } catch (error) {
+    console.error('Error updating game started status in Firestore:', error);
+  }
+}
+
+
 module.exports = {
   getGame,
   updateGameData,
   createGame,
   deleteGame,
   updatePlayersInFirestore,
-  deleteGameFromFirestore
+  deleteGameFromFirestore,
+  updateGameInFirestore  
 };
