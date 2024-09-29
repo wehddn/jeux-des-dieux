@@ -2,6 +2,8 @@ import React from 'react';
 import Card from './Card';
 
 function PlayerField({ player, index, colors, onDropCard, onSlotClick, currentPlayer, slotColors }) {
+  const playerCurses = player.curses || {};
+
   return (
     <div className="player-field">
       <div className="player-label">Поле Игрока {index + 1}</div>
@@ -9,7 +11,7 @@ function PlayerField({ player, index, colors, onDropCard, onSlotClick, currentPl
         {colors.map((color, slotIndex) => {
           const cardsInSlot = player.table.filter(card => card.slot === slotIndex);
           const className = Object.keys(slotColors)[slotIndex];
-          const curseCount = player.curses[className] || 0;
+          const curseCount = playerCurses[className] || 0;
           return (
             <div 
               key={slotIndex} 

@@ -1,6 +1,6 @@
-// gameManager.js
-const { db } = require('./firebaseConfig'); 
-const games = {}; // Местное хранилище для управления состоянием игры
+const { db } = require('./firebaseConfig');
+const { generateDeck } = require('./deck');
+const games = {};
 
 function getGame(gameId) {
   return games[gameId];
@@ -11,10 +11,16 @@ function updateGameData(gameId, gameData) {
   console.log(`Updated game data for game ${gameId}:`, games[gameId]);
 }
 
-function createGame(gameId, playerId, deck) {
+function createGame(gameId, playerId) {
+  const deck = generateDeck();
+  console.log(`Created game ${gameId} with deck:`, deck);
   const gameData = {
     id: gameId,
-    players: [{ id: playerId }], // Сохраняем только id игрока
+    deck: deck,
+    players: [
+      { id: playerId, hand: [], table: [] }
+    ],
+    discardPile: [],
     started: false,
   };
   updateGameData(gameId, gameData);
@@ -28,8 +34,9 @@ function deleteGame(gameId) {
 
 async function updatePlayersInFirestore(gameId, players) {
   try {
-    await db.collection('Games').doc(gameId).update({ players });
-    console.log(`Players updated in Firestore for game ${gameId}:`, players);
+    const filteredPlayers = players.map(player => ({ id: player.id }));
+    await db.collection('Games').doc(gameId).update({ players: filteredPlayers });
+    console.log(`Players updated in Firestore for game ${gameId}:`, filteredPlayers);
   } catch (error) {
     console.error('Error updating players in Firestore:', error);
   }
@@ -52,7 +59,6 @@ async function updateGameInFirestore(gameId, gameData) {
     console.error('Error updating game started status in Firestore:', error);
   }
 }
-
 
 module.exports = {
   getGame,

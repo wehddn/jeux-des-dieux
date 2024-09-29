@@ -1,4 +1,3 @@
-// webSocketHandlers.js
 const { getGame, updateGameData, createGame, deleteGame, updatePlayersInFirestore, deleteGameFromFirestore, updateGameInFirestore } = require('./gameManager');
 const { generateDeck, drawInitialCards } = require('./deck');
 const WebSocket = require('ws');
@@ -17,12 +16,21 @@ async function handleWebSocketConnection(ws, wss) {
       ws.room = room;
       ws.userID = userId;
 
-      if (type === 'join') {
-        console.log(`User ${userId} is attempting to join room ${room}`);
-        await joinGame(gameId, userId, ws, wss);
-      } else if (type === 'leave') {
-        console.log(`User ${userId} is leaving room ${room}`);
-        await handleClose(gameId, userID, wss);
+      switch (type) {
+        case 'join':
+          console.log(`User ${userId} is attempting to join room ${room}`);
+          await joinGame(gameId, userId, ws, wss);
+          break;
+        case 'leave':
+          console.log(`User ${userId} is leaving room ${room}`);
+          await handleClose(gameId, userId, wss);
+          break;
+        case 'drawCard':
+          console.log(`Player ${userId} is drawing a card`);
+          await handleDrawCard(gameId, userId, ws, wss);
+          break;
+        default:
+          console.log(`Unknown message type: ${type}`);
       }
     } catch (error) {
       console.error('Error handling message:', error);
@@ -36,14 +44,14 @@ async function handleWebSocketConnection(ws, wss) {
     await handleClose(gameId, userID, wss);
   });
 }
-
+// Присоединение к игре
 async function joinGame(gameId, userId, ws, wss) {
   console.log('Attempting to join game:', gameId);
   try {
     let gameData = getGame(gameId);
     if (!gameData) {
-      const deck = generateDeck();
-      gameData = createGame(gameId, userId, deck);
+      // Создаем новую игру
+      gameData = createGame(gameId, userId);
       updateGameData(gameId, gameData);
       await updatePlayersInFirestore(gameId, gameData.players);
       ws.send(JSON.stringify({ type: 'joined', room: gameId }));
@@ -52,16 +60,20 @@ async function joinGame(gameId, userId, ws, wss) {
       const existingPlayer = gameData.players.find(player => player.id === userId);
 
       if (existingPlayer) {
+        // Игрок повторно присоединился к существующей игре
         console.log(`User ${userId} rejoined existing game ${gameId}`);
-        ws.send(JSON.stringify({ type: 'rejoined', room: gameId }));
+        ws.send(JSON.stringify({ type: 'rejoined', room: gameId, hand: existingPlayer.hand, table: gameData.players.map(p => ({ id: p.id, table: p.table })) }));
       } else if (gameData.players.length < 2) {
-        const newPlayer = { id: userId };
+        // Добавляем второго игрока
+        const newPlayer = { id: userId, hand: [], table: [] };
         gameData.players.push(newPlayer);
         console.log(`User ${userId} joined game ${gameId}, current players: ${gameData.players.map(p => p.id).join(', ')}`);
 
+        // Если оба игрока присоединились, начинаем игру
         if (gameData.players.length === 2) {
           gameData.started = true;
-          startGame(gameData, wss);
+          gameData.currentPlayer = 0;  // Начинает первый игрок
+          startGame(gameData, wss);  // Вызываем startGame
         }
 
         updateGameData(gameId, gameData);
@@ -88,7 +100,7 @@ async function handleClose(gameId, userID, wss) {
         return;
       }
       processing[gameId] = true;
-      
+
       const gameData = getGame(gameId);
       if (!gameData) {
         console.log(`Game data not found for gameId: ${gameId}`);
@@ -124,12 +136,21 @@ async function handleClose(gameId, userID, wss) {
 
 function startGame(gameData, wss) {
   console.log(`Starting game ${gameData.id}`);
-  
+
   gameData.started = true;
 
-  updatePlayersInFirestore(gameData.id, gameData.players);
-  updateGameInFirestore(gameData.id, gameData);
+  // Раздаем карты игрокам
+  gameData.players.forEach(player => {
+    player.hand = drawInitialCards(gameData.deck);
+    player.table = [];
+  });
 
+  // Убираем карты, которые разданы из колоды
+  gameData.deck = gameData.deck.slice(gameData.players.length * 6);
+
+  updateGameData(gameData.id, gameData);
+
+  // Отправляем данные всем подключенным клиентам
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN && client.room === gameData.id) {
       const player = gameData.players.find(p => p.id === client.userID);
@@ -138,7 +159,9 @@ function startGame(gameData, wss) {
           type: 'start',
           room: gameData.id,
           hand: player.hand,
-          table: gameData.players.map(p => ({ id: p.id, table: p.table }))
+          table: gameData.players.map(p => ({ id: p.id, table: p.table })),
+          deck: gameData.deck,  // Отправляем состояние колоды
+          currentPlayer: gameData.currentPlayer
         }));
         console.log(`Sent start game message to user ${client.userID}`);
       } else {
@@ -148,6 +171,32 @@ function startGame(gameData, wss) {
   });
 }
 
+async function handleDrawCard(gameId, userId, ws, wss) {
+  const gameData = getGame(gameId);
+  const player = gameData.players.find(p => p.id === userId);
+
+  if (player && gameData.deck.length > 0 && gameData.currentPlayer === gameData.players.indexOf(player)) {
+    const newCard = gameData.deck.pop();
+    player.hand.push(newCard);
+    console.log(`Player ${userId} drew a card:`, newCard);
+
+    updateGameData(gameId, gameData);
+
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN && client.room === gameId) {
+        const playerState = gameData.players.map(p => ({ id: p.id, table: p.table }));
+        client.send(JSON.stringify({
+          type: 'gameState',
+          deck: gameData.deck,
+          room: gameId,
+          hand: client.userID === userId ? player.hand : [],
+          table: playerState,
+          currentPlayer: gameData.currentPlayer  // Отправляем текущего игрока
+        }));
+      }
+    });
+  }
+}
 
 module.exports = {
   handleWebSocketConnection,
