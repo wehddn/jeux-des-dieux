@@ -8,12 +8,14 @@ function getGame(gameId) {
 
 function updateGameData(gameId, gameData) {
   games[gameId] = gameData;
-  console.log(`Updated game data for game ${gameId}:`, games[gameId]);
+  //console.log(`Updated game data for game ${gameId}:`, games[gameId]);
+  console.log(`Updated game data for game ${gameId}`);
 }
 
 function createGame(gameId, playerId) {
   const deck = generateDeck();
-  console.log(`Created game ${gameId} with deck:`, deck);
+  //console.log(`Created game ${gameId} with deck:`, deck);
+  console.log(`Created game ${gameId}`);
   const gameData = {
     id: gameId,
     deck: deck,
@@ -36,7 +38,8 @@ async function updatePlayersInFirestore(gameId, players) {
   try {
     const filteredPlayers = players.map(player => ({ id: player.id }));
     await db.collection('Games').doc(gameId).update({ players: filteredPlayers });
-    console.log(`Players updated in Firestore for game ${gameId}:`, filteredPlayers);
+    //console.log(`Players updated in Firestore for game ${gameId}:`, filteredPlayers);
+    console.log(`Players updated in Firestore for game ${gameId}`);
   } catch (error) {
     console.error('Error updating players in Firestore:', error);
   }

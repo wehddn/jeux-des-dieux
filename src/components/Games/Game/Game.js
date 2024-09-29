@@ -38,7 +38,7 @@ function Game({ hand, table, deck, ws, user }) {
 
   // Функция вытягивания карты из колоды
   function drawCardFromDeck() {
-    if (gameState.deck.length > 0 && ws && ws.readyState === WebSocket.OPEN) {
+    if (gameState.deck > 0 && ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'drawCard', playerIndex: gameState.currentPlayer }));
     } else {
       console.log("No cards left in the deck or WebSocket not open");
@@ -107,7 +107,7 @@ function Game({ hand, table, deck, ws, user }) {
         if (index === gameState.currentPlayer) {
           return {
             ...player,
-            hand: player.hand.filter(c => c !== card),
+            hand: hand.filter(c => c !== card),
           };
         }
         return player;
@@ -122,7 +122,7 @@ function Game({ hand, table, deck, ws, user }) {
       const nextPlayer = (prevState.currentPlayer + 1) % 2;
       const nextTurn = prevState.turn + 1;
 
-      if (prevState.deck.length === 0) {
+      if (prevState.deck === 0) {
         alert("Игра окончена! Карты в колоде закончились.");
         return prevState;
       }
@@ -168,7 +168,7 @@ function Game({ hand, table, deck, ws, user }) {
           onClick={drawCardFromDeck}
           style={{ cursor: 'pointer', padding: '10px', border: '1px solid black' }}
         >
-          Deck: {gameState.deck.length} cards {/* Отображаем количество карт в колоде */}
+          Deck: {gameState.deck} cards {/* Отображаем количество карт в колоде */}
         </div>
       </div>
       <Hand

@@ -125,7 +125,8 @@ async function handleClose(gameId, userID, wss) {
         });
       }
 
-      console.log(`Updated players after ${userID} left:`, updatedPlayers);
+      //console.log(`Updated players after ${userID} left:`, updatedPlayers);
+      console.log(`Updated players after ${userID} left`);
       processing[gameId] = false;
     } catch (error) {
       console.error('Error handling disconnect:', error);
@@ -144,9 +145,6 @@ function startGame(gameData, wss) {
     player.hand = drawInitialCards(gameData.deck);
     player.table = [];
   });
-
-  // Убираем карты, которые разданы из колоды
-  gameData.deck = gameData.deck.slice(gameData.players.length * 6);
 
   updateGameData(gameData.id, gameData);
 
