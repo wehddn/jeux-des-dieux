@@ -1,12 +1,12 @@
 import React from "react";
 
 const Stats = ({ userProfile }) => {
-    return (
-        <div className="card" style={{border: "none", backgroundColor: '#F3F2EE', height: '90vh' }}>
-        <h2 className="pt-4">Statistiques</h2>
-        <hr className="p-2" style={{width: "90%", margin: "0 auto"}}/>
-        </div>
-    );
-    };
+  return (
+    <div className="card-stats me-4 mt-4">
+      <h2 className="pt-4 profile-tittle">Statistiques</h2>
+      <hr className="p-2 hr-line" />
+    </div>
+  );
+};
 
 export default Stats;

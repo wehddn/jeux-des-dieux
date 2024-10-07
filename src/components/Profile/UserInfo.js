@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { updateUserName } from '../../bd/Users';
+import React, { useState } from "react";
+import { updateUserName } from "../../bd/Users";
 
 const UserInfo = ({ userProfile }) => {
   const [newPseudo, setNewPseudo] = useState(userProfile.name);
@@ -24,63 +24,64 @@ const UserInfo = ({ userProfile }) => {
       setIsEditing(false);
       userProfile.name = newPseudo;
     } catch (error) {
-      console.error('Error updating pseudo:', error);
+      console.error("Error updating pseudo:", error);
     }
   };
 
   return (
-    <div className='card d-flex' style={{border: "none"}}>
-      <div className='pt-4 d-flex justify-content-center'>
-        <img className="photoProfil" src={`/photoProfil/${userProfile.photo}`} alt="Profile" style={{ width: "15rem", height: "auto" }} />
-      </div>
-      <div className='p-4'>
-        <div className='d-flex justify-content-start'>
+    <div className="card profile-info d-flex ms-4 mt-4">
+      <div className="p-4">
+        <div className="d-flex justify-content-center">
+          <img
+            className="photoProfil"
+            src={`/photoProfil/${userProfile.photo}`}
+            alt="Profile"
+          />
+        </div>
+        <div className="d-flex justify-content-start">
           <h5>Pseudo</h5>
         </div>
-        <div className='d-flex justify-content-start'>
+        <div className="d-flex justify-content-start">
           {isEditing ? (
-            <div className='d-flex justify-content-start'  style={{ width: "100%"}}>
+            <div className="d-flex justify-content-start pseudo-input">
               <input
                 type="text"
                 value={newPseudo}
-                onChange={handleInputChange} 
-                className='p-2 d-flex justify-content-start'
-                style={{ width: "85%", border: "none", backgroundColor: '#F3F2EE' }}
+                onChange={handleInputChange}
+                className="pseudo-input"
               />
-              <button onClick={handleSaveClick} style={{border: "none", backgroundColor: "transparent"}}>
-                <img src={`/btn/save.svg`} alt="Profile" style={{ width: "2rem", height: "auto"}} ></img>
+              <button onClick={handleSaveClick} className="btn-save">
+                <img src={`/btn/save.svg`} alt="Save" className="btn-save" />
               </button>
             </div>
           ) : (
             <>
-              <div className='d-flex justify-content-start' style={{ width: "85%", backgroundColor: '#F3F2EE' }}>
-                <p className='m-2'>{userProfile.name || 'Player'}</p>
+              <div className="pseudo-container">
+                <p className="m-2">{userProfile.name || "Player"}</p>
               </div>
-              <button onClick={handleEditClick} style={{border: "none", backgroundColor: "transparent"}}>
-                <img src={`/btn/edit.svg`} alt="Profile" style={{ width: "2rem", height: "auto"}} ></img>
+              <button onClick={handleEditClick} className="btn-edit">
+                <img src={`/btn/edit.svg`} alt="Edit" className="btn-edit" />
               </button>
             </>
           )}
         </div>
 
-        <div className='pt-3 d-flex justify-content-start'>
+        <div className="pt-3 d-flex justify-content-start">
           <h5>Mail</h5>
         </div>
-        <div className='d-flex justify-content-start' style={{ width: "85%", backgroundColor: '#F3F2EE' }}>
-          <p className='m-2'>{userProfile.email}</p>
+        <div className="pseudo-container">
+          <p className="m-2">{userProfile.email}</p>
         </div>
 
-        <div className='pt-3 d-flex justify-content-start'>
+        <div className="pt-3 d-flex justify-content-start">
           <h5>Numéro Unique</h5>
         </div>
-
-        <div className='d-flex justify-content-start' style={{ width: "85%", backgroundColor: '#F3F2EE' }}>
-          <p className='m-2'>{userProfile.id}</p>
+        <div className="pseudo-container">
+          <p className="m-2 word-break">{userProfile.id}</p>
         </div>
       </div>
-      
     </div>
   );
-}
+};
 
 export default UserInfo;

@@ -18,7 +18,7 @@ const Profile = () => {
         const userData = await getOrCreateUser(userId, userEmail);
         setUserProfile(userData);
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error("Error fetching user data:", error);
       }
     };
 
@@ -28,27 +28,25 @@ const Profile = () => {
   return (
     <>
       <Header></Header>
-      <div className="fon_profil text-center">
+      <div className="fon_profil">
         {userProfile ? (
-          <>
-            <div className="row d-flex">
-              <div className="col-4 pl-4">
-                <UserInfo userProfile={userProfile}></UserInfo>
-              </div>
-              <div className="col-4">
-                <Friends userProfile={userProfile}></Friends>
-              </div>
-              <div className="col-4">
-                <Stats userProfile={userProfile}></Stats>
-              </div>
+          <div className="row d-flex">
+            <div className="col-lg-4 col-12 colone-profil">
+              <UserInfo userProfile={userProfile} />
             </div>
-          </>
+            <div className="col-lg-4 col-12 colone-profil">
+              <Friends userProfile={userProfile} />
+            </div>
+            <div className="col-lg-4 col-12 colone-profil">
+              <Stats userProfile={userProfile} />
+            </div>
+          </div>
         ) : (
           <p>Loading...</p>
         )}
       </div>
-      <div className="d-grid gap-2">
-      </div>
+
+      <div className="d-grid gap-2"></div>
     </>
   );
 };

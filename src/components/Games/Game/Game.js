@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PlayerField from "./PlayerField";
 import Hand from "./Hand";
 
@@ -6,10 +6,10 @@ function Game({ hand, table, deck, ws, user, gameState, setGameState, sendDrawCa
   const [selectedCard, setSelectedCard] = useState(null);
 
   const slotColors = {
-    Креды: "red",
-    ОИ: "blue",
-    Каперы: "green",
-    Фаготы: "purple",
+    Crèdes: "red",
+    'Ordre de la Vérité': "blue",
+    Capères: "green",
+    Phagots: "purple",
   };
 
   function drawCardFromDeck() {
@@ -110,40 +110,54 @@ function Game({ hand, table, deck, ws, user, gameState, setGameState, sendDrawCa
 
   return (
     <div className="game">
-      <div className="fields">
-        {gameState.players.map((player, index) => (
-          <PlayerField
-            key={index}
-            player={player}
-            index={index}
-            colors={Object.values(slotColors)}
-            onSlotClick={onSlotClick}
-            onDropCard={(e, slotIndex) => onDropCard(e, index, slotIndex)}
-            currentPlayer={gameState.currentPlayer}
-            slotColors={slotColors}
-          />
-        ))}
+      <div className="opponent-field">
+        {gameState.players
+          .filter((_, index) => index !== gameState.currentPlayer)
+          .map((player, index) => (
+            <PlayerField
+              key={index}
+              player={player}
+              index={index}
+              colors={Object.values(slotColors)}
+              onSlotClick={onSlotClick}
+              onDropCard={(e, slotIndex) => onDropCard(e, index, slotIndex)}
+              currentPlayer={gameState.currentPlayer}
+              slotColors={slotColors}
+            />
+          ))}
       </div>
+
       <div className="deck-and-discard">
         <div
           className="discard-pile"
-          style={{ cursor: 'pointer', padding: '10px', border: '1px solid black' }}
+          style={{ cursor: "pointer", padding: "10px", border: "1px solid black" }}
         >
           Discard Pile: {gameState.discardPile} cards
         </div>
-        <div 
-          className="deck" 
+        <div
+          className="deck"
           onClick={drawCardFromDeck}
-          style={{ cursor: 'pointer', padding: '10px', border: '1px solid black' }}
+          style={{ cursor: "pointer", padding: "10px", border: "1px solid black" }}
         >
           Deck: {deck} cards
         </div>
       </div>
-      <Hand
-        cards={hand || []}
-        onCardClick={onCardClick}
-        onCardDoubleClick={discardCard}
-      />
+
+      <div className="player-field">
+        <PlayerField
+          player={gameState.players[gameState.currentPlayer]}
+          index={gameState.currentPlayer}
+          colors={Object.values(slotColors)}
+          onSlotClick={onSlotClick}
+          onDropCard={(e, slotIndex) =>
+            onDropCard(e, gameState.currentPlayer, slotIndex)
+          }
+          currentPlayer={gameState.currentPlayer}
+          slotColors={slotColors}
+        />
+      </div>
+
+      <Hand cards={hand || []} onCardClick={onCardClick} onCardDoubleClick={discardCard} />
     </div>
   );
 }

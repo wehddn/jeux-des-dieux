@@ -1,5 +1,5 @@
 function generateDeck() {
-  const classes = ["Креды", "ОИ", "Каперы", "Фаготы", "Наемники"];
+  const classes = ["Crèdes", "Ordre de la Vérité", "Capères", "Phagots", "Mercenaires"];
   const values = ["1", "2", "3", "4"];
   let deck = [];
 
