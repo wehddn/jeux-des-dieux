@@ -2,17 +2,9 @@ import React, { useState, useEffect } from "react";
 import PlayerField from "./PlayerField";
 import Hand from "./Hand";
 
-function Game({ hand, table, deck, ws, user }) {
-  const [gameState, setGameState] = useState({
-    deck: deck, // Изначально берем колоду из props
-    players: table, // Игроки и их поля
-    discardPile: [], // Сброс карт
-    currentPlayer: 0, // Номер текущего игрока
-    turn: 0, // Счетчик ходов
-  });
+function Game({ hand, table, deck, ws, user, gameState, setGameState, sendDrawCard }) {
   const [selectedCard, setSelectedCard] = useState(null);
 
-  // Цвета для слотов (по классам)
   const slotColors = {
     Креды: "red",
     ОИ: "blue",
@@ -20,32 +12,14 @@ function Game({ hand, table, deck, ws, user }) {
     Фаготы: "purple",
   };
 
-  // Слушаем сообщения от WebSocket
-  useEffect(() => {
-    if (ws) {
-      ws.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        if (message.type === 'gameState') {
-          setGameState(message.data); // Обновляем состояние игры при получении данных от WebSocket
-        }
-      };
-    }
-
-    return () => {
-      if (ws) ws.close(); // Закрываем WebSocket при размонтировании компонента
-    };
-  }, [ws]);
-
-  // Функция вытягивания карты из колоды
   function drawCardFromDeck() {
-    if (gameState.deck > 0 && ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ type: 'drawCard', playerIndex: gameState.currentPlayer }));
+    if (deck > 0 && ws && ws.readyState === WebSocket.OPEN) {
+      sendDrawCard();
     } else {
       console.log("No cards left in the deck or WebSocket not open");
     }
   }
 
-  // Игра карты на стол или в сброс
   function playCard(card, slotIndex, playerIndex = gameState.currentPlayer) {
     setGameState((prevState) => {
       const newPlayers = prevState.players.map((player, i) => {
@@ -65,12 +39,10 @@ function Game({ hand, table, deck, ws, user }) {
     });
   }
 
-  // Когда игрок кликает на карту
   function onCardClick(card) {
     setSelectedCard(card);
   }
 
-  // Когда игрок выбирает слот для карты
   function onSlotClick(slotIndex) {
     if (selectedCard) {
       playCard(selectedCard, slotIndex);
@@ -79,7 +51,6 @@ function Game({ hand, table, deck, ws, user }) {
     }
   }
 
-  // Перетаскивание карты в слот
   function onDropCard(e, playerIndex, slotIndex) {
     const cardData = e.dataTransfer.getData("card");
 
@@ -98,16 +69,15 @@ function Game({ hand, table, deck, ws, user }) {
     }
   }
 
-  // Сброс карты в биту
   function discardCard(card) {
     setGameState((prevState) => ({
       ...prevState,
-      discardPile: [...prevState.discardPile, card],
+      discardPile: prevState.discardPile + 1,
       players: prevState.players.map((player, index) => {
         if (index === gameState.currentPlayer) {
           return {
             ...player,
-            hand: hand.filter(c => c !== card),
+            hand: prevState.players[index].hand.filter(c => c !== card),
           };
         }
         return player;
@@ -116,10 +86,9 @@ function Game({ hand, table, deck, ws, user }) {
     endTurn();
   }
 
-  // Функция завершения хода
   function endTurn() {
     setGameState((prevState) => {
-      const nextPlayer = (prevState.currentPlayer + 1) % 2;
+      const nextPlayer = (prevState.currentPlayer + 1) % prevState.players.length;
       const nextTurn = prevState.turn + 1;
 
       if (prevState.deck === 0) {
@@ -137,9 +106,8 @@ function Game({ hand, table, deck, ws, user }) {
     drawCardFromDeck();
   }
 
-  console.log("gameState", gameState)
+  console.log("gameState", gameState);
 
-  // Основной рендер компонента
   return (
     <div className="game">
       <div className="fields">
@@ -148,11 +116,11 @@ function Game({ hand, table, deck, ws, user }) {
             key={index}
             player={player}
             index={index}
-            colors={Object.values(slotColors)} // Передаем цвета для слотов
+            colors={Object.values(slotColors)}
             onSlotClick={onSlotClick}
             onDropCard={(e, slotIndex) => onDropCard(e, index, slotIndex)}
             currentPlayer={gameState.currentPlayer}
-            slotColors={slotColors} // Передаем объект с цветами слотов
+            slotColors={slotColors}
           />
         ))}
       </div>
@@ -161,14 +129,14 @@ function Game({ hand, table, deck, ws, user }) {
           className="discard-pile"
           style={{ cursor: 'pointer', padding: '10px', border: '1px solid black' }}
         >
-          Discard Pile: {gameState.discardPile.length} cards
+          Discard Pile: {gameState.discardPile} cards
         </div>
         <div 
           className="deck" 
           onClick={drawCardFromDeck}
           style={{ cursor: 'pointer', padding: '10px', border: '1px solid black' }}
         >
-          Deck: {gameState.deck} cards {/* Отображаем количество карт в колоде */}
+          Deck: {deck} cards
         </div>
       </div>
       <Hand

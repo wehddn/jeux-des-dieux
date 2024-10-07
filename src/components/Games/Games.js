@@ -100,7 +100,7 @@ function Games() {
             <tr key={room.id}>
               <td>
                 <img 
-                  src={room.password ? `${process.env.PUBLIC_URL}/games/fermer.png` : `${process.env.PUBLIC_URL}/games/ouver.png`} 
+                  src={room.password ? `${process.env.REACT_APP_API_URL}/games/fermer.png` : `${process.env.REACT_APP_API_URL}/games/ouver.png`} 
                   alt={room.password ? "closed" : "open"} 
                 />
               </td>
@@ -108,7 +108,7 @@ function Games() {
               <td>{players[room.id] ? players[room.id].join(", ") : "Loading..."}</td>
               <td>
                 <button onClick={() => joinRoom(room)}>
-                  <img src={`${process.env.PUBLIC_URL}/games/door.png`} alt="door" />
+                  <img src={`${process.env.REACT_APP_API_URL}/games/door.png`} alt="door" />
                 </button>
               </td>
             </tr>

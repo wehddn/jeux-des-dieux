@@ -1,21 +1,99 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useUserAuth } from "../../context/UserAuthContext.js";
 import Game from "./Game/Game";
 
 function GameRoom() {
-  const { id } = useParams(); // Получаем ID комнаты из URL
-  const { user } = useUserAuth(); // Получаем данные текущего пользователя
-  const [status, setStatus] = useState("waiting"); // Статус игры (waiting, joined, started, full)
-  const [hand, setHand] = useState([]); // Рука игрока
-  const [table, setTable] = useState([]); // Карты на столе
-  const [deck, setDeck] = useState([]); // Карты в колоде
-  const ws = useRef(null); // Используем useRef для хранения WebSocket соединения
-  const hasJoined = useRef(false); // Флаг, показывающий, присоединился ли игрок
-  const messageQueue = useRef([]); // Очередь сообщений, которые нужно обработать после присоединения
+  const { id } = useParams(); // Get room ID from URL
+  const { user } = useUserAuth(); // Get current user data
+  const [status, setStatus] = useState("waiting"); // Game status
+  const [hand, setHand] = useState([]); // Player's hand
+  const [table, setTable] = useState([]); // Cards on the table
+  const [deck, setDeck] = useState(0); // Number of cards in the deck
+  const [gameState, setGameState] = useState({
+    deck: 0,
+    players: [],
+    discardPile: 0,
+    currentPlayer: 0,
+    turn: 0,
+  }); // Comprehensive game state
+  const ws = useRef(null); // WebSocket connection reference
+  const hasJoined = useRef(false); // Flag to indicate if the player has joined
+  const messageQueue = useRef([]); // Queue for messages before joining
+
+  // Wrap handleIncomingMessage in useCallback to avoid unnecessary re-renders
+  const handleIncomingMessage = useCallback((data) => {
+    switch (data.type) {
+      case "start":
+        console.log("handle start ", data);
+        setStatus("started");
+  
+        // Initializing players correctly and ensuring discardPile is set
+        setGameState({
+          deck: data.deck.length,
+          players: data.table.map((player) => ({
+            ...player,
+            hand: data.hand, // Assuming you only have the current player's hand at this stage
+          })),
+          discardPile: 0, // Ensuring discardPile is initialized
+          currentPlayer: data.currentPlayer,
+          turn: 0,
+        });
+  
+        setHand(data.hand);  // Current player's hand
+        setTable(data.table); // Cards on the table
+        setDeck(data.deck.length);  // Assuming deck is an array
+        break;
+  
+      case "gameState":
+        console.log("handle gameState ", data);
+  
+        // Find current player's hand and ensure player structure is correct
+        const updatedPlayers = data.table.map((player) => ({
+          ...player,
+          hand: player.hand || [],  // Ensuring hand is always an array
+        }));
+  
+        setGameState({
+          ...data,
+          players: updatedPlayers,
+          discardPile: data.discardPile || 0,  // Ensure discardPile is always an array
+        });
+  
+        setDeck(data.deck.length);
+        setHand(
+          data.table.find((p) => p.id === user.uid)?.hand || []  // Get current player's hand
+        );
+        setTable(data.table.map(p => ({ id: p.id, table: p.table })));  // Map player's table data
+        break;
+  
+      case "rejoined":
+        console.log("handle rejoined ", data);
+        setHand(data.hand);  // Rejoined player's hand
+        setTable(data.table);  // Rejoined player's table state
+        setDeck(data.deck.length);
+  
+        setGameState({
+          deck: data.deck.length,
+          players: data.table.map((player) => ({
+            ...player,
+            hand: data.hand || [],  // Set hand to empty array if not available
+          })),
+          discardPile: data.discardPile || [],  // Ensure discardPile is always initialized
+          currentPlayer: 0,
+          turn: 0,
+        });
+        break;
+  
+      default:
+        console.warn(`Unhandled message type: ${data.type}`);
+        break;
+    }
+  }, [user.uid]);
+  
 
   useEffect(() => {
-    // Создаем новое WebSocket соединение
+    // Establish WebSocket connection
     ws.current = new WebSocket("ws://localhost:3001");
 
     ws.current.onopen = () => {
@@ -30,7 +108,7 @@ function GameRoom() {
       }
     };
 
-    // Обработчик при входе новых пользователей в комнату
+    // Handle incoming messages
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
 
@@ -48,7 +126,18 @@ function GameRoom() {
       }
     };
 
-    // Обработчик для закрытия соединения при перезагрузке страницы
+    // Handle connection closure
+    ws.current.onclose = () => {
+      console.log("WebSocket connection closed.");
+      setStatus("disconnected");
+    };
+
+    ws.current.onerror = (error) => {
+      console.error("WebSocket error:", error);
+      setStatus("error");
+    };
+
+    // Handle leaving the game on page unload
     const handleBeforeUnload = () => {
       if (ws.current && ws.current.readyState === WebSocket.OPEN) {
         ws.current.send(
@@ -62,11 +151,10 @@ function GameRoom() {
       }
     };
 
-    // Добавляем обработчик события перезагрузки страницы
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      // Удаляем обработчик события и закрываем соединение при размонтировании компонента
+      // Cleanup on component unmount
       window.removeEventListener("beforeunload", handleBeforeUnload);
       if (ws.current && ws.current.readyState === WebSocket.OPEN) {
         ws.current.send(
@@ -79,30 +167,18 @@ function GameRoom() {
         ws.current.close();
       }
     };
-  }, [id, user]); // Эффект срабатывает при изменении id комнаты или данных пользователя
+  }, [id, user, handleIncomingMessage]);
 
-  // Функция для обработки входящих сообщений
-  const handleIncomingMessage = (data) => {
-    switch (data.type) {
-      case "start":
-        setStatus("started");
-        setHand(data.hand);
-        setTable(data.table);
-        setDeck(data.deck); // Сохраняем состояние колоды
-        break;
-      case "full":
-        setStatus("full");
-        break;
-      case "waiting":
-        setStatus("waiting");
-        break;
-      case "rejoined":
-        setHand(data.hand);
-        setTable(data.table);
-        setDeck(data.deck); // Сохраняем колоду при повторном входе
-        break;
-      default:
-        break;
+  // Function to send a drawCard request
+  const sendDrawCard = () => {
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      ws.current.send(
+        JSON.stringify({
+          type: "drawCard",
+          room: id,
+          userId: user.uid,
+        })
+      );
     }
   };
 
@@ -115,15 +191,19 @@ function GameRoom() {
       )}
       {status === "started" && (
         <Game
-          hand={hand} // Передаем состояние руки в компонент игры
-          table={table} // Передаем состояние стола в компонент игры
-          deck={deck.length} // Передаем состояние стола в компонент игры
-          ws={ws.current} // Передаем WebSocket соединение в компонент игры
-          user={user} // Передаем информацию о пользователе в компонент игры
+          hand={hand}
+          table={table}
+          deck={deck}
+          ws={ws.current}
+          user={user}
+          gameState={gameState}
+          setGameState={setGameState}
+          sendDrawCard={sendDrawCard}
         />
       )}
-      {status === "full" && <p>This room is full. You cannot join.</p>}{" "}
-      {/* Сообщение о том, что комната полная */}
+      {status === "full" && <p>This room is full. You cannot join.</p>}
+      {status === "disconnected" && <p>Disconnected from server.</p>}
+      {status === "error" && <p>Error connecting to server.</p>}
     </div>
   );
 }
