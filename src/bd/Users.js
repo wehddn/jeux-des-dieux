@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, deleteDoc, collection, getDocs, updateDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 
 const getOrCreateUser = async (userId, userEmail) => {
@@ -89,4 +89,89 @@ const deleteUserProfile = async (userId) => {
   }
 };
 
-export { getOrCreateUser, getUserPhoto, getUser, updateUserName, deleteUserProfile };
+const getFilteredUsers = async (userId) => {
+  const usersRef = collection(db, 'Users');
+  const userRef = doc(db, 'Users', userId);
+
+  try {
+    const userSnap = await getDoc(userRef);
+    if (!userSnap.exists()) {
+      throw new Error('User not found');
+    }
+
+    const userData = userSnap.data();
+    const sentRequests = userData.sentRequests || [];
+    const receivedRequests = userData.receivedRequests || [];
+
+    // Получаем всех пользователей
+    const querySnapshot = await getDocs(usersRef);
+    const users = [];
+    
+    querySnapshot.forEach((doc) => {
+      const otherUserData = { id: doc.id, ...doc.data() };
+      
+      // Исключаем самого пользователя, тех, кому он отправил заявку, и тех, кто отправил заявку ему
+      if (
+        otherUserData.id !== userId && // Исключаем самого пользователя
+        !sentRequests.includes(otherUserData.id) && // Исключаем пользователей, которым отправлены заявки
+        !receivedRequests.includes(otherUserData.id) // Исключаем пользователей, которые отправили заявку
+      ) {
+        users.push(otherUserData);
+      }
+    });
+
+    return users;
+  } catch (error) {
+    console.error('Error getting users:', error);
+    throw new Error('Error getting users');
+  }
+};
+
+
+const addFriend = async (userId, friendId) => {
+  const userRef = doc(db, 'Users', userId);
+  const friendRef = doc(db, 'Users', friendId);
+
+  try {
+    const userSnap = await getDoc(userRef);
+    const friendSnap = await getDoc(friendRef);
+
+    if (userSnap.exists() && friendSnap.exists()) {
+      const userData = userSnap.data();
+      const friendData = friendSnap.data();
+
+      const currentFriends = userData.friends || [];
+      const sentRequests = userData.sentRequests || [];
+      const receivedRequests = friendData.receivedRequests || [];
+
+      // Проверка, если друг уже добавлен
+      if (currentFriends.includes(friendId)) {
+        console.log('Friend is already added');
+        return;
+      }
+
+      // Проверка, если заявка уже отправлена
+      if (sentRequests.includes(friendId)) {
+        console.log('Friend request already sent');
+        return;
+      }
+
+      // Добавляем заявку в отправленные у пользователя
+      await updateDoc(userRef, { sentRequests: [...sentRequests, friendId] });
+
+      // Добавляем заявку в полученные у друга
+      await updateDoc(friendRef, { receivedRequests: [...receivedRequests, userId] });
+
+      console.log('Friend request sent successfully');
+    } else {
+      throw new Error('User or friend not found');
+    }
+  } catch (error) {
+    console.error('Error sending friend request:', error);
+    throw new Error('Error sending friend request');
+  }
+};
+
+
+
+export { getOrCreateUser, getUserPhoto, getUser, updateUserName, deleteUserProfile, getFilteredUsers, addFriend };
