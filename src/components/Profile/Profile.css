@@ -124,6 +124,8 @@
 
   .btn_1, .btn_2 {
     padding: 0.5rem 1.5rem;
+    width: 240px;
+    height: 80px;
   }
 
   .pseudo-input, .pseudo-container {
@@ -165,6 +167,8 @@
 
   .btn_1, .btn_2 {
     padding: 0.25rem 1rem;
+    width: 120px;
+    height: 40px;
   }
 
   .pseudo-input, .pseudo-container {
