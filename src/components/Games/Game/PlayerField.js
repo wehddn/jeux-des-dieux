@@ -6,7 +6,6 @@ function PlayerField({ player, index, colors, onDropCard, onSlotClick, currentPl
 
   return (
     <div className="player-field">
-      <div className="player-label">Поле Игрока {index + 1}</div>
       <div className="card-slots">
         {colors.map((color, slotIndex) => {
           const cardsInSlot = player.table.filter(card => card.slot === slotIndex);

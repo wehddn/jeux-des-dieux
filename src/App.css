@@ -30,6 +30,8 @@
   color: white;
   background-color: #313131;
   min-height: 100vh;
+  min-width: 140vh;
+  max-width: 140vh;
 }
 
 .button-custom {
@@ -48,4 +50,12 @@
 
 .button-custom:hover {
   background-color: #272727;
+}
+
+@media (max-width: 480px) {
+  .App-content {
+    min-height: 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
 }

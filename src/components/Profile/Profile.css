@@ -67,6 +67,7 @@
   .pseudo-container {
     width: 85%;
     background-color: #F3F2EE;
+    min-height: 40px;
   }
   
   .btn-edit, .btn-save {

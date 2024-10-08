@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import Modal from 'react-modal';
-import { useNavigate } from 'react-router-dom';
-import { createGame } from '../../bd/Games';
+import React, { useState } from "react";
+import Modal from "react-modal";
+import { useNavigate } from "react-router-dom";
+import { createGame } from "../../bd/Games";
 import { useUserAuth } from "../../context/UserAuthContext.js";
 
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
 function CreateGameModal({ isOpen, onRequestClose, contentLabel }) {
-  const [gameName, setGameName] = useState('');
+  const [gameName, setGameName] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { user, authenticateRoom } = useUserAuth();
 
@@ -18,14 +18,14 @@ function CreateGameModal({ isOpen, onRequestClose, contentLabel }) {
 
     try {
       const gameData = {
-        name: gameName || '',
+        name: gameName || "",
         userId: user.uid,
         isPrivate: Boolean(isPrivate),
       };
 
       if (isPrivate) {
         if (!password) {
-          alert('Пожалуйста, укажите пароль для закрытой игры.');
+          alert("Пожалуйста, укажите пароль для закрытой игры.");
           return;
         }
         gameData.password = password;
@@ -36,45 +36,71 @@ function CreateGameModal({ isOpen, onRequestClose, contentLabel }) {
       navigate(`/room/${gameId}`);
       onRequestClose();
     } catch (error) {
-      console.error('Ошибка при создании игры:', error);
+      console.error("Ошибка при создании игры:", error);
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onRequestClose={onRequestClose} contentLabel={contentLabel}>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      contentLabel={contentLabel}
+      className="modal-content"
+      overlayClassName="modal-overlay"
+    >
       <div>
-        <h2>Создать новую игру</h2>
+        <h2>Créer un jeux amical</h2>
+        <hr />
         <form onSubmit={handleCreateGame}>
-          <label>
-            Название игры:
-            <input
-              type="text"
-              value={gameName}
-              onChange={(e) => setGameName(e.target.value)}
-              required
-            />
-          </label>
-          <label>
+          <div>
+            <label>
+              Nom du jeu :
+              <div>
+                <input
+                  type="text"
+                  value={gameName}
+                  onChange={(e) => setGameName(e.target.value)}
+                  required
+                />
+              </div>
+            </label>
+          </div>
+          <div className="checkbox-container">
+            <label>Jeu fermé : </label>
             <input
               type="checkbox"
               checked={isPrivate}
               onChange={() => setIsPrivate(!isPrivate)}
             />
-            Закрытая игра
-          </label>
-          {isPrivate && (
-            <label>
-              Пароль:
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </label>
-          )}
-          <button type="submit">Создать</button>
-          <button type="button" onClick={onRequestClose}>Отмена</button>
+          </div>
+
+          <div>
+            {isPrivate && (
+              <label>
+                Mot de passe :
+                <div>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </label>
+            )}
+          </div>
+          <div className="box-btn-modal">
+            <button type="submit" className="btn-save">
+              Créer
+            </button>
+            <button
+              type="button"
+              onClick={onRequestClose}
+              className="btn-cancel"
+            >
+              Annulation
+            </button>
+          </div>
         </form>
       </div>
     </Modal>

@@ -8,7 +8,7 @@ const FriendSearchModal = ({ isOpen, onRequestClose, userProfile }) => {
 
   useEffect(() => {
     const fetchFilteredUsers = async () => {
-      if (searchTerm) { // Выполняем запрос только если есть поисковый запрос
+      if (searchTerm) {
         const allUsers = await getFilteredUsers(userProfile.id);
         setFilteredUsers(
           allUsers.filter((user) =>
@@ -16,15 +16,15 @@ const FriendSearchModal = ({ isOpen, onRequestClose, userProfile }) => {
           )
         );
       } else {
-        setFilteredUsers([]); // Очищаем список, если строка поиска пустая
+        setFilteredUsers([]);
       }
     };
 
     fetchFilteredUsers();
-  }, [searchTerm, userProfile]); // Запрос обновляется при каждом изменении searchTerm
+  }, [searchTerm, userProfile]);
 
   const handleSearch = (e) => {
-    setSearchTerm(e.target.value); // Обновляем поисковый запрос
+    setSearchTerm(e.target.value);
   };
 
   const handleAddFriend = async (friendId) => {
@@ -37,25 +37,40 @@ const FriendSearchModal = ({ isOpen, onRequestClose, userProfile }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
-      <h2>Search Friends</h2>
-      <input
-        type="text"
-        placeholder="Search by name"
-        value={searchTerm}
-        onChange={handleSearch}
-      />
-      <ul>
-        {filteredUsers.map((user) => (
-          <li key={user.id}>
-            {user.name}{" "}
-            <button onClick={() => handleAddFriend(user.id)}>
-              Add Friend
-            </button>
-          </li>
-        ))}
-      </ul>
-      <button onClick={onRequestClose}>Close</button>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      overlayClassName="modal-overlay"
+      className="modal-content"
+    >
+      <button onClick={onRequestClose} className="btn-close" />
+      <h2>Cherche des amis</h2>
+      <hr />
+      <div>
+        <input
+          type="text"
+          placeholder="Cherche des amis"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+        <ul>
+          {filteredUsers.map((user) => (
+            <li key={user.id}>
+              <div className="box-btn-modal">
+                {user.name}{" "}
+                <button
+                  type="submit"
+                  className="btn-save"
+                  onClick={() => handleAddFriend(user.id)}
+                >
+                  Add Friend
+                </button>
+              </div>
+              <hr />
+            </li>
+          ))}
+        </ul>
+      </div>
     </Modal>
   );
 };

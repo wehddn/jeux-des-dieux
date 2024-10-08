@@ -184,7 +184,6 @@ function GameRoom() {
 
   return (
     <div>
-      <h1>Game Room {id}</h1>
       {status === "waiting" && <p>Waiting for players...</p>}
       {status === "joined" && (
         <p>Player joined. Waiting for another player...</p>

@@ -21,9 +21,9 @@ const Settings = () => {
   return (
     <>
       <Header></Header>
-      <div>
+      <div className="settings_context">
         <h1>Settings</h1>
-        <button onClick={handleDeleteClick}>Supprimer Le Profil</button>
+        <button onClick={handleDeleteClick} className="btn-del">Supprimer Le Profil</button>
       </div>
     </>
   );

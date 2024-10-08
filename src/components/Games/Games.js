@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import CreateGameModal from "./CreateGameModal";
 import { getGamesList, getUser } from "../../bd/Games";
 import PasswordModal from "./PasswordModal";
+import Header from "../base/Header/Header.js";
 
 function Games() {
   const [rooms, setRooms] = useState([]);
@@ -79,50 +80,64 @@ function Games() {
 
   return (
     <div>
-      <h1>Games</h1>
-      <button onClick={openModal}>Создать ИГРУ</button>
-      <CreateGameModal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        contentLabel="Пример модального окна"
-      />
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>Nom de jeu</th>
-            <th>Les joueurs</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {rooms.map((room) => (
-            <tr key={room.id}>
-              <td>
-                <img 
-                  src={room.password ? `${process.env.REACT_APP_API_URL}/games/fermer.png` : `${process.env.REACT_APP_API_URL}/games/ouver.png`} 
-                  alt={room.password ? "closed" : "open"} 
-                />
-              </td>
-              <td>{room.name}</td>
-              <td>{players[room.id] ? players[room.id].join(", ") : "Loading..."}</td>
-              <td>
-                <button onClick={() => joinRoom(room)}>
-                  <img src={`${process.env.REACT_APP_API_URL}/games/door.png`} alt="door" />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {selectedRoom && (
-        <PasswordModal
-          isOpen={passwordModalIsOpen}
-          onRequestClose={closePasswordModal}
-          room={selectedRoom}
-          onPasswordCorrect={handlePasswordCorrect}
+      <Header />
+      <div className="games-container">
+        <button className="btn-create-game" onClick={openModal}>
+          Créer un JEU
+        </button>
+        <CreateGameModal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          contentLabel="Fenetre pour créer un JEU"
         />
-      )}
+        <table className="games-table">
+          <thead>
+            <tr>
+              <th>Public ou non</th>
+              <th>Nom de jeu</th>
+              <th>Les joueurs</th>
+              <th>Entrée</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rooms.map((room) => (
+              <tr key={room.id}>
+                <td>
+                  <img
+                    className="game-status-icon"
+                    src={
+                      room.password ? `/games/fermer.png` : `/games/ouver.png`
+                    }
+                    alt={room.password ? "closed" : "open"}
+                  />
+                </td>
+                <td>{room.name}</td>
+                <td>
+                  {players[room.id]
+                    ? players[room.id].join(", ")
+                    : "Loading..."}
+                </td>
+                <td>
+                  <button
+                    className="btn-join-room"
+                    onClick={() => joinRoom(room)}
+                  >
+                    <img src={`/games/door.svg`} alt="door" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {selectedRoom && (
+          <PasswordModal
+            isOpen={passwordModalIsOpen}
+            onRequestClose={closePasswordModal}
+            room={selectedRoom}
+            onPasswordCorrect={handlePasswordCorrect}
+          />
+        )}
+      </div>
     </div>
   );
 }

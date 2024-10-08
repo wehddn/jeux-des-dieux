@@ -29,6 +29,9 @@ const Header = () => {
       <button className="header-button header-btn-games" onClick={() => navigate("/games")}>
         Games
       </button>
+      <button className="header-button header-btn-rules" onClick={() => navigate("/rules")}>
+        Sur le jeu
+      </button>
     </div>
   );
 };
