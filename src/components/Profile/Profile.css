@@ -1,0 +1,204 @@
+.fon_profil {
+    background-image: url('/fon/fon_profil.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 5rem 2rem 10.3rem 2rem;
+    text-align: center;
+  }
+  
+  .card {
+    background-color: #F3F2EE;
+    border: none;
+    height: 78vh;
+  }
+  
+  .profile-info{
+    background-color: transparent !important;
+  }
+
+  .friend-button {
+    border: none;
+    background-color: transparent;
+    width: 2rem;
+    height: auto;
+  }
+  
+  .friend-photo {
+    width: 8rem;
+    height: auto;
+  }
+  
+  .photoProfil {
+    width: 13rem;
+    height: auto;
+  }
+  
+  .profile-tittle{
+    color: #313131;
+  }
+
+  .btn_1, .btn_2 {
+    background-size: cover;
+    color: #F3F2EE;
+    border: none;
+    padding: 0.5rem 2rem;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+    background-color: transparent;
+  }
+  
+  .btn_1 {
+    background-image: url('/btn/btn_1.svg');
+  }
+  
+  .btn_2 {
+    background-image: url('/btn/btn_2.svg');
+  }
+
+  .pseudo-input {
+    width: 85%;
+    background-color: #F3F2EE;
+    height: 40px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    border-radius: 4px;
+  }
+  
+  .pseudo-input:focus {
+    outline: none;
+    border-color: #ff9800;
+  }
+
+  .pseudo-container  {
+    width: 85%;
+    background-color: #F3F2EE;
+    min-height: 40px;
+    max-height: 40px;
+  }
+  
+  .btn-edit, .btn-save {
+    border: none;
+    background-color: transparent;
+    width: 2rem;
+    height: auto;
+  }
+  
+  .word-break {
+    word-break: break-word;
+  }
+  
+  .card-stats {
+    background-color: #F3F2EE;
+    height: 78vh;
+  }
+  
+  .colone-profil{
+    margin-top: 1.5rem;
+  }
+  
+
+@media (max-width: 768px) {
+  .fon_profil {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 3rem 1rem 6rem 1rem;
+    text-align: center;
+  }
+
+  .card {
+    height: auto;
+    margin-bottom: 20px;
+  }
+
+  .profile-info {
+    background-color: transparent !important;
+  }
+
+  .friend-button {
+    width: 1.5rem;
+    height: auto;
+  }
+
+  .friend-photo {
+    width: 6rem;
+    height: auto;
+  }
+
+  .profile-tittle {
+    margin-bottom: 15px;
+  }
+
+  .btn_1, .btn_2 {
+    padding: 0.5rem 1.5rem;
+    width: 240px;
+    height: 80px;
+  }
+
+  .pseudo-input, .pseudo-container {
+    padding: 1rem;
+  }
+
+  .btn-edit, .btn-save {
+    width: 3rem;
+  }
+
+  .card-stats {
+    height: auto;
+    margin-bottom: 20px;
+  }
+
+  .colone-profil{
+    margin: 0 !important;
+  }
+
+  .ms-4{
+    margin-left: 0 !important;
+    margin-top: 10rem!important;
+  }
+
+  .me-4{
+    margin-right: 0 !important;
+    margin-bottom: 15rem!important;
+  }
+}
+
+@media (max-width: 480px) {
+  .fon_profil {
+    padding: 2rem 1rem 4rem 1rem;
+  }
+
+  .friend-photo {
+    width: 5rem;
+  }
+
+  .btn_1, .btn_2 {
+    padding: 0.25rem 1rem;
+    width: 120px;
+    height: 40px;
+  }
+
+  .pseudo-input, .pseudo-container  {
+    padding: 0.5rem;
+  }
+
+  .btn-edit, .btn-save {
+    width: 3rem;
+  }
+
+  .colone-profil{
+    margin: 0 !important;
+  }
+
+  .ms-4{
+    margin-left: 0 !important;
+    margin-top: 10rem!important;
+  }
+
+  .me-4{
+    margin-right: 0 !important;
+    margin-bottom: 15rem!important;
+  }
+}

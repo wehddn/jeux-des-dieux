@@ -1,24 +1,93 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Container, Row, Col } from "react-bootstrap";
+import { Routes, Route } from "react-router-dom";
+import "./App.css";
+import "./Modal.css";
+import "./components/Games/Game.css";
+import "./components/Settings/Settings.css";
+import "./components/Profile/Profile.css";
+import "./components/base/Header/Header.css";
+import "./components/Rules/Rules.css";
+import Profile from "./components/Profile/Profile";
+import Games from "./components/Games/Games";
+import Game from "./components/Games/Game/Game";
+import PrivateRoute from "./components/Routes/PrivateRoute";
+import GameRoom from "./components/Games/GameRoom";
+import Settings from "./components/Settings/Settings";
+import Rules from "./components/Rules/Rules";
+import Login from "./components/Authorization/Login";
+import Signup from "./components/Authorization/Signup";
+import EmailVerification from "./components/Authorization/EmailVerification";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { UserAuthContextProvider } from "./context/UserAuthContext";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App-header">
+      <div className="App-overlay"></div>
+      <div className="App-content">
+        <Container>
+          <Row>
+            <Col>
+              <UserAuthContextProvider>
+                <Routes>
+                  <Route
+                    path="/profile"
+                    element={
+                      <ProtectedRoute>
+                        <Profile />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/settings"
+                    element={
+                      <ProtectedRoute>
+                        <Settings />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/rules"
+                    element={
+                      <ProtectedRoute>
+                        <Rules />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/games"
+                    element={
+                      <ProtectedRoute>
+                        <Games />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/games/game"
+                    element={
+                      <ProtectedRoute>
+                        <Game />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/room/:id"
+                    element={
+                      <PrivateRoute>
+                        <GameRoom />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route path="/" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/verify" element={<EmailVerification />} />
+                </Routes>
+              </UserAuthContextProvider>
+            </Col>
+          </Row>
+        </Container>
+      </div>
     </div>
   );
 }
