@@ -59,15 +59,23 @@
 
   .pseudo-input {
     width: 85%;
-    border: none;
     background-color: #F3F2EE;
-    padding: 2rem;
+    height: 40px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    border-radius: 4px;
   }
   
-  .pseudo-container {
+  .pseudo-input:focus {
+    outline: none;
+    border-color: #ff9800;
+  }
+
+  .pseudo-container  {
     width: 85%;
     background-color: #F3F2EE;
     min-height: 40px;
+    max-height: 40px;
   }
   
   .btn-edit, .btn-save {
@@ -172,7 +180,7 @@
     height: 40px;
   }
 
-  .pseudo-input, .pseudo-container {
+  .pseudo-input, .pseudo-container  {
     padding: 0.5rem;
   }
 

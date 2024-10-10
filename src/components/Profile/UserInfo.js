@@ -41,7 +41,7 @@ const UserInfo = ({ userProfile }) => {
         <div className="d-flex justify-content-start">
           <h5>Pseudo</h5>
         </div>
-        <div className="d-flex justify-content-start">
+        <div className="d-flex justify-content-start box-pseudo-input">
           {isEditing ? (
             <div className="d-flex justify-content-start pseudo-input">
               <input
