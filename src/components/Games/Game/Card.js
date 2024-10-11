@@ -28,10 +28,11 @@ function Card({ card, onDragStart }) {
         alignItems: "center",
         justifyContent: "center",
         cursor: "pointer",
+        fontSize: "10px",
         backgroundColor: slotColors[card.suit],
       }}      
     >
-      {card.suit}
+      {card.suit} {card.value}
     </div>
   );
 }

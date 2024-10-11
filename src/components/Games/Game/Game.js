@@ -70,7 +70,6 @@ const isSlotBlocked = (slotIndex, card) => {
                 slotColors={slotColors}
                 blocked={true} // Блокируем поле противника
               />
-              {getPlayerStatusMessage(index)}
             </div>
           ))}
       </div>

@@ -71,6 +71,22 @@ function GameRoom() {
           setStatus("full");
           break;
 
+        case "gameOver":
+          if (data.isDraw) {
+            console.log("The game ended in a draw.");
+            setStatus("gameOver");
+            alert("Игра закончилась ничьей.");
+          } else {
+            console.log(`Player ${data.winnerId} has won the game!`);
+            setStatus("gameOver");
+            if (data.winnerId === user.uid) {
+              alert("Поздравляем! Вы выиграли игру!");
+            } else {
+              alert("Вы проиграли игру.");
+            }
+          }
+          break;
+
         default:
           console.warn(`Unhandled message type: ${data.type}`);
           break;
@@ -191,6 +207,23 @@ function GameRoom() {
     }
   };
 
+  function sendGameOverToAll(gameId, wss) {
+    console.log('end');
+    const gameData = getGame(gameId);
+
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN && client.room === gameId) {
+        client.send(
+          JSON.stringify({
+            type: "gameOver",
+            winnerId: gameData.winnerId, // ID победителя или null
+            isDraw: gameData.isDraw, // true, если ничья
+          })
+        );
+      }
+    });
+  }
+
   return (
     <div>
       {status === "waiting" && <p>Waiting for players...</p>}
@@ -198,7 +231,6 @@ function GameRoom() {
         <p>Player joined. Waiting for another player...</p>
       )}
       {status === "started" && (
-        // Удаляем sendDrawCard из импорта Game
         <Game
           hand={hand}
           deck={deck}
@@ -212,7 +244,7 @@ function GameRoom() {
       {status === "disconnected" && <p>Disconnected from server.</p>}
       {status === "error" && <p>Error connecting to server.</p>}
     </div>
-  );
+  );  
 }
 
 export default GameRoom;

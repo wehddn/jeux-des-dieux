@@ -1,11 +1,23 @@
 function generateDeck() {
   const classes = ["Crèdes", "Ordre de la Vérité", "Capères", "Phagots", "Mercenaires"];
-  const values = ["1", "2", "3", "4"];
+  const values = ["1", "2", "3", "4", "5", "6", "7", "8"];
   let deck = [];
 
   classes.forEach((cls) => {
     values.forEach((value) => {
-      deck.push({ suit: cls, value });
+      if (value === "8") {
+        if (cls === "Mercenaires") {
+          for (let i = 0; i < 2; i++) {
+            deck.push({ suit: cls, value });
+          }
+        } else {
+          for (let i = 0; i < 4; i++) {
+            deck.push({ suit: cls, value });
+          }
+        }
+      } else {
+        deck.push({ suit: cls, value });
+      }
     });
   });
 
@@ -23,11 +35,11 @@ function shuffle(deck) {
 }
 
 function drawInitialCards(deck) {
-  return deck.splice(0, 6);
+  return deck.splice(0, 4);
 }
 
 module.exports = {
   generateDeck,
   shuffle,
-  drawInitialCards
+  drawInitialCards,
 };

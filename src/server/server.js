@@ -420,8 +420,15 @@ async function handlePlayCard(
     // Обновляем состояние игры
     updateGameData(gameId, gameData);
 
-    // Отправляем обновлённое состояние всем игрокам
-    sendGameStateToAll(gameId, wss);
+    const gameEnded = checkForGameEnd(gameData);
+
+    if (gameEnded) {
+      // Отправляем сообщение об окончании игры всем игрокам
+      sendGameOverToAll(gameId, wss);
+    } else {
+      // Если игра не закончилась, отправляем обновлённое состояние
+      sendGameStateToAll(gameId, wss);
+    }
   } else {
     console.error(
       `Player ${userId} is not the current player or not found in game ${gameId}`
@@ -470,11 +477,87 @@ async function handleDiscardCard(
     // Обновляем состояние игры
     updateGameData(gameId, gameData);
 
-    // Отправляем обновлённое состояние всем игрокам
-    sendGameStateToAll(gameId, wss);
+    const gameEnded = checkForGameEnd(gameData);
+
+    if (gameEnded) {
+      // Отправляем сообщение об окончании игры всем игрокам
+      sendGameOverToAll(gameId, wss);
+    } else {
+      // Если игра не закончилась, отправляем обновлённое состояние
+      sendGameStateToAll(gameId, wss);
+    }
   } else {
     console.error(
       `Player ${userId} is not the current player or not found in game ${gameId}`
     );
   }
+}
+
+function checkForGameEnd(gameData) {
+  let winnerId = null;
+  let isDraw = false;
+
+  // Проверяем, собрал ли кто-то 4 карты в одном слоте
+  for (const player of gameData.players) {
+    const slotCounts = {};
+
+    for (const card of player.table) {
+      const slot = card.slot;
+      slotCounts[slot] = (slotCounts[slot] || 0) + 1;
+
+      if (slotCounts[slot] >= 4) {
+        winnerId = player.id;
+        break;
+      }
+    }
+
+    if (winnerId) {
+      break;
+    }
+  }
+
+  // Если победитель не найден, проверяем на ничью
+  if (!winnerId) {
+    const allHandsEmpty = gameData.players.every(player => player.hand.length === 0);
+    if (allHandsEmpty) {
+      isDraw = true;
+    }
+  }
+
+  // Если игра закончилась, устанавливаем флаги и возвращаем true
+  if (winnerId || isDraw) {
+    gameData.isGameOver = true;
+    gameData.winnerId = winnerId;
+    gameData.isDraw = isDraw;
+
+    // Для тестирования выводим в консоль
+    if (winnerId) {
+      console.log(`Player ${winnerId} has won the game!`);
+    } else if (isDraw) {
+      console.log('The game ended in a draw.');
+    }
+
+    return true; // Игра закончилась
+  }
+
+  return false; // Игра продолжается
+}
+
+function sendGameOverToAll(gameId, wss) {
+  const gameData = getGame(gameId);
+
+  wss.clients.forEach((client) => {
+    if (
+      client.readyState === WebSocket.OPEN &&
+      client.room === gameId
+    ) {
+      client.send(
+        JSON.stringify({
+          type: 'gameOver',
+          winnerId: gameData.winnerId, // ID победителя или null
+          isDraw: gameData.isDraw,     // true, если ничья
+        })
+      );
+    }
+  });
 }
