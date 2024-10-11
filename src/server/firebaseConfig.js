@@ -1,5 +1,5 @@
 const admin = require('firebase-admin');
-const serviceAccount = require('./jeux-des-dieux-firebase-adminsdk-foy72-01cd0d5427.json');
+const serviceAccount = require('./jeux-des-dieux-firebase-adminsdk-foy72-8a047523f4.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
