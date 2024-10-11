@@ -195,6 +195,21 @@ function GameRoom() {
     }
   };
 
+  const sendPlayCurseCard = (card, slotIndex, targetPlayerId) => {
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      ws.current.send(
+        JSON.stringify({
+          type: "playCurseCard",
+          card,
+          slotIndex,
+          targetPlayerId,
+          room: id,
+          userId: user.uid,
+        })
+      );
+    }
+  };
+
   const sendDrawCard = () => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(
@@ -238,6 +253,7 @@ function GameRoom() {
           gameState={gameState}
           sendDiscardCard={sendDiscardCard}
           sendPlayCard={sendPlayCard}
+          sendPlayCurseCard={sendPlayCurseCard}
         />
       )}
       {status === "full" && <p>This room is full. You cannot join.</p>}
