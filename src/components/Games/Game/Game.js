@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import PlayerField from "./PlayerField";
 import Hand from "./Hand";
 
-function Game({ hand, table, deck, ws, user, gameState, setGameState, sendDrawCard }) {
+function Game({ hand, deck, user, gameState, sendDiscardCard, sendPlayCard }) {
   const [selectedCard, setSelectedCard] = useState(null);
+  const isCurrentPlayer = gameState.players[gameState.currentPlayer].id === user.uid;
 
   const slotColors = {
     Crèdes: "red",
@@ -11,153 +12,109 @@ function Game({ hand, table, deck, ws, user, gameState, setGameState, sendDrawCa
     Capères: "green",
     Phagots: "purple",
   };
-
-  function drawCardFromDeck() {
-    if (deck > 0 && ws && ws.readyState === WebSocket.OPEN) {
-      sendDrawCard();
-    } else {
-      console.log("No cards left in the deck or WebSocket not open");
+  
+  // Отображение статуса игрока (Твой ход / Ход противника)
+  const getPlayerStatusMessage = (playerIndex) => {
+    if (playerIndex === gameState.currentPlayer) {
+      return <p style={{ color: "green" }}>Твой ход</p>;
     }
+    return <p style={{ color: "red" }}>Ход противника</p>;
+  };
+
+  // Блокировка слотов на поле для карт с неподходящей мастью
+const isSlotBlocked = (slotIndex, card) => {
+  if (card.suit === "Mercenaires") {
+    return false; // "Mercenaires" можно сыграть в любой слот
   }
+  const slotSuit = Object.keys(slotColors)[slotIndex];
+  return card.suit !== slotSuit;
+};
 
-  function playCard(card, slotIndex, playerIndex = gameState.currentPlayer) {
-    setGameState((prevState) => {
-      const newPlayers = prevState.players.map((player, i) => {
-        if (i === playerIndex) {
-          return {
-            ...player,
-            table: [...player.table, { ...card, slot: slotIndex }],
-          };
-        }
-        return player;
-      });
+  // Сброс карты
+  const discardCard = (card) => {
+    // Отправляем сообщение на сервер о сбросе карты
+    sendDiscardCard(card);
 
-      return {
-        ...prevState,
-        players: newPlayers,
-      };
-    });
-  }
+    // После отправки, сбрасываем выбранную карту
+    setSelectedCard(null);
+  };
 
-  function onCardClick(card) {
-    setSelectedCard(card);
-  }
-
-  function onSlotClick(slotIndex) {
-    if (selectedCard) {
-      playCard(selectedCard, slotIndex);
-      setSelectedCard(null);
-      endTurn();
-    }
-  }
-
-  function onDropCard(e, playerIndex, slotIndex) {
-    const cardData = e.dataTransfer.getData("card");
-
-    if (!cardData) {
-      console.error("No card data found in drag event.");
+  // Розыгрыш карты на своём поле
+  const playCard = (card, slotIndex) => {
+    if (isSlotBlocked(slotIndex, card)) {
+      console.log("Cannot play card on this slot");
       return;
     }
 
-    try {
-      const card = JSON.parse(cardData);
-      console.log('Dropped card:', card);
-      playCard(card, slotIndex, playerIndex);
-      endTurn();
-    } catch (error) {
-      console.error("Error parsing card data:", error);
-    }
-  }
+    // Отправляем сообщение на сервер о розыгрыше карты
+    sendPlayCard(card, slotIndex);
 
-  function discardCard(card) {
-    setGameState((prevState) => ({
-      ...prevState,
-      discardPile: prevState.discardPile + 1,
-      players: prevState.players.map((player, index) => {
-        if (index === gameState.currentPlayer) {
-          return {
-            ...player,
-            hand: prevState.players[index].hand.filter(c => c !== card),
-          };
-        }
-        return player;
-      })
-    }));
-    endTurn();
-  }
-
-  function endTurn() {
-    setGameState((prevState) => {
-      const nextPlayer = (prevState.currentPlayer + 1) % prevState.players.length;
-      const nextTurn = prevState.turn + 1;
-
-      if (prevState.deck === 0) {
-        alert("Игра окончена! Карты в колоде закончились.");
-        return prevState;
-      }
-
-      return {
-        ...prevState,
-        currentPlayer: nextPlayer,
-        turn: nextTurn,
-      };
-    });
-
-    drawCardFromDeck();
-  }
-
-  console.log("gameState", gameState);
+    // После отправки, сбрасываем выбранную карту
+    setSelectedCard(null);
+  };
 
   return (
     <div className="game">
       <div className="opponent-field">
         {gameState.players
-          .filter((_, index) => index !== gameState.currentPlayer)
+          .filter((player) => player.id !== user.uid)
           .map((player, index) => (
-            <PlayerField
-              key={index}
-              player={player}
-              index={index}
-              colors={Object.values(slotColors)}
-              onSlotClick={onSlotClick}
-              onDropCard={(e, slotIndex) => onDropCard(e, index, slotIndex)}
-              currentPlayer={gameState.currentPlayer}
-              slotColors={slotColors}
-            />
+            <div key={player.id}>
+              <PlayerField
+                player={player}
+                index={index}
+                colors={Object.values(slotColors)}
+                onSlotClick={() => {}}
+                onDropCard={() => {}}
+                currentPlayer={gameState.currentPlayer}
+                slotColors={slotColors}
+                blocked={true} // Блокируем поле противника
+              />
+              {getPlayerStatusMessage(index)}
+            </div>
           ))}
       </div>
 
       <div className="deck-and-discard">
         <div
           className="discard-pile"
-          style={{ cursor: "pointer", padding: "10px", border: "1px solid black" }}
+          style={{ padding: "10px", border: "1px solid black" }}
         >
-          Discard Pile: {gameState.discardPile} cards
+          Сброс: {gameState.discardPile.length} карт
         </div>
         <div
           className="deck"
-          onClick={drawCardFromDeck}
-          style={{ cursor: "pointer", padding: "10px", border: "1px solid black" }}
+          style={{ padding: "10px", border: "1px solid black" }}
         >
-          Deck: {deck} cards
+          Колода: {deck.length} карт
         </div>
       </div>
 
       <div className="player-field">
         <PlayerField
-          player={gameState.players[gameState.currentPlayer]}
-          index={gameState.currentPlayer}
+          player={gameState.players.find((p) => p.id === user.uid)}
+          index={gameState.players.findIndex((p) => p.id === user.uid)}
           colors={Object.values(slotColors)}
-          onSlotClick={onSlotClick}
-          onDropCard={(e, slotIndex) =>
-            onDropCard(e, gameState.currentPlayer, slotIndex)
-          }
+          onSlotClick={(slotIndex) => {
+            if (selectedCard && !isSlotBlocked(slotIndex, selectedCard)) {
+              playCard(selectedCard, slotIndex);
+            }
+          }}
+          onDropCard={() => {}}
           currentPlayer={gameState.currentPlayer}
           slotColors={slotColors}
         />
+        {getPlayerStatusMessage(gameState.players.findIndex((p) => p.id === user.uid))}
       </div>
 
-      <Hand cards={hand || []} onCardClick={onCardClick} onCardDoubleClick={discardCard} />
+      <Hand
+        cards={hand || []}
+        onCardClick={(card) => {
+          setSelectedCard(card);
+        }}
+        onCardDoubleClick={(card) => discardCard(card)}
+        isCurrentPlayer={isCurrentPlayer} // Блокируем карты для противника
+      />
     </div>
   );
 }

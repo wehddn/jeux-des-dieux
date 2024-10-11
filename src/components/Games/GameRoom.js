@@ -8,12 +8,11 @@ function GameRoom() {
   const { user } = useUserAuth();
   const [status, setStatus] = useState("waiting");
   const [hand, setHand] = useState([]);
-  const [table, setTable] = useState([]);
-  const [deck, setDeck] = useState(0);
+  const [deck, setDeck] = useState([]);
   const [gameState, setGameState] = useState({
-    deck: 0,
+    deck: [],
     players: [],
-    discardPile: 0,
+    discardPile: [],
     currentPlayer: 0,
     turn: 0,
   });
@@ -21,73 +20,64 @@ function GameRoom() {
   const hasJoined = useRef(false);
   const messageQueue = useRef([]);
 
-  const handleIncomingMessage = useCallback((data) => {
-    switch (data.type) {
-      case "start":
-        console.log("handle start ", data);
-        setStatus("started");
-  
-        setGameState({
-          deck: data.deck.length,
-          players: data.table.map((player) => ({
-            ...player,
-            hand: data.hand,
-          })),
-          discardPile: 0,
-          currentPlayer: data.currentPlayer,
-          turn: 0,
-        });
-  
-        setHand(data.hand);
-        setTable(data.table);
-        setDeck(data.deck.length);
-        break;
-  
-      case "gameState":
-        console.log("handle gameState ", data);
-  
-        const updatedPlayers = data.table.map((player) => ({
-          ...player,
-          hand: player.hand || [],
-        }));
-  
-        setGameState({
-          ...data,
-          players: updatedPlayers,
-          discardPile: data.discardPile || 0,
-        });
-  
-        setDeck(data.deck.length);
-        setHand(
-          data.table.find((p) => p.id === user.uid)?.hand || []
-        );
-        setTable(data.table.map(p => ({ id: p.id, table: p.table })));
-        break;
-  
-      case "rejoined":
-        console.log("handle rejoined ", data);
-        setHand(data.hand);
-        setTable(data.table);
-        setDeck(data.deck.length);
-  
-        setGameState({
-          deck: data.deck.length,
-          players: data.table.map((player) => ({
-            ...player,
-            hand: data.hand || [],
-          })),
-          discardPile: data.discardPile || [],
-          currentPlayer: 0,
-          turn: 0,
-        });
-        break;
-  
-      default:
-        console.warn(`Unhandled message type: ${data.type}`);
-        break;
-    }
-  }, [user.uid]);
-  
+  const handleIncomingMessage = useCallback(
+    (data) => {
+      switch (data.type) {
+        case "start":
+          setStatus("started");
+          setGameState({
+            deck: data.deck,
+            players: data.players,
+            discardPile: data.discardPile || [],
+            currentPlayer: data.currentPlayer,
+            turn: data.turn || 0,
+          });
+          setHand(data.hand);
+          setDeck(data.deck);
+          console.log("handle start ", data);
+          break;
+
+        case "gameState":
+          console.log("handle gameState ", data);
+          setGameState({
+            deck: data.deck,
+            players: data.players,
+            discardPile: data.discardPile,
+            currentPlayer: data.currentPlayer,
+            turn: data.turn,
+          });
+          setDeck(data.deck);
+          setHand(data.hand); // Используем data.hand вместо data.players
+          break;
+
+        case "rejoined":
+          console.log("handle rejoined ", data);
+          setHand(data.hand);
+          setDeck(data.deck);
+          setGameState({
+            deck: data.deck,
+            players: data.players,
+            discardPile: data.discardPile || [],
+            currentPlayer: data.currentPlayer,
+            turn: data.turn || 0,
+          });
+          break;
+
+        case "waiting":
+          setStatus("waiting");
+          break;
+
+        case "full":
+          setStatus("full");
+          break;
+
+        default:
+          console.warn(`Unhandled message type: ${data.type}`);
+          break;
+      }
+    },
+    [user.uid]
+  );
 
   useEffect(() => {
     ws.current = new WebSocket("ws://localhost:3001");
@@ -106,7 +96,6 @@ function GameRoom() {
 
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-
       if (data.type === "joined") {
         setStatus("joined");
         hasJoined.current = true;
@@ -161,6 +150,35 @@ function GameRoom() {
     };
   }, [id, user, handleIncomingMessage]);
 
+  // Отправка действия игрока на сервер через WebSocket
+  const sendDiscardCard = (card) => {
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      ws.current.send(
+        JSON.stringify({
+          type: "discardCard",
+          card,
+          room: id,
+          userId: user.uid,
+        })
+      );
+    }
+  };
+
+  const sendPlayCard = (card, slotIndex) => {
+    console.log("Room play card", slotIndex, card);
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+      ws.current.send(
+        JSON.stringify({
+          type: "playCard",
+          card,
+          slotIndex,
+          room: id,
+          userId: user.uid,
+        })
+      );
+    }
+  };
+
   const sendDrawCard = () => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(
@@ -180,15 +198,14 @@ function GameRoom() {
         <p>Player joined. Waiting for another player...</p>
       )}
       {status === "started" && (
+        // Удаляем sendDrawCard из импорта Game
         <Game
           hand={hand}
-          table={table}
           deck={deck}
-          ws={ws.current}
           user={user}
           gameState={gameState}
-          setGameState={setGameState}
-          sendDrawCard={sendDrawCard}
+          sendDiscardCard={sendDiscardCard}
+          sendPlayCard={sendPlayCard}
         />
       )}
       {status === "full" && <p>This room is full. You cannot join.</p>}
