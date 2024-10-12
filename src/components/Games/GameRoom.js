@@ -222,23 +222,6 @@ function GameRoom() {
     }
   };
 
-  function sendGameOverToAll(gameId, wss) {
-    console.log('end');
-    const gameData = getGame(gameId);
-
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN && client.room === gameId) {
-        client.send(
-          JSON.stringify({
-            type: "gameOver",
-            winnerId: gameData.winnerId, // ID победителя или null
-            isDraw: gameData.isDraw, // true, если ничья
-          })
-        );
-      }
-    });
-  }
-
   return (
     <div>
       {status === "waiting" && <p>Waiting for players...</p>}
@@ -255,6 +238,9 @@ function GameRoom() {
           sendPlayCard={sendPlayCard}
           sendPlayCurseCard={sendPlayCurseCard}
         />
+      )}
+      {status === "gameOver" && (
+        <p>Game Over</p>
       )}
       {status === "full" && <p>This room is full. You cannot join.</p>}
       {status === "disconnected" && <p>Disconnected from server.</p>}
