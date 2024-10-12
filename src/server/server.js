@@ -401,9 +401,13 @@ async function handlePlayCard(
     player.table.push({ ...card, slot: slotIndex });
 
     // Удаляем карту из руки игрока
-    player.hand = player.hand.filter(
-      (c) => c.suit !== card.suit || c.value !== card.value
+    const index = player.hand.findIndex(
+      (c) => c.suit === card.suit && c.value === card.value
     );
+    
+    if (index !== -1) {
+      player.hand.splice(index, 1); // Удаляем только одну карту по индексу
+    }
 
     // Добавляем новую карту из колоды
     if (gameData.deck.length > 0) {
@@ -482,9 +486,13 @@ async function handlePlayCurseCard(gameId, userId, card, slotIndex, targetPlayer
     targetPlayer.table.push({ ...card, slot: slotIndex, isCurse: true });
 
     // Удаляем карту из руки игрока
-    player.hand = player.hand.filter(
-      (c) => c.suit !== card.suit || c.value !== card.value
+    const index = player.hand.findIndex(
+      (c) => c.suit === card.suit && c.value === card.value
     );
+    
+    if (index !== -1) {
+      player.hand.splice(index, 1); // Удаляем только одну карту по индексу
+    }
 
     // Проверяем, есть ли теперь 2 карты порчи в этом слоте
     const curseCardsInSlot = targetPlayer.table.filter(
@@ -560,9 +568,13 @@ async function handleDiscardCard(
     gameData.currentPlayer === gameData.players.indexOf(player)
   ) {
     // Удаляем карту из руки игрока
-    player.hand = player.hand.filter(
-      (c) => c.suit !== card.suit || c.value !== card.value
+    const index = player.hand.findIndex(
+      (c) => c.suit === card.suit && c.value === card.value
     );
+    
+    if (index !== -1) {
+      player.hand.splice(index, 1); // Удаляем только одну карту по индексу
+    }
 
     // Добавляем карту в сброс
     gameData.discardPile.push(card);
