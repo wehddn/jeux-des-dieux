@@ -210,11 +210,13 @@ function GameRoom() {
     }
   };
 
-  const sendDrawCard = () => {
+  const sendPlayPurificationCard = (card, slotIndex) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(
         JSON.stringify({
-          type: "drawCard",
+          type: "playPurificationCard",
+          card,
+          slotIndex,
           room: id,
           userId: user.uid,
         })
@@ -237,6 +239,7 @@ function GameRoom() {
           sendDiscardCard={sendDiscardCard}
           sendPlayCard={sendPlayCard}
           sendPlayCurseCard={sendPlayCurseCard}
+          sendPlayPurificationCard={sendPlayPurificationCard}
         />
       )}
       {status === "gameOver" && (

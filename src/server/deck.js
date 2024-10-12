@@ -15,6 +15,10 @@ function generateDeck() {
             deck.push({ suit: cls, value });
           }
         }
+      } else if (value === "9") {
+        for (let i = 0; i < 4; i++) {
+          deck.push({ suit: cls, value });
+        }
       } else {
         deck.push({ suit: cls, value });
       }

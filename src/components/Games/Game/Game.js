@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PlayerField from "./PlayerField";
 import Hand from "./Hand";
 
-function Game({ hand, deck, user, gameState, sendDiscardCard, sendPlayCard, sendPlayCurseCard }) {
+function Game({ hand, deck, user, gameState, sendDiscardCard, sendPlayCard, sendPlayCurseCard, sendPlayPurificationCard }) {
   const [selectedCard, setSelectedCard] = useState(null);
   const isCurrentPlayer =
     gameState.players[gameState.currentPlayer].id === user.uid;
@@ -24,8 +24,23 @@ function Game({ hand, deck, user, gameState, sendDiscardCard, sendPlayCard, send
 
   // Блокировка слотов на поле для карт с неподходящей мастью
   const isSlotBlocked = (slotIndex, card, isOpponentSlot = false) => {
-    console.log("isSlotBlocked", card.value);
-    if (card.value === 8) {
+    const slotSuit = Object.keys(slotColors)[slotIndex];
+
+    if (card.value === 9) {
+      if (isOpponentSlot) {
+        return true; // Нельзя играть карту очищения на поле противника
+      }
+      // Проверяем, что слот не пуст
+      const player = gameState.players.find(p => p.id === user.uid);
+      const slotHasCards = player.table.some(c => c.slot === slotIndex);
+      if (!slotHasCards) return true; // Слот пуст, нельзя сыграть карту очищения
+  
+      // Проверяем соответствие масти
+      if (card.suit === "Mercenaires") {
+        return false; // Mercenaires можно сыграть в любой слот
+      }
+      return card.suit !== slotSuit;
+    } else if (card.value === 8) {
       // Карты порчи не могут быть сыграны в пустой слот
       if (isOpponentSlot) {
         const opponent = gameState.players.find((p) => p.id !== user.uid);
@@ -59,7 +74,7 @@ function Game({ hand, deck, user, gameState, sendDiscardCard, sendPlayCard, send
 
   // Розыгрыш карты на своём поле
   const playCard = (card, slotIndex, targetPlayerId) => {
-    console.log("play card");
+    console.log("play card", card);
     if (card.value === "8") {
       // Это карта порчи
       if (!isSlotBlocked(slotIndex, card, true)) {
@@ -67,6 +82,13 @@ function Game({ hand, deck, user, gameState, sendDiscardCard, sendPlayCard, send
         console.log("play curse card");
       } else {
         console.log("Cannot play curse card on this slot");
+      }
+    } else if (card.value === "9") {
+      // Это карта очищения
+      if (!isSlotBlocked(slotIndex, card)) {
+        sendPlayPurificationCard(card, slotIndex);
+      } else {
+        console.log("Cannot play purification card on this slot");
       }
     } else {
       // Обычная карта
