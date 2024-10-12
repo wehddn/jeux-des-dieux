@@ -2,10 +2,11 @@ import React from 'react';
 
 function Card({ card, onDragStart }) {
   const slotColors = {
-    Crèdes: "/Crèdes/Crède_",
+    Crèdes: "/Credes/Crede_",
     'Ordre de la Vérité': "/Ordres/Ordre_",
-    Capères: "/Capères/Capère_",
+    Capères: "/Capers/Caper_",
     Phagots: "/Phagots/Phagot_",
+    Mercenaires: "/Mercenaire/Mercenaire_"
   };
   
   return (
@@ -21,18 +22,19 @@ function Card({ card, onDragStart }) {
         }
       }}
       style={{
-        width: "60px",
-        height: "90px",
+        width: "100px",
+        height: "133px",
         border: "1px solid #000",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         cursor: "pointer",
         fontSize: "10px",
-        backgroundImage: url(slotColors[card.suit]+card.value+'.svg'),
+        backgroundImage: `url(${slotColors[card.suit]}${card.value}.svg)`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}      
     >
-      {card.suit} {card.value}
     </div>
   );
 }
