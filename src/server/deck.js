@@ -1,6 +1,6 @@
 function generateDeck() {
   const classes = ["Crèdes", "Ordre de la Vérité", "Capères", "Phagots", "Mercenaires"];
-  const values = ["1", "2", "3", "4", "5", "6", "7", "8"];
+  const values = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
   let deck = [];
 
   classes.forEach((cls) => {
