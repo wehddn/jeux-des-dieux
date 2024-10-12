@@ -22,10 +22,6 @@ const Signup = () => {
     }
   };
 
-  const goToLogin = () => {
-    navigate("/");
-  };
-
   return (
     <>
       <div className="p-4 box">
@@ -54,7 +50,9 @@ const Signup = () => {
           </div>
         </Form>
         <div className="d-flex justify-content-center align-items-center row">
-          <Button variant="primary" className="button-custom" onClick={goToLogin}>ENTRÉE</Button>
+        <Button variant="primary" className="button-custom" onClick={() => navigate("/forgot-password")}>
+          MOT DE PASS OUBLIÉ
+        </Button>
         </div>
       </div>
     </>

@@ -44,8 +44,8 @@ const Login = () => {
     navigate("/signup");
   };
 
-  const newPassword = () => {
-    navigate("/#");
+  const handleNewPassword = () => {
+    navigate("/forgot-password");
   };
 
   return (
@@ -81,9 +81,9 @@ const Login = () => {
           </div>
         </Form>
         <div className="d-flex justify-content-center align-items-center row" style={{ padding: 0 }}>
-          <Button variant="primary" className="button-custom" onClick={handleGoogleSignIn}>CONNECTER AVEC GOOGLE</Button>
+          <Button variant="primary" className="button-custom" onClick={handleGoogleSignIn}>SE CONNECTER AVEC GOOGLE</Button>
           <Button variant="primary" className="button-custom" onClick={handleForgotPassword}>S'INSCRIRE</Button>
-          <Button variant="primary" className="button-custom" onClick={newPassword}>MOT DE PASS OUBLIÉ</Button>
+          <Button variant="primary" className="button-custom" onClick={handleNewPassword}>MOT DE PASS OUBLIÉ</Button>
         </div>
       </div>
     </>

@@ -7,6 +7,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   sendEmailVerification,
+  sendPasswordResetEmail
 } from "firebase/auth";
 import { auth } from "../firebase";
 
@@ -40,6 +41,10 @@ export function UserAuthContextProvider({ children }) {
     return signInWithPopup(auth, googleAuthProvider);
   }
 
+  function resetPassword(email) {
+    return sendPasswordResetEmail(auth, email);
+  }
+
   function authenticateRoom(roomId) {
     setAuthenticatedRooms((prev) => {
       const updatedRooms = [...prev, roomId];
@@ -65,7 +70,7 @@ export function UserAuthContextProvider({ children }) {
 
   return (
     <userAuthContext.Provider
-      value={{ user, logIn, signUp, logOut, googleSignIn, authenticateRoom, isRoomAuthenticated }}
+      value={{ user, logIn, signUp, logOut, googleSignIn, resetPassword, authenticateRoom, isRoomAuthenticated }}
     >
       {!loading && children}
     </userAuthContext.Provider>
