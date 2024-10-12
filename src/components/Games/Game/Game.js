@@ -8,10 +8,10 @@ function Game({ hand, deck, user, gameState, sendDiscardCard, sendPlayCard, send
     gameState.players[gameState.currentPlayer].id === user.uid;
 
   const slotColors = {
-    Crèdes: "red",
-    "Ordre de la Vérité": "blue",
-    Capères: "green",
-    Phagots: "purple",
+    Crèdes: "#136E71",
+    "Ordre de la Vérité": "#FEDD9A",
+    Capères: "#5C8EA6",
+    Phagots: "#464B7B",
   };
 
   // Отображение статуса игрока (Твой ход / Ход противника)
