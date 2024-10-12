@@ -76,6 +76,10 @@ async function handleWebSocketConnection(ws, wss) {
           console.log(`Player ${userId} is playing a curse card`);
           await handlePlayCurseCard(gameId, userId, card, slotIndex, targetPlayerId, wss);
           break;
+        case 'playPurificationCard':
+          console.log(`Player ${userId} is playing a purification card`);
+          await handlePlayPurificationCard(gameId, userId, card, slotIndex, wss);
+          break;
         case 'discardCard':
           console.log(
             `Player ${userId} is discarding a card`
@@ -482,41 +486,56 @@ async function handlePlayCurseCard(gameId, userId, card, slotIndex, targetPlayer
       return;
     }
 
-    // Добавляем карту на стол противника
-    targetPlayer.table.push({ ...card, slot: slotIndex, isCurse: true });
+    // Проверяем, есть ли в слоте карты очищения
+    const purificationsInSlot = targetPlayer.table.filter(
+      (c) => c.slot === slotIndex && c.isPurification
+    );
 
-    // Удаляем карту из руки игрока
+    if (purificationsInSlot.length > 0) {
+      // Есть карты очищения в слоте
+      // Удаляем одну карту очищения
+      const purificationToRemove = purificationsInSlot[0];
+      targetPlayer.table.splice(targetPlayer.table.indexOf(purificationToRemove), 1);
+      console.log(`Removed one purification card from slot ${slotIndex} of player ${targetPlayerId}`);
+      // Карта порчи не добавляется
+    } else {
+      // Нет карт очищения в слоте
+      // Добавляем карту порчи на стол противника
+      targetPlayer.table.push({ ...card, slot: slotIndex, isCurse: true });
+
+      // Проверяем, есть ли теперь 2 карты порчи в этом слоте
+      const curseCardsInSlot = targetPlayer.table.filter(
+        (c) => c.slot === slotIndex && c.isCurse
+      );
+
+      if (curseCardsInSlot.length >= 2) {
+        // Удаляем 2 карты порчи из слота
+        targetPlayer.table = targetPlayer.table.filter(
+          (c) => !(c.slot === slotIndex && c.isCurse)
+        );
+
+        // Удаляем одну обычную карту из слота
+        const normalCardsInSlot = targetPlayer.table.filter(
+          (c) => c.slot === slotIndex && !c.isCurse && !c.isPurification
+        );
+
+        if (normalCardsInSlot.length > 0) {
+          // Удаляем первую найденную обычную карту
+          const cardToRemove = normalCardsInSlot[0];
+          targetPlayer.table.splice(targetPlayer.table.indexOf(cardToRemove), 1);
+        }
+
+        console.log(`Removed 2 curse cards and one normal card from slot ${slotIndex} of player ${targetPlayerId}`);
+      }
+    }
+
+    // Удаляем карту порчи из руки игрока
     const index = player.hand.findIndex(
       (c) => c.suit === card.suit && c.value === card.value
     );
     
     if (index !== -1) {
       player.hand.splice(index, 1); // Удаляем только одну карту по индексу
-    }
-
-    // Проверяем, есть ли теперь 2 карты порчи в этом слоте
-    const curseCardsInSlot = targetPlayer.table.filter(
-      (c) => c.slot === slotIndex && c.isCurse
-    );
-
-    if (curseCardsInSlot.length >= 2) {
-      // Удаляем 2 карты порчи из слота
-      targetPlayer.table = targetPlayer.table.filter(
-        (c) => !(c.slot === slotIndex && c.isCurse)
-      );
-
-      // Удаляем одну обычную карту из слота
-      const normalCardsInSlot = targetPlayer.table.filter(
-        (c) => c.slot === slotIndex && !c.isCurse
-      );
-
-      if (normalCardsInSlot.length > 0) {
-        // Удаляем первую найденную обычную карту
-        const cardToRemove = normalCardsInSlot[0];
-        targetPlayer.table.splice(targetPlayer.table.indexOf(cardToRemove), 1);
-      }
-
-      console.log(`Removed 2 curse cards and one normal card from slot ${slotIndex} of player ${targetPlayerId}`);
     }
 
     // Добавляем новую карту из колоды
@@ -555,6 +574,106 @@ async function handlePlayCurseCard(gameId, userId, card, slotIndex, targetPlayer
     );
   }
 }
+
+
+async function handlePlayPurificationCard(gameId, userId, card, slotIndex, wss) {
+  const gameData = getGame(gameId);
+  const player = gameData.players.find((p) => p.id === userId);
+
+  if (
+    player &&
+    gameData.currentPlayer === gameData.players.indexOf(player)
+  ) {
+    // Проверяем, что слот не пуст
+    const slotHasCards = player.table.some(c => c.slot === slotIndex);
+    if (!slotHasCards) {
+      console.log(`Cannot play purification card on empty slot`);
+      return;
+    }
+
+    // Проверяем соответствие масти
+    const slotSuits = [
+      'Crèdes',
+      'Ordre de la Vérité',
+      'Capères',
+      'Phagots',
+    ];
+    const slotSuit = slotSuits[slotIndex];
+
+    if (
+      card.suit !== slotSuit &&
+      card.suit !== 'Mercenaires'
+    ) {
+      console.log(
+        `Player ${userId} cannot play purification card ${card.suit} on slot ${slotIndex}`
+      );
+      return;
+    }
+
+    // Проверяем, есть ли в слоте карты порчи
+    const cursesInSlot = player.table.filter(
+      (c) => c.slot === slotIndex && c.isCurse
+    );
+
+    if (cursesInSlot.length > 0) {
+      // Удаляем одну карту порчи из слота
+      const curseToRemove = cursesInSlot[0];
+      player.table.splice(player.table.indexOf(curseToRemove), 1);
+      console.log(`Removed one curse card from slot ${slotIndex} of player ${userId}`);
+      // Карта очищения не добавляется в слот
+    } else {
+      // Нет карт порчи, добавляем карту очищения в слот
+      player.table.push({ ...card, slot: slotIndex, isPurification: true });
+      console.log(`Added purification card to slot ${slotIndex} of player ${userId}`);
+    }
+
+    // Удаляем карту очищения из руки игрока
+    const index = player.hand.findIndex(
+      (c) => c.suit === card.suit && c.value === card.value
+    );
+    
+    if (index !== -1) {
+      player.hand.splice(index, 1); // Удаляем только одну карту по индексу
+    }
+
+    // Добавляем новую карту из колоды
+    if (gameData.deck.length > 0) {
+      const newCard = gameData.deck.pop();
+      player.hand.push(newCard);
+      console.log(
+        `Player ${userId} drew a new card:`, newCard
+      );
+    } else {
+      console.log('Deck is empty, no card drawn');
+    }
+
+    // Переход хода к следующему игроку
+    gameData.currentPlayer = (
+      gameData.currentPlayer + 1
+    ) % gameData.players.length;
+    gameData.turn += 1;
+
+    // Обновляем состояние игры
+    updateGameData(gameId, gameData);
+
+    // Проверяем на окончание игры
+    const gameEnded = checkForGameEnd(gameData);
+
+    if (gameEnded) {
+      // Отправляем сообщение об окончании игры
+      sendGameOverToAll(gameId, wss);
+    } else {
+      // Отправляем обновлённое состояние всем игрокам
+      sendGameStateToAll(gameId, wss);
+    }
+  } else {
+    console.error(
+      `Player ${userId} is not the current player or not found in game ${gameId}`
+    );
+  }
+}
+
+
 
 // Обработка сброса карты
 async function handleDiscardCard(
