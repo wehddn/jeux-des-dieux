@@ -11,7 +11,7 @@ function Card({ card, onDragStart }) {
   
   return (
     <div
-      className="card"
+      className="card-game"
       draggable
       onDragStart={(e) => {
         if (onDragStart) {

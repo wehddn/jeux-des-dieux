@@ -140,7 +140,7 @@
   background-size: 100% 100%;
   display: flex;
   align-items: center;
-  justify-content: end;
+  justify-content: flex-end;
   border: none;
   font-size: 1rem;
   color: #F3F2EE;

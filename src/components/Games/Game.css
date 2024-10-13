@@ -29,17 +29,83 @@
 .card-slots {
   display: flex;
   justify-content: space-around;
-  width: 500px;
+  width: 600px;
+  position: relative;
+  padding: 2rem;
+  border-radius: 30px;
 }
 
 .card-slot {
-  width: 100px;
-  height: 133px;
+  position: relative;
+  width: 120px;
+  height: 200px;
   border: 10px solid;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Для того, чтобы карты начинались с верха */
+  overflow: visible; /* Позволяем элементам выходить за пределы ячейки */
+}
+
+.card-game {
+  position: absolute;
+  width: 90px;
+  height: 120px;
+  background-size: cover;
+  background-position: center;
+}
+
+.card-game:nth-child(1) {
+  top: 0px;
+}
+
+.card-game:nth-child(2) {
+  top: 15px;
+}
+
+.card-game:nth-child(3) {
+  top: 30px;
+}
+
+.card-game:nth-child(4) {
+  top: 45px;
+}
+
+.card-game:nth-child(5) {
+  top: 60px;
+}
+
+.card-count, .curse-count, .purification-count {
+  position: absolute;
+  bottom: -33px;
+  z-index: 10;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  font-size: 1rem;
+  color: #F3F2EE;
+  background-size: 100% 100%;
+}
+
+.curse-count {
+  background-image: url('/games/count_corruption.svg');
+}
+
+.purification-count {
+  background-image: url('/games/count_purification.svg');
+}
+
+.card-count {
+  left: 0; /* Сдвиг влево для первой иконки */
+}
+
+.curse-count {
+  left: 40px; /* Сдвиг для второй иконки */
+}
+
+.purification-count {
+  left: 80px; /* Сдвиг для третьей иконки */
 }
 
 .deck-and-discard {
@@ -61,20 +127,19 @@
 }
 
 .hand {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
+  display: flex;  /* Выстраиваем карты в одну линию */
+  justify-content: center;  /* Центрируем карты по горизонтали */
+  gap: 10px;  /* Добавляем отступы между картами */
+  margin-top: 20px;  /* Добавляем отступ сверху */
 }
 
-.card-count, .curse-count {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  background-color: white;
-  border-radius: 50%;
-  padding: 2px 5px;
-  font-size: 0.8rem;
-  color: #000;
+.hand .card-game {
+  position: relative;  /* Отменяем absolute, чтобы карты не накладывались */
+  width: 90px;  /* Ширина карты */
+  height: 120px;  /* Высота карты */
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;  /* Добавляем указатель при наведении */
 }
 
 .card-curse {

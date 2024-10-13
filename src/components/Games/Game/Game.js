@@ -2,7 +2,16 @@ import React, { useState } from "react";
 import PlayerField from "./PlayerField";
 import Hand from "./Hand";
 
-function Game({ hand, deck, user, gameState, sendDiscardCard, sendPlayCard, sendPlayCurseCard, sendPlayPurificationCard }) {
+function Game({
+  hand,
+  deck,
+  user,
+  gameState,
+  sendDiscardCard,
+  sendPlayCard,
+  sendPlayCurseCard,
+  sendPlayPurificationCard,
+}) {
   const [selectedCard, setSelectedCard] = useState(null);
   const isCurrentPlayer =
     gameState.players[gameState.currentPlayer].id === user.uid;
@@ -17,9 +26,9 @@ function Game({ hand, deck, user, gameState, sendDiscardCard, sendPlayCard, send
   // Отображение статуса игрока (Твой ход / Ход противника)
   const getPlayerStatusMessage = (playerIndex) => {
     if (playerIndex === gameState.currentPlayer) {
-      return <p style={{ color: "green" }}>Твой ход</p>;
+      return <p style={{ color: "green" }}>Votre tour</p>;
     }
-    return <p style={{ color: "red" }}>Ход противника</p>;
+    return <p style={{ color: "red" }}>Tour de l'adversaire</p>;
   };
 
   // Блокировка слотов на поле для карт с неподходящей мастью
@@ -31,10 +40,10 @@ function Game({ hand, deck, user, gameState, sendDiscardCard, sendPlayCard, send
         return true; // Нельзя играть карту очищения на поле противника
       }
       // Проверяем, что слот не пуст
-      const player = gameState.players.find(p => p.id === user.uid);
-      const slotHasCards = player.table.some(c => c.slot === slotIndex);
+      const player = gameState.players.find((p) => p.id === user.uid);
+      const slotHasCards = player.table.some((c) => c.slot === slotIndex);
       if (!slotHasCards) return true; // Слот пуст, нельзя сыграть карту очищения
-  
+
       // Проверяем соответствие масти
       if (card.suit === "Mercenaires") {
         return false; // Mercenaires можно сыграть в любой слот
@@ -113,7 +122,11 @@ function Game({ hand, deck, user, gameState, sendDiscardCard, sendPlayCard, send
                 index={index}
                 colors={Object.values(slotColors)}
                 onSlotClick={(slotIndex) => {
-                  console.log("opponent click", selectedCard, selectedCard.value);
+                  console.log(
+                    "opponent click",
+                    selectedCard,
+                    selectedCard.value
+                  );
                   if (selectedCard && selectedCard.value === "8") {
                     console.log("play opponent field");
                     playCard(selectedCard, slotIndex, player.id);
@@ -124,7 +137,6 @@ function Game({ hand, deck, user, gameState, sendDiscardCard, sendPlayCard, send
                 slotColors={slotColors}
                 isOpponentSlot={true}
               />
-              {getPlayerStatusMessage(index)}
             </div>
           ))}
       </div>
@@ -134,13 +146,13 @@ function Game({ hand, deck, user, gameState, sendDiscardCard, sendPlayCard, send
           className="discard-pile"
           style={{ padding: "10px", border: "1px solid black" }}
         >
-          Сброс: {gameState.discardPile.length} карт
+          Défausse : {gameState.discardPile.length} cartes
         </div>
         <div
           className="deck"
           style={{ padding: "10px", border: "1px solid black" }}
         >
-          Колода: {deck.length} карт
+          Pioche : {deck.length} cartes
         </div>
       </div>
 
@@ -158,9 +170,6 @@ function Game({ hand, deck, user, gameState, sendDiscardCard, sendPlayCard, send
           currentPlayer={gameState.currentPlayer}
           slotColors={slotColors}
         />
-        {getPlayerStatusMessage(
-          gameState.players.findIndex((p) => p.id === user.uid)
-        )}
       </div>
 
       <Hand
@@ -171,6 +180,9 @@ function Game({ hand, deck, user, gameState, sendDiscardCard, sendPlayCard, send
         onCardDoubleClick={(card) => discardCard(card)}
         isCurrentPlayer={isCurrentPlayer} // Блокируем карты для противника
       />
+      {getPlayerStatusMessage(
+        gameState.players.findIndex((p) => p.id === user.uid)
+      )}
     </div>
   );
 }

@@ -2,13 +2,29 @@ import React from 'react';
 import Card from './Card';
 
 function PlayerField({ player, index, colors, onDropCard, onSlotClick, currentPlayer, slotColors }) {
-
+  const getBackgroundImage = (type, className) => {
+    switch (className) {
+      case 'Capères':
+        if (type === 'count') return '/Capers/count_cards_capere.svg';
+        break;
+      case 'Crèdes':
+        if (type === 'count') return '/Credes/count_cards_crede.svg';
+        break;
+      case 'Ordre de la Vérité':
+        if (type === 'count') return '/Ordres/count_cards_ordre.svg';
+        break;
+      case 'Phagots':
+        if (type === 'count') return '/Phagots/count_cards_phagot.svg';
+        break;
+      default:
+        return '';
+    }
+  };
   return (
-    <div className="player-field">
+    <div className="player-field pb-2">
       <div className="card-slots">
         {colors.map((color, slotIndex) => {
           const cardsInSlot = player.table.filter(card => card.slot === slotIndex);
-          const className = Object.keys(slotColors)[slotIndex];
           return (
             <div 
               key={slotIndex} 
@@ -19,9 +35,20 @@ function PlayerField({ player, index, colors, onDropCard, onSlotClick, currentPl
               onClick={() => onSlotClick(slotIndex)}
             >
               {cardsInSlot.map((card, i) => <Card key={i} card={card} />)}
-              <div className="card-count">{cardsInSlot.length}</div>
-              <div>{cardsInSlot.filter(card => card.isCurse === true).length}</div>
-              <div>{cardsInSlot.filter(card => card.isPurification === true).length}</div>
+              <div 
+                className="card-count" 
+                style={{ backgroundImage: `url(${getBackgroundImage('count', Object.keys(slotColors)[slotIndex])})` }}
+              >
+                {cardsInSlot.length}
+              </div>
+              
+              <div className="curse-count" >
+                {cardsInSlot.filter(card => card.isCurse === true).length}
+              </div>
+
+              <div className="purification-count" >
+                {cardsInSlot.filter(card => card.isPurification === true).length}
+              </div>
             </div>
           );
         })}
