@@ -16,9 +16,7 @@ let processing = {};
 const app = express();
 const port = 3001;
 
-const server = app.listen(port, () => {
-  console.log(`Server is listening on port ${port}`);
-});
+const server = app.listen(port, () => {});
 
 const wss = new WebSocket.Server({ server });
 
@@ -47,49 +45,31 @@ async function handleWebSocketConnection(ws, wss) {
 
       switch (type) {
         case 'join':
-          console.log(
-            `User ${userId} is attempting to join room ${room}`
-          );
           await joinGame(gameId, userId, ws, wss);
           break;
         case 'leave':
-          console.log(
-            `User ${userId} is leaving room ${room}`
-          );
           await handleClose(gameId, userId, wss);
           break;
         case 'drawCard':
-          console.log(
-            `Player ${userId} is drawing a card`
-          );
           await handleDrawCard(gameId, userId, wss);
           break;
         case 'playCard':
-          console.log(
-            `Player ${userId} is playing a card`
-          );
           await handlePlayCard(
             gameId, userId, card, slotIndex, wss
           );
           break;
         case 'playCurseCard':
-          console.log(`Player ${userId} is playing a curse card`);
           await handlePlayCurseCard(gameId, userId, card, slotIndex, targetPlayerId, wss);
           break;
         case 'playPurificationCard':
-          console.log(`Player ${userId} is playing a purification card`);
           await handlePlayPurificationCard(gameId, userId, card, slotIndex, wss);
           break;
         case 'discardCard':
-          console.log(
-            `Player ${userId} is discarding a card`
-          );
           await handleDiscardCard(
             gameId, userId, card, wss
           );
           break;
         default:
-          console.log(`Unknown message type: ${type}`);
       }
     } catch (error) {
       console.error('Error handling message:', error);
@@ -104,20 +84,14 @@ async function handleWebSocketConnection(ws, wss) {
   });
 
   ws.on('close', async () => {
-    console.log(
-      `Connection closed for user ${userID} in room ${gameId}`
-    );
     await handleClose(gameId, userID, wss);
   });
 }
 
-// Присоединение к игре
 async function joinGame(gameId, userId, ws, wss) {
-  console.log('Attempting to join game:', gameId);
   try {
     let gameData = getGame(gameId);
     if (!gameData) {
-      // Создаём новую игру
       gameData = createGame(gameId, userId);
       updateGameData(gameId, gameData);
       await updatePlayersInFirestore(
@@ -126,19 +100,12 @@ async function joinGame(gameId, userId, ws, wss) {
       ws.send(
         JSON.stringify({ type: 'joined', room: gameId })
       );
-      console.log(
-        `User ${userId} created and joined new game ${gameId}`
-      );
     } else {
       const existingPlayer = gameData.players.find(
         (player) => player.id === userId
       );
 
       if (existingPlayer) {
-        // Игрок повторно присоединился
-        console.log(
-          `User ${userId} rejoined existing game ${gameId}`
-        );
         ws.send(
           JSON.stringify({
             type: 'rejoined',
@@ -152,18 +119,12 @@ async function joinGame(gameId, userId, ws, wss) {
           })
         );
       } else if (gameData.players.length < 2) {
-        // Добавляем нового игрока
         const newPlayer = {
           id: userId,
           hand: [],
           table: [],
         };
         gameData.players.push(newPlayer);
-        console.log(
-          `User ${userId} joined game ${gameId}, current players: ${gameData.players.map(p => p.id).join(', ')}`
-        );
-
-        // Начинаем игру, если два игрока присоединились
         if (gameData.players.length === 2) {
           gameData.started = true;
           gameData.currentPlayer = 0;
@@ -178,9 +139,6 @@ async function joinGame(gameId, userId, ws, wss) {
           JSON.stringify({ type: 'joined', room: gameId })
         );
       } else {
-        console.log(
-          `User ${userId} could not join game ${gameId} because it is full`
-        );
         ws.send(
           JSON.stringify({ type: 'full', room: gameId })
         );
@@ -199,23 +157,16 @@ async function joinGame(gameId, userId, ws, wss) {
   }
 }
 
-// Закрытие соединения
 async function handleClose(gameId, userID, wss) {
   if (gameId && userID) {
     try {
       if (processing[gameId]) {
-        console.log(
-          `Processing already in progress for game ${gameId}`
-        );
         return;
       }
       processing[gameId] = true;
 
       const gameData = getGame(gameId);
       if (!gameData) {
-        console.log(
-          `Game data not found for gameId: ${gameId}`
-        );
         processing[gameId] = false;
         return;
       }
@@ -225,9 +176,6 @@ async function handleClose(gameId, userID, wss) {
       );
 
       if (updatedPlayers.length === 0) {
-        console.log(
-          `No players left in game ${gameId}. Deleting game.`
-        );
         deleteGame(gameId);
         await deleteGameFromFirestore(gameId);
       } else {
@@ -255,7 +203,6 @@ async function handleClose(gameId, userID, wss) {
         });
       }
 
-      console.log(`Updated players after ${userID} left`);
       processing[gameId] = false;
     } catch (error) {
       console.error('Error handling disconnect:', error);
@@ -264,16 +211,13 @@ async function handleClose(gameId, userID, wss) {
   }
 }
 
-// Начало игры
 function startGame(gameData, wss) {
-  console.log(`Starting game ${gameData.id}`);
 
   gameData.started = true;
-  gameData.deck = generateDeck(); // Генерируем колоду
+  gameData.deck = generateDeck();
   gameData.discardPile = [];
   gameData.turn = 0;
 
-  // Раздаём начальные карты игрокам
   gameData.players.forEach((player) => {
     player.hand = drawInitialCards(gameData.deck);
     player.table = [];
@@ -281,7 +225,6 @@ function startGame(gameData, wss) {
 
   updateGameData(gameData.id, gameData);
 
-  // Отправляем данные всем подключенным клиентам
   wss.clients.forEach((client) => {
     if (
       client.readyState === WebSocket.OPEN &&
@@ -306,9 +249,6 @@ function startGame(gameData, wss) {
             turn: gameData.turn,
           })
         );
-        console.log(
-          `Sent start game message to user ${client.userID}`
-        );
       } else {
         console.error(
           `Player not found for userID: ${client.userID} in game ${gameData.id}`
@@ -318,7 +258,6 @@ function startGame(gameData, wss) {
   });
 }
 
-// Отправка состояния игры всем игрокам
 function sendGameStateToAll(gameId, wss) {
   const gameData = getGame(gameId);
 
@@ -349,7 +288,6 @@ function sendGameStateToAll(gameId, wss) {
   });
 }
 
-// Обработка взятия карты
 async function handleDrawCard(gameId, userId, wss) {
   const gameData = getGame(gameId);
   const player = gameData.players.find((p) => p.id === userId);
@@ -361,18 +299,14 @@ async function handleDrawCard(gameId, userId, wss) {
   ) {
     const newCard = gameData.deck.pop();
     player.hand.push(newCard);
-    console.log(`Player ${userId} drew a card:`, newCard);
 
-    // Обновляем состояние игры
     gameData.turn += 1;
     updateGameData(gameId, gameData);
 
-    // Отправляем обновлённое состояние всем игрокам
     sendGameStateToAll(gameId, wss);
   }
 }
 
-// Обработка розыгрыша карты
 async function handlePlayCard(
   gameId, userId, card, slotIndex, wss
 ) {
@@ -383,7 +317,6 @@ async function handlePlayCard(
     player &&
     gameData.currentPlayer === gameData.players.indexOf(player)
   ) {
-    // Проверяем, может ли карта быть сыграна в указанный слот
     const slotSuits = [
       'Crèdes',
       'Ordre de la Vérité',
@@ -395,51 +328,38 @@ async function handlePlayCard(
       card.suit !== slotSuit &&
       card.suit !== 'Mercenaires'
     ) {
-      console.log(
-        `Player ${userId} cannot play card ${card.suit} on slot ${slotIndex}`
-      );
       return;
     }
 
-    // Добавляем карту на стол игрока
     player.table.push({ ...card, slot: slotIndex });
 
-    // Удаляем карту из руки игрока
     const index = player.hand.findIndex(
       (c) => c.suit === card.suit && c.value === card.value
     );
     
     if (index !== -1) {
-      player.hand.splice(index, 1); // Удаляем только одну карту по индексу
+      player.hand.splice(index, 1);
     }
 
-    // Добавляем новую карту из колоды
     if (gameData.deck.length > 0) {
       const newCard = gameData.deck.pop();
       player.hand.push(newCard);
-      console.log(
-        `Player ${userId} drew a new card:`, newCard
-      );
     } else {
       console.log('Deck is empty, no card drawn');
     }
 
-    // Переход хода к следующему игроку
     gameData.currentPlayer = (
       gameData.currentPlayer + 1
     ) % gameData.players.length;
     gameData.turn += 1;
 
-    // Обновляем состояние игры
     updateGameData(gameId, gameData);
 
     const gameEnded = checkForGameEnd(gameData);
 
     if (gameEnded) {
-      // Отправляем сообщение об окончании игры всем игрокам
       sendGameOverToAll(gameId, wss);
     } else {
-      // Если игра не закончилась, отправляем обновлённое состояние
       sendGameStateToAll(gameId, wss);
     }
   } else {
@@ -459,7 +379,6 @@ async function handlePlayCurseCard(gameId, userId, card, slotIndex, targetPlayer
     targetPlayer &&
     gameData.currentPlayer === gameData.players.indexOf(player)
   ) {
-    // Проверяем, может ли карта быть сыграна в указанный слот
     const slotSuits = [
       'Crèdes',
       'Ordre de la Vérité',
@@ -468,104 +387,75 @@ async function handlePlayCurseCard(gameId, userId, card, slotIndex, targetPlayer
     ];
     const slotSuit = slotSuits[slotIndex];
 
-    // Проверяем, что слот не пуст
     const slotHasCards = targetPlayer.table.some(c => c.slot === slotIndex);
     if (!slotHasCards) {
-      console.log(`Cannot play curse card on empty slot`);
       return;
     }
 
-    // Проверяем соответствие масти
     if (
       card.suit !== slotSuit &&
       card.suit !== 'Mercenaires'
     ) {
-      console.log(
-        `Player ${userId} cannot play curse card ${card.suit} on slot ${slotIndex}`
-      );
       return;
     }
 
-    // Проверяем, есть ли в слоте карты очищения
     const purificationsInSlot = targetPlayer.table.filter(
       (c) => c.slot === slotIndex && c.isPurification
     );
 
     if (purificationsInSlot.length > 0) {
-      // Есть карты очищения в слоте
-      // Удаляем одну карту очищения
       const purificationToRemove = purificationsInSlot[0];
       targetPlayer.table.splice(targetPlayer.table.indexOf(purificationToRemove), 1);
-      console.log(`Removed one purification card from slot ${slotIndex} of player ${targetPlayerId}`);
-      // Карта порчи не добавляется
     } else {
-      // Нет карт очищения в слоте
-      // Добавляем карту порчи на стол противника
       targetPlayer.table.push({ ...card, slot: slotIndex, isCurse: true });
 
-      // Проверяем, есть ли теперь 2 карты порчи в этом слоте
       const curseCardsInSlot = targetPlayer.table.filter(
         (c) => c.slot === slotIndex && c.isCurse
       );
 
       if (curseCardsInSlot.length >= 2) {
-        // Удаляем 2 карты порчи из слота
         targetPlayer.table = targetPlayer.table.filter(
           (c) => !(c.slot === slotIndex && c.isCurse)
         );
 
-        // Удаляем одну обычную карту из слота
         const normalCardsInSlot = targetPlayer.table.filter(
           (c) => c.slot === slotIndex && !c.isCurse && !c.isPurification
         );
 
         if (normalCardsInSlot.length > 0) {
-          // Удаляем первую найденную обычную карту
           const cardToRemove = normalCardsInSlot[0];
           targetPlayer.table.splice(targetPlayer.table.indexOf(cardToRemove), 1);
         }
-
-        console.log(`Removed 2 curse cards and one normal card from slot ${slotIndex} of player ${targetPlayerId}`);
       }
     }
 
-    // Удаляем карту порчи из руки игрока
     const index = player.hand.findIndex(
       (c) => c.suit === card.suit && c.value === card.value
     );
     
     if (index !== -1) {
-      player.hand.splice(index, 1); // Удаляем только одну карту по индексу
+      player.hand.splice(index, 1);
     }
 
-    // Добавляем новую карту из колоды
     if (gameData.deck.length > 0) {
       const newCard = gameData.deck.pop();
       player.hand.push(newCard);
-      console.log(
-        `Player ${userId} drew a new card:`, newCard
-      );
     } else {
       console.log('Deck is empty, no card drawn');
     }
 
-    // Переход хода к следующему игроку
     gameData.currentPlayer = (
       gameData.currentPlayer + 1
     ) % gameData.players.length;
     gameData.turn += 1;
 
-    // Обновляем состояние игры
     updateGameData(gameId, gameData);
 
-    // Проверяем на окончание игры
     const gameEnded = checkForGameEnd(gameData);
 
     if (gameEnded) {
-      // Отправляем сообщение об окончании игры
       sendGameOverToAll(gameId, wss);
     } else {
-      // Отправляем обновлённое состояние всем игрокам
       sendGameStateToAll(gameId, wss);
     }
   } else {
@@ -584,14 +474,11 @@ async function handlePlayPurificationCard(gameId, userId, card, slotIndex, wss) 
     player &&
     gameData.currentPlayer === gameData.players.indexOf(player)
   ) {
-    // Проверяем, что слот не пуст
     const slotHasCards = player.table.some(c => c.slot === slotIndex);
     if (!slotHasCards) {
-      console.log(`Cannot play purification card on empty slot`);
       return;
     }
 
-    // Проверяем соответствие масти
     const slotSuits = [
       'Crèdes',
       'Ordre de la Vérité',
@@ -604,66 +491,47 @@ async function handlePlayPurificationCard(gameId, userId, card, slotIndex, wss) 
       card.suit !== slotSuit &&
       card.suit !== 'Mercenaires'
     ) {
-      console.log(
-        `Player ${userId} cannot play purification card ${card.suit} on slot ${slotIndex}`
-      );
       return;
     }
 
-    // Проверяем, есть ли в слоте карты порчи
     const cursesInSlot = player.table.filter(
       (c) => c.slot === slotIndex && c.isCurse
     );
 
     if (cursesInSlot.length > 0) {
-      // Удаляем одну карту порчи из слота
       const curseToRemove = cursesInSlot[0];
       player.table.splice(player.table.indexOf(curseToRemove), 1);
-      console.log(`Removed one curse card from slot ${slotIndex} of player ${userId}`);
-      // Карта очищения не добавляется в слот
     } else {
-      // Нет карт порчи, добавляем карту очищения в слот
       player.table.push({ ...card, slot: slotIndex, isPurification: true });
-      console.log(`Added purification card to slot ${slotIndex} of player ${userId}`);
     }
 
-    // Удаляем карту очищения из руки игрока
     const index = player.hand.findIndex(
       (c) => c.suit === card.suit && c.value === card.value
     );
     
     if (index !== -1) {
-      player.hand.splice(index, 1); // Удаляем только одну карту по индексу
+      player.hand.splice(index, 1);
     }
 
-    // Добавляем новую карту из колоды
     if (gameData.deck.length > 0) {
       const newCard = gameData.deck.pop();
       player.hand.push(newCard);
-      console.log(
-        `Player ${userId} drew a new card:`, newCard
-      );
     } else {
       console.log('Deck is empty, no card drawn');
     }
 
-    // Переход хода к следующему игроку
     gameData.currentPlayer = (
       gameData.currentPlayer + 1
     ) % gameData.players.length;
     gameData.turn += 1;
 
-    // Обновляем состояние игры
     updateGameData(gameId, gameData);
 
-    // Проверяем на окончание игры
     const gameEnded = checkForGameEnd(gameData);
 
     if (gameEnded) {
-      // Отправляем сообщение об окончании игры
       sendGameOverToAll(gameId, wss);
     } else {
-      // Отправляем обновлённое состояние всем игрокам
       sendGameStateToAll(gameId, wss);
     }
   } else {
@@ -675,7 +543,6 @@ async function handlePlayPurificationCard(gameId, userId, card, slotIndex, wss) 
 
 
 
-// Обработка сброса карты
 async function handleDiscardCard(
   gameId, userId, card, wss
 ) {
@@ -686,47 +553,35 @@ async function handleDiscardCard(
     player &&
     gameData.currentPlayer === gameData.players.indexOf(player)
   ) {
-    // Удаляем карту из руки игрока
     const index = player.hand.findIndex(
       (c) => c.suit === card.suit && c.value === card.value
     );
     
     if (index !== -1) {
-      player.hand.splice(index, 1); // Удаляем только одну карту по индексу
+      player.hand.splice(index, 1);
     }
 
-    // Добавляем карту в сброс
     gameData.discardPile.push(card);
 
-    console.log(`Player ${userId} discarded a card:`, card);
-
-    // Добавляем новую карту из колоды
     if (gameData.deck.length > 0) {
       const newCard = gameData.deck.pop();
       player.hand.push(newCard);
-      console.log(
-        `Player ${userId} drew a new card:`, newCard
-      );
     } else {
       console.log('Deck is empty, no card drawn');
     }
 
-    // Переход хода к следующему игроку
     gameData.currentPlayer = (
       gameData.currentPlayer + 1
     ) % gameData.players.length;
     gameData.turn += 1;
 
-    // Обновляем состояние игры
     updateGameData(gameId, gameData);
 
     const gameEnded = checkForGameEnd(gameData);
 
     if (gameEnded) {
-      // Отправляем сообщение об окончании игры всем игрокам
       sendGameOverToAll(gameId, wss);
     } else {
-      // Если игра не закончилась, отправляем обновлённое состояние
       sendGameStateToAll(gameId, wss);
     }
   } else {
@@ -740,21 +595,18 @@ function checkForGameEnd(gameData) {
   let winnerId = null;
   let isDraw = false;
 
-  // Проверяем, собрал ли кто-то 4 карты в одном слоте без карт порчи
   for (const player of gameData.players) {
     const slotCounts = {};
 
     for (const card of player.table) {
       const slot = card.slot;
-      if (!card.isCurse && card.value != "9") { // Считаем только обычные карты
+      if (!card.isCurse && card.value != "9") {
         slotCounts[slot] = (slotCounts[slot] || 0) + 1;
       }
     }
 
-    // Проверяем каждый слот
     for (const slot in slotCounts) {
       if (slotCounts[slot] >= 4) {
-        // Проверяем, что в этом слоте нет карт порчи
         const hasCurseCards = player.table.some(
           (c) => c.slot == slot && c.isCurse
         );
@@ -770,7 +622,6 @@ function checkForGameEnd(gameData) {
     }
   }
 
-  // Если победитель не найден, проверяем на ничью
   if (!winnerId) {
     const allHandsEmpty = gameData.players.every(player => player.hand.length === 0);
     if (allHandsEmpty) {
@@ -778,23 +629,15 @@ function checkForGameEnd(gameData) {
     }
   }
 
-  // Если игра закончилась, устанавливаем флаги и возвращаем true
   if (winnerId || isDraw) {
     gameData.isGameOver = true;
     gameData.winnerId = winnerId;
     gameData.isDraw = isDraw;
 
-    // Для тестирования выводим в консоль
-    if (winnerId) {
-      console.log(`Player ${winnerId} has won the game!`);
-    } else if (isDraw) {
-      console.log('The game ended in a draw.');
-    }
-
-    return true; // Игра закончилась
+    return true;
   }
 
-  return false; // Игра продолжается
+  return false;
 }
 
 
@@ -809,8 +652,8 @@ function sendGameOverToAll(gameId, wss) {
       client.send(
         JSON.stringify({
           type: 'gameOver',
-          winnerId: gameData.winnerId, // ID победителя или null
-          isDraw: gameData.isDraw,     // true, если ничья
+          winnerId: gameData.winnerId,
+          isDraw: gameData.isDraw,
         })
       );
     }

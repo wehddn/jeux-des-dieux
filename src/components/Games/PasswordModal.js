@@ -10,11 +10,8 @@ function PasswordModal({ isOpen, onRequestClose, room, onPasswordCorrect }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const { authenticateRoom } = useUserAuth();
-  console.log("PasswordModal1", room.id);
 
   const handleSubmit = async (e) => {
-    console.log("PasswordModal", room.id);
-
     e.preventDefault();
 
     try {
@@ -27,12 +24,12 @@ function PasswordModal({ isOpen, onRequestClose, room, onPasswordCorrect }) {
           authenticateRoom(room.id);
           onPasswordCorrect();
         } else {
-          setError("Неверный пароль. Пожалуйста, попробуйте снова.");
+          setError("Mot de passe incorrect. Veuillez réessayer.");
         }
       }
     } catch (error) {
-      console.error("Ошибка при проверке пароля:", error);
-      setError("Ошибка при проверке пароля. Пожалуйста, попробуйте снова.");
+      console.error("Erreur lors de la vérification du mot de passe:", error);
+      setError("Erreur lors de la vérification du mot de passe. Veuillez réessayer.");
     }
   };
 

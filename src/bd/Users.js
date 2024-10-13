@@ -72,11 +72,8 @@ const deleteUserProfile = async (userId) => {
     if (user) {
       try {
         await user.delete();
-        console.log('User profile deleted successfully');
       } catch (error) {
         if (error.code === 'auth/requires-recent-login') {
-          // The user's sign-in is too old. Ask them to sign in again.
-          console.log('Please sign in again to delete your account.');
         } else {
           console.error('Error deleting user profile:', error);
           throw new Error('Error deleting user profile');
@@ -103,18 +100,16 @@ const getFilteredUsers = async (userId) => {
     const sentRequests = userData.sentRequests || [];
     const receivedRequests = userData.receivedRequests || [];
 
-    // Получаем всех пользователей
     const querySnapshot = await getDocs(usersRef);
     const users = [];
     
     querySnapshot.forEach((doc) => {
       const otherUserData = { id: doc.id, ...doc.data() };
       
-      // Исключаем самого пользователя, тех, кому он отправил заявку, и тех, кто отправил заявку ему
       if (
-        otherUserData.id !== userId && // Исключаем самого пользователя
-        !sentRequests.includes(otherUserData.id) && // Исключаем пользователей, которым отправлены заявки
-        !receivedRequests.includes(otherUserData.id) // Исключаем пользователей, которые отправили заявку
+        otherUserData.id !== userId &&
+        !sentRequests.includes(otherUserData.id) &&
+        !receivedRequests.includes(otherUserData.id)
       ) {
         users.push(otherUserData);
       }
@@ -144,25 +139,18 @@ const addFriend = async (userId, friendId) => {
       const sentRequests = userData.sentRequests || [];
       const receivedRequests = friendData.receivedRequests || [];
 
-      // Проверка, если друг уже добавлен
       if (currentFriends.includes(friendId)) {
-        console.log('Friend is already added');
         return;
       }
 
-      // Проверка, если заявка уже отправлена
       if (sentRequests.includes(friendId)) {
-        console.log('Friend request already sent');
         return;
       }
 
-      // Добавляем заявку в отправленные у пользователя
       await updateDoc(userRef, { sentRequests: [...sentRequests, friendId] });
 
-      // Добавляем заявку в полученные у друга
       await updateDoc(friendRef, { receivedRequests: [...receivedRequests, userId] });
 
-      console.log('Friend request sent successfully');
     } else {
       throw new Error('User or friend not found');
     }
@@ -177,7 +165,6 @@ const acceptFriendRequest = async (userId, friendId) => {
   const friendRef = doc(db, 'Users', friendId);
 
   try {
-    // Получаем данные пользователя и друга
     const userSnap = await getDoc(userRef);
     const friendSnap = await getDoc(friendRef);
 
@@ -185,11 +172,9 @@ const acceptFriendRequest = async (userId, friendId) => {
       const userData = userSnap.data();
       const friendData = friendSnap.data();
 
-      // Обновляем список друзей
       const userFriends = userData.friends || [];
       const friendFriends = friendData.friends || [];
 
-      // Удаляем друга из списка полученных заявок и добавляем его в друзья
       const userReceivedRequests = userData.receivedRequests || [];
       const updatedReceivedRequests = userReceivedRequests.filter(id => id !== friendId);
 
@@ -198,7 +183,6 @@ const acceptFriendRequest = async (userId, friendId) => {
         receivedRequests: updatedReceivedRequests
       });
 
-      // Удаляем пользователя из списка отправленных заявок друга и добавляем его в друзья
       const friendSentRequests = friendData.sentRequests || [];
       const updatedSentRequests = friendSentRequests.filter(id => id !== userId);
 
@@ -207,7 +191,6 @@ const acceptFriendRequest = async (userId, friendId) => {
         sentRequests: updatedSentRequests
       });
 
-      console.log("Friend request accepted successfully.");
     } else {
       throw new Error("User or friend not found.");
     }
@@ -217,13 +200,11 @@ const acceptFriendRequest = async (userId, friendId) => {
   }
 };
 
-// Функция для отклонения заявки в друзья
 const declineFriendRequest = async (userId, friendId) => {
   const userRef = doc(db, 'Users', userId);
   const friendRef = doc(db, 'Users', friendId);
 
   try {
-    // Получаем данные пользователя и друга
     const userSnap = await getDoc(userRef);
     const friendSnap = await getDoc(friendRef);
 
@@ -231,7 +212,6 @@ const declineFriendRequest = async (userId, friendId) => {
       const userData = userSnap.data();
       const friendData = friendSnap.data();
 
-      // Удаляем друга из списка полученных заявок
       const userReceivedRequests = userData.receivedRequests || [];
       const updatedReceivedRequests = userReceivedRequests.filter(id => id !== friendId);
 
@@ -239,7 +219,6 @@ const declineFriendRequest = async (userId, friendId) => {
         receivedRequests: updatedReceivedRequests
       });
 
-      // Удаляем пользователя из списка отправленных заявок друга
       const friendSentRequests = friendData.sentRequests || [];
       const updatedSentRequests = friendSentRequests.filter(id => id !== userId);
 
@@ -247,7 +226,6 @@ const declineFriendRequest = async (userId, friendId) => {
         sentRequests: updatedSentRequests
       });
 
-      console.log("Friend request declined successfully.");
     } else {
       throw new Error("User or friend not found.");
     }

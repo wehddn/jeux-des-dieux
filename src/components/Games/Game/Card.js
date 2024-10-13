@@ -17,7 +17,6 @@ function Card({ card, onDragStart }) {
         if (onDragStart) {
           const cardData = JSON.stringify(card);
           e.dataTransfer.setData('card', cardData);
-          console.log('Dragging card:', cardData);
           onDragStart(e, card);
         }
       }}

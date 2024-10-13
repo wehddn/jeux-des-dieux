@@ -14,10 +14,7 @@ const Profile = () => {
 
   const handleAcceptFriendRequest = async (friendId) => {
     try {
-      // Вызов функции для принятия заявки
       await acceptFriendRequest(userProfile.id, friendId);
-      console.log("Friend request accepted");
-      // Обновите данные пользователя (например, обновите состояние или выполните новый запрос)
     } catch (error) {
       console.error("Error accepting friend request:", error);
     }
@@ -25,10 +22,7 @@ const Profile = () => {
   
   const handleDeclineFriendRequest = async (friendId) => {
     try {
-      // Вызов функции для отклонения заявки
       await declineFriendRequest(userProfile.id, friendId);
-      console.log("Friend request declined");
-      // Обновите данные пользователя
     } catch (error) {
       console.error("Error declining friend request:", error);
     }

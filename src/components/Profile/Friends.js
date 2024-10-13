@@ -9,7 +9,6 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
   const [receivedRequests, setReceivedRequests] = useState(userProfile.receivedRequests || []);
 
   useEffect(() => {
-    // Обновляем receivedRequests при изменении профиля пользователя
     setReceivedRequests(userProfile.receivedRequests || []);
   }, [userProfile]);
 
@@ -22,7 +21,6 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
   const handleAccept = async (friendId) => {
     try {
       await handleAcceptFriendRequest(friendId);
-      // Убираем заявку из списка после принятия
       setReceivedRequests(receivedRequests.filter((id) => id !== friendId));
     } catch (error) {
       console.error("Error accepting friend request:", error);
@@ -32,7 +30,6 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
   const handleDecline = async (friendId) => {
     try {
       await handleDeclineFriendRequest(friendId);
-      // Убираем заявку из списка после отклонения
       setReceivedRequests(receivedRequests.filter((id) => id !== friendId));
     } catch (error) {
       console.error("Error declining friend request:", error);

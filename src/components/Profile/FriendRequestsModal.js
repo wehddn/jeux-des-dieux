@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
-import Friend from "./Friend.js"; // Используйте компонент Friend, если нужно
+import Friend from "./Friend.js";
 
 const FriendRequestsModal = ({ isOpen, onRequestClose, receivedRequests, handleAccept, handleDecline }) => {
   return (
@@ -10,28 +10,27 @@ const FriendRequestsModal = ({ isOpen, onRequestClose, receivedRequests, handleA
       overlayClassName="modal-overlay"
       className="modal-content"
     >
-      <h2>Полученные заявки в друзья</h2>
+      <h2>Demandes d'amis reçues</h2>
       {receivedRequests && receivedRequests.length > 0 ? (
         <ul>
           {receivedRequests.map((friendId, index) => (
             <li key={index}>
-              {/* Отобразить информацию о пользователе (например, через компонент Friend) */}
               <Friend userId={friendId} />
               <div>
                 <button onClick={() => handleAccept(friendId)} className="btn btn-success">
-                  Принять
+                  Accepter
                 </button>
                 <button onClick={() => handleDecline(friendId)} className="btn btn-danger">
-                  Отклонить
+                  Refuser
                 </button>
               </div>
             </li>
           ))}
         </ul>
       ) : (
-        <p>У вас нет новых заявок.</p>
+        <p>Vous n'avez pas de nouvelles demandes.</p>
       )}
-      <button onClick={onRequestClose} className="btn btn-secondary">Закрыть</button>
+      <button onClick={onRequestClose} className="btn btn-secondary">Fermer</button>
     </Modal>
   );
 };

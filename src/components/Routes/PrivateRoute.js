@@ -14,9 +14,7 @@ function PrivateRoute({ children }) {
 
   useEffect(() => {
     const checkAuthorization = async () => {
-      console.log("Checking authorization for room ID:", id);
       if (!id) {
-        console.log("No room ID provided");
         setLoading(false);
         return;
       }
@@ -27,30 +25,23 @@ function PrivateRoute({ children }) {
 
         if (roomDoc.exists()) {
           const roomData = roomDoc.data();
-          console.log("Room data in PrivateRoute:", roomData);
           if (roomData.creatorId === user.uid) {
-            console.log("User is the creator of the room, authenticating");
             authenticateRoom(id);
             setIsAuthorized(true);
           } else if (isRoomAuthenticated(id)) {
-            console.log("User is authenticated for this room");
             setIsAuthorized(true);
           } else if (roomData.isPrivate) {
-            console.log("Room is private, opening password modal");
             setShowPasswordModal(true);
           } else {
-            console.log("Room is public, authorizing user");
-            setIsAuthorized(true); // Установить true для публичных комнат
+            setIsAuthorized(true);
           }
         } else {
-          console.log("Room does not exist");
           setIsAuthorized(false);
         }
       } catch (error) {
         console.error("Ошибка при проверке авторизации:", error);
         setIsAuthorized(false);
       } finally {
-        console.log("Setting loading to false");
         setLoading(false);
       }
     };
@@ -63,7 +54,6 @@ function PrivateRoute({ children }) {
   };
 
   const handlePasswordCorrect = () => {
-    console.log("Пароль введен корректно");
     setIsAuthorized(true);
     setShowPasswordModal(false);
   };
@@ -80,7 +70,7 @@ function PrivateRoute({ children }) {
           isOpen={showPasswordModal}
           onRequestClose={handlePasswordModalClose}
           room={ id }
-          onPasswordCorrect={handlePasswordCorrect} // Передача функции
+          onPasswordCorrect={handlePasswordCorrect}
         />
       )}
       {!isAuthorized && !loading && !showPasswordModal && (

@@ -12,9 +12,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("try to redirect");
     if (!loading && user) {
-      console.log("user here");
       navigate('/profile');
     }
   }, [user, navigate, loading]);

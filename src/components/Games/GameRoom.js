@@ -34,11 +34,9 @@ function GameRoom() {
           });
           setHand(data.hand);
           setDeck(data.deck);
-          console.log("handle start ", data);
           break;
 
         case "gameState":
-          console.log("handle gameState ", data);
           setGameState({
             deck: data.deck,
             players: data.players,
@@ -47,11 +45,10 @@ function GameRoom() {
             turn: data.turn,
           });
           setDeck(data.deck);
-          setHand(data.hand); // Используем data.hand вместо data.players
+          setHand(data.hand);
           break;
 
         case "rejoined":
-          console.log("handle rejoined ", data);
           setHand(data.hand);
           setDeck(data.deck);
           setGameState({
@@ -73,11 +70,9 @@ function GameRoom() {
 
         case "gameOver":
           if (data.isDraw) {
-            console.log("The game ended in a draw.");
             setStatus("gameOver");
             alert("Игра закончилась ничьей.");
           } else {
-            console.log(`Player ${data.winnerId} has won the game!`);
             setStatus("gameOver");
             if (data.winnerId === user.uid) {
               alert("Поздравляем! Вы выиграли игру!");
@@ -127,7 +122,6 @@ function GameRoom() {
     };
 
     ws.current.onclose = () => {
-      console.log("WebSocket connection closed.");
       setStatus("disconnected");
     };
 
@@ -166,7 +160,6 @@ function GameRoom() {
     };
   }, [id, user, handleIncomingMessage]);
 
-  // Отправка действия игрока на сервер через WebSocket
   const sendDiscardCard = (card) => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(
@@ -181,7 +174,6 @@ function GameRoom() {
   };
 
   const sendPlayCard = (card, slotIndex) => {
-    console.log("Room play card", slotIndex, card);
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(
         JSON.stringify({
