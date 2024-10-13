@@ -5,7 +5,7 @@ h1{
   color: #F7E4C4;
 }
 .btn-del {
-  background-image: url('/games/btn_cree.svg');
+  background-image: url('../../../public/games/btn_cree.svg');
   background-color: transparent;
   background-size: 100% 100%;
   background-repeat: no-repeat;

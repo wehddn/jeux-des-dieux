@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('/fon/fenetre.svg');
+  background-image: url('../public/fon/fenetre.svg');
   padding: 3rem;
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -147,11 +147,11 @@
 }
 
 .btn-cancel {
-  background-image: url('/btn/cancel_modal.svg');
+  background-image: url('../public/btn/cancel_modal.svg');
 }
 
 .btn-save {
-  background-image: url('/btn/save_modal.svg');
+  background-image: url('../public/btn/save_modal.svg');
 }
 
 .btn-close {
@@ -174,7 +174,7 @@
 
 @media (max-width: 480px) {
   .modal-overlay {
-    background-image: url('/fon/fenetre_big.svg');
+    background-image: url('../public/fon/fenetre_big.svg');
   }
 
   .modal-content {

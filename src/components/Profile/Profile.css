@@ -1,5 +1,5 @@
 .fon_profil {
-    background-image: url('/fon/fon_profil.svg');
+    background-image: url('../../../public/fon/fon_profil.svg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -50,11 +50,11 @@
   }
   
   .btn_1 {
-    background-image: url('/btn/btn_1.svg');
+    background-image: url('../../../public/btn/btn_1.svg');
   }
   
   .btn_2 {
-    background-image: url('/btn/btn_2.svg');
+    background-image: url('../../../public/btn/btn_2.svg');
   }
 
   .pseudo-input {
