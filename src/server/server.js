@@ -746,7 +746,7 @@ function checkForGameEnd(gameData) {
 
     for (const card of player.table) {
       const slot = card.slot;
-      if (!card.isCurse) { // Считаем только обычные карты
+      if (!card.isCurse && card.value != "9") { // Считаем только обычные карты
         slotCounts[slot] = (slotCounts[slot] || 0) + 1;
       }
     }

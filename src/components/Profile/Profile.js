@@ -4,13 +4,36 @@ import Stats from "./Stats.js";
 import Friends from "./Friends.js";
 import Header from "../base/Header/Header.js";
 import UserInfo from "./UserInfo.js";
-import { getOrCreateUser } from "../../bd/Users.js";
+import { getOrCreateUser, acceptFriendRequest, declineFriendRequest } from "../../bd/Users.js";
 
 const Profile = () => {
   const { user } = useUserAuth();
   const [userProfile, setUserProfile] = useState(null);
   const userId = user.uid;
   const userEmail = user.email;
+
+  const handleAcceptFriendRequest = async (friendId) => {
+    try {
+      // Вызов функции для принятия заявки
+      await acceptFriendRequest(userProfile.id, friendId);
+      console.log("Friend request accepted");
+      // Обновите данные пользователя (например, обновите состояние или выполните новый запрос)
+    } catch (error) {
+      console.error("Error accepting friend request:", error);
+    }
+  };
+  
+  const handleDeclineFriendRequest = async (friendId) => {
+    try {
+      // Вызов функции для отклонения заявки
+      await declineFriendRequest(userProfile.id, friendId);
+      console.log("Friend request declined");
+      // Обновите данные пользователя
+    } catch (error) {
+      console.error("Error declining friend request:", error);
+    }
+  };
+  
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -35,7 +58,11 @@ const Profile = () => {
               <UserInfo userProfile={userProfile} />
             </div>
             <div className="col-lg-4 col-12 colone-profil">
-              <Friends userProfile={userProfile} />
+              <Friends 
+                userProfile={userProfile}
+                handleAcceptFriendRequest={handleAcceptFriendRequest}
+                handleDeclineFriendRequest={handleDeclineFriendRequest}
+              />
             </div>
             <div className="col-lg-4 col-12 colone-profil">
               <Stats userProfile={userProfile} />
