@@ -91,7 +91,7 @@ function GameRoom() {
   );
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:3001");
+    ws.current = new WebSocket("ws://13.60.180.227:3001");
 
     ws.current.onopen = () => {
       if (ws.current && ws.current.readyState === WebSocket.OPEN) {
