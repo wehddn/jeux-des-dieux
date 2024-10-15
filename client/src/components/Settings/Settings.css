@@ -1,0 +1,27 @@
+.settings_context{
+min-height: 550px;
+}
+h1{
+  color: #F7E4C4;
+}
+.btn-del {
+  background-image: url('../../../public/games/btn_cree.svg');
+  background-color: transparent;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s;
+  color: #F7E4C4;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}

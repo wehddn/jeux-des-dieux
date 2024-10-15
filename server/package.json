@@ -1,0 +1,11 @@
+{
+  "name": "jeux-des-dieux-server",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "express": "^4.19.2",
+    "firebase": "^10.11.1",
+    "firebase-admin": "^12.3.0",
+    "ws": "^8.18.0"
+  }
+}

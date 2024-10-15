@@ -2,9 +2,11 @@
 
 # dependencies
 /node_modules
+client/node_modules
+server/node_modules
 /.pnp
 .pnp.js
-/src/server/jeux-des-dieux-firebase-adminsdk-foy72-8a047523f4.json
+/src/server/jeux-des-dieux-firebase-adminsdk*.json
 # testing
 /coverage
 
