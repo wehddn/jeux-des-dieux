@@ -39,7 +39,7 @@ function PlayerField({ player, index, colors, onDropCard, onSlotClick, currentPl
                 className="card-count" 
                 style={{ backgroundImage: `url(${getBackgroundImage('count', Object.keys(slotColors)[slotIndex])})` }}
               >
-                {cardsInSlot.length}
+                {cardsInSlot.length - cardsInSlot.filter(card => card.isCurse === true).length - cardsInSlot.filter(card => card.isPurification === true).length}
               </div>
               
               <div className="curse-count" >

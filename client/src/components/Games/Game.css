@@ -41,8 +41,8 @@
   border: 10px solid;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Для того, чтобы карты начинались с верха */
-  overflow: visible; /* Позволяем элементам выходить за пределы ячейки */
+  align-items: flex-start;
+  overflow: visible;
 }
 
 .card-game {
@@ -96,15 +96,15 @@
 }
 
 .card-count {
-  left: 0; /* Сдвиг влево для первой иконки */
+  left: 0;
 }
 
 .curse-count {
-  left: 40px; /* Сдвиг для второй иконки */
+  left: 40px;
 }
 
 .purification-count {
-  left: 80px; /* Сдвиг для третьей иконки */
+  left: 80px;
 }
 
 .deck-and-discard {
@@ -126,19 +126,19 @@
 }
 
 .hand {
-  display: flex;  /* Выстраиваем карты в одну линию */
-  justify-content: center;  /* Центрируем карты по горизонтали */
-  gap: 10px;  /* Добавляем отступы между картами */
-  margin-top: 20px;  /* Добавляем отступ сверху */
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .hand .card-game {
-  position: relative;  /* Отменяем absolute, чтобы карты не накладывались */
-  width: 90px;  /* Ширина карты */
-  height: 120px;  /* Высота карты */
+  position: relative;
+  width: 90px;
+  height: 120px;
   background-size: cover;
   background-position: center;
-  cursor: pointer;  /* Добавляем указатель при наведении */
+  cursor: pointer;
 }
 
 .card-curse {
@@ -279,5 +279,57 @@
   .games-table th, .games-table td {
     padding: 0.5rem;
     font-size: 0.8rem;
+  }
+  
+  .card-slots {
+    width: 80%;
+  }
+  
+  .card-slot {
+    width: 100px;
+    height: 130px;
+  }
+  
+  .card-game {
+    width: 65px !important;
+    height: 86.5px !important;
+  }
+  
+  .card-game:nth-child(1) {
+    top: 0px;
+  }
+
+  .card-game:nth-child(2) {
+    top: 10px;
+  }
+
+  .card-game:nth-child(3) {
+    top: 20px;
+  }
+
+  .card-game:nth-child(4) {
+    top: 30px;
+  }
+
+  .card-game:nth-child(5) {
+    top: 40px;
+  }
+
+  .card-count, .curse-count, .purification-count {
+    bottom: -28px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .card-count {
+    left: 0;
+  }
+  
+  .curse-count {
+    left: 20px;
+  }
+  
+  .purification-count {
+    left: 40px;
   }
 }
