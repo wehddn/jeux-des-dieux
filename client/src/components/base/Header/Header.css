@@ -25,28 +25,28 @@
     font-weight: bold;
   }
   
-  .header-btn-logout {
-    background-image: url('../../../../public/header/header_btn_v1.svg');
-    background-color: transparent;
-  }
-  
   .header-btn-profile {
-    background-image: url('../../../../public/header/header_btn_v2.svg');
-    background-color: transparent;
-  }
-  
-  .header-btn-settings {
-    background-image: url('../../../../public/header/header_btn_v3.svg');
-    background-color: transparent;
-  }
-  
-  .header-btn-games {
-    background-image: url('../../../../public/header/header_btn_v1.svg');
+    background-image: url('../../../../public/img/header/header_btn_v1.svg');
     background-color: transparent;
   }
 
   .header-btn-rules {
-    background-image: url('../../../../public/header/header_btn_v2.svg');
+    background-image: url('../../../../public/img/header/header_btn_v2.svg');
+    background-color: transparent;
+  }
+
+  .header-btn-games {
+    background-image: url('../../../../public/img/header/header_btn_v3.svg');
+    background-color: transparent;
+  }
+
+  .header-btn-settings {
+    background-image: url('../../../../public/img/header/header_btn_v2.svg');
+    background-color: transparent;
+  }
+
+  .header-btn-logout {
+    background-image: url('../../../../public/img/header/header_btn_v1.svg');
     background-color: transparent;
   }
   

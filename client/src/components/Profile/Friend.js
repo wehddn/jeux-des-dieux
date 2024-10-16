@@ -22,14 +22,11 @@ const Friend = ({ userId }) => {
   }
 
   return (
-    <div className="col-6">
-      <div className="d-flex row">
-        <button className="col-2 d-flex align-items-start friend-button">
-          <img src={`/btn/croix.svg`} alt="suppr." className="friend-button" />
-        </button>
+    <div>
+      <div className="d-flex justify-content-center row">
         <img
-          className="col-10 friend-photo"
-          src={`/photoProfil/${userProfile.photo}`}
+          className="col-12 friend-photo"
+          src={`/img/photoProfil/${userProfile.photo}`}
           alt="Profile"
         />
       </div>

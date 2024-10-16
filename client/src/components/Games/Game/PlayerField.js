@@ -5,16 +5,16 @@ function PlayerField({ player, index, colors, onDropCard, onSlotClick, currentPl
   const getBackgroundImage = (type, className) => {
     switch (className) {
       case 'Capères':
-        if (type === 'count') return '/Capers/count_cards_capere.svg';
+        if (type === 'count') return '/img/Capers/count_cards_capere.svg';
         break;
       case 'Crèdes':
-        if (type === 'count') return '/Credes/count_cards_crede.svg';
+        if (type === 'count') return '/img/Credes/count_cards_crede.svg';
         break;
       case 'Ordre de la Vérité':
-        if (type === 'count') return '/Ordres/count_cards_ordre.svg';
+        if (type === 'count') return '/img/Ordres/count_cards_ordre.svg';
         break;
       case 'Phagots':
-        if (type === 'count') return '/Phagots/count_cards_phagot.svg';
+        if (type === 'count') return '/img/Phagots/count_cards_phagot.svg';
         break;
       default:
         return '';

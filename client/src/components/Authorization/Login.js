@@ -50,7 +50,7 @@ const Login = () => {
     <>
       <div className="p-4 d-flex justify-content-center align-items-center row">
 
-        <img src={`/LOGO.svg`} alt="LOGO" />
+        <img src={`/img/LOGO.svg`} alt="LOGO" />
 
         {error && <Alert variant="danger">{error}</Alert>}
 

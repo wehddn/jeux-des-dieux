@@ -2,6 +2,7 @@ import React from "react";
 import { deleteUserProfile } from "../../bd/Users";
 import { useUserAuth } from "../../context/UserAuthContext.js";
 import Header from "../base/Header/Header.js";
+import Footer from "../base/Footer/Footer.js";
 
 const Settings = () => {
   const { user } = useUserAuth();
@@ -25,6 +26,7 @@ const Settings = () => {
         <h1>Settings</h1>
         <button onClick={handleDeleteClick} className="btn-del">Supprimer Le Profil</button>
       </div>
+      <Footer />
     </>
   );
 };

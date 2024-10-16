@@ -2,11 +2,11 @@ import React from 'react';
 
 function Card({ card, onDragStart }) {
   const slotColors = {
-    Crèdes: "/Credes/Crede_",
-    'Ordre de la Vérité': "/Ordres/Ordre_",
-    Capères: "/Capers/Caper_",
-    Phagots: "/Phagots/Phagot_",
-    Mercenaires: "/Mercenaire/Mercenaire_"
+    Crèdes: "/img/Credes/Crede_",
+    'Ordre de la Vérité': "/img/Ordres/Ordre_",
+    Capères: "/img/Capers/Caper_",
+    Phagots: "/img/Phagots/Phagot_",
+    Mercenaires: "/img/Mercenaire/Mercenaire_"
   };
   
   return (

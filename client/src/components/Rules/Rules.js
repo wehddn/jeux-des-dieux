@@ -1,5 +1,6 @@
 import React from "react";
 import Header from "../base/Header/Header.js";
+import Footer from "../base/Footer/Footer.js";
 
 const Rules = () => {
   return (
@@ -40,6 +41,7 @@ const Rules = () => {
         <p>Le premier joueur qui réussit à avoir 4 héros de la même faction gagne la partie!</p>
         <p>Le jeu est basé sur la stratégie : utiliser les bonnes cartes au bon moment pour vaincre tes adversaires et gagner.</p>
       </div>
+      <Footer />
     </div>
   );
 };

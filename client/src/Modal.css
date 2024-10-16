@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('../public/fon/fenetre.svg');
+  background-image: url('../public/img/fon/fenetre.svg');
   padding: 3rem;
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -91,7 +91,7 @@
   transform: translate(-50%, -50%);
 }
 
-.modal-content ul {
+.modal-content ul, .container-modal-friend {
   color:#313131;
   list-style: none;
   padding: 0;
@@ -100,22 +100,22 @@
   margin: 1rem 0;
 }
 
-.modal-content ul::-webkit-scrollbar {
+.modal-content ul::-webkit-scrollbar , .container-modal-friend::-webkit-scrollbar {
   width: 12px;
 }
 
-.modal-content ul::-webkit-scrollbar-track {
+.modal-content ul::-webkit-scrollbar-track, .container-modal-friend::-webkit-scrollbar-track {
   background-color: #F7E4C4;
   border-radius: 10px;
 }
 
-.modal-content ul::-webkit-scrollbar-thumb {
+.modal-content ul::-webkit-scrollbar-thumb, .container-modal-friend::-webkit-scrollbar-thumb{
   background-color: #B14330;
   border-radius: 10px;
   border: 2px solid #F7E4C4;
 }
 
-.modal-content ul::-webkit-scrollbar-thumb:hover {
+.modal-content ul::-webkit-scrollbar-thumb:hover, .container-modal-friend::-webkit-scrollbar-thumb:hover {
   background-color: #953325;
 }
 
@@ -147,11 +147,11 @@
 }
 
 .btn-cancel {
-  background-image: url('../public/btn/cancel_modal.svg');
+  background-image: url('../public/img/btn/cancel_modal.svg');
 }
 
 .btn-save {
-  background-image: url('../public/btn/save_modal.svg');
+  background-image: url('../public/img/btn/save_modal.svg');
 }
 
 .btn-close {
@@ -174,7 +174,7 @@
 
 @media (max-width: 480px) {
   .modal-overlay {
-    background-image: url('../public/fon/fenetre_big.svg');
+    background-image: url('../public/img/fon/fenetre_big.svg');
   }
 
   .modal-content {
@@ -205,4 +205,13 @@
     font-size: 1rem;
     color: #313131;
   }
+
+  .btn-close {
+    font-size: 1.5rem;
+  }
+
+  .modal-overlay {
+    background-image: url('../public/img/fon/fenetre_fon_v2.svg');
+  }
+  
 }

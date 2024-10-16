@@ -4,6 +4,7 @@ import CreateGameModal from "./CreateGameModal";
 import { getGamesList, getUser } from "../../bd/Games";
 import PasswordModal from "./PasswordModal";
 import Header from "../base/Header/Header.js";
+import Footer from "../base/Footer/Footer.js";
 
 function Games() {
   const [rooms, setRooms] = useState([]);
@@ -106,7 +107,7 @@ function Games() {
                   <img
                     className="game-status-icon"
                     src={
-                      room.password ? `/games/fermer.png` : `/games/ouver.png`
+                      room.password ? `/img/games/fermer.png` : `/img/games/ouver.png`
                     }
                     alt={room.password ? "closed" : "open"}
                   />
@@ -122,7 +123,7 @@ function Games() {
                     className="btn-join-room"
                     onClick={() => joinRoom(room)}
                   >
-                    <img src={`/games/door.svg`} alt="door" />
+                    <img src={`/img/games/door.svg`} alt="door" />
                   </button>
                 </td>
               </tr>
@@ -138,6 +139,7 @@ function Games() {
           />
         )}
       </div>
+      <Footer />
     </div>
   );
 }

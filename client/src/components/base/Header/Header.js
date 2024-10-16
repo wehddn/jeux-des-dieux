@@ -17,20 +17,20 @@ const Header = () => {
 
   return (
     <div className="header-buttons">
-      <button className="header-button header-btn-logout" onClick={handleLogout}>
-        Log out
-      </button>
       <button className="header-button header-btn-profile" onClick={() => navigate("/profile")}>
         Profile
       </button>
-      <button className="header-button header-btn-settings" onClick={() => navigate("/settings")}>
-        Settings
+      <button className="header-button header-btn-rules" onClick={() => navigate("/rules")}>
+        Règles
       </button>
       <button className="header-button header-btn-games" onClick={() => navigate("/games")}>
         Games
       </button>
-      <button className="header-button header-btn-rules" onClick={() => navigate("/rules")}>
-        Sur le jeu
+      <button className="header-button header-btn-settings" onClick={() => navigate("/settings")}>
+        Settings
+      </button>
+      <button className="header-button header-btn-logout" onClick={handleLogout}>
+        Log out
       </button>
     </div>
   );

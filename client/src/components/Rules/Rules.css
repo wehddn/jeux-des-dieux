@@ -9,7 +9,7 @@
     color: #F7E4C4;
     margin-bottom: 2rem;
     padding: 3rem;
-    background-image: url('../../../public/fon/text_fon_2.svg');
+    background-image: url('../../../public/img/fon/text_fon_2.svg');
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-position: center;
@@ -32,7 +32,7 @@
 
   .text-block-dark{
     color: #313131;
-    background-image: url('../../../public/fon/text_fon_1.svg');
+    background-image: url('../../../public/img/fon/text_fon_1.svg');
     background-size: cover;
     background-position: center;
     height: 25rem;
@@ -65,8 +65,9 @@
   
     .text-block-dark {
       height: auto;
-      padding-top: 3rem;
-      padding-bottom: 3rem;
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+      margin-top: -3rem;
     }
   
     .rules-title h1 {
@@ -95,8 +96,9 @@
   
     .text-block-dark {
       height: 100%;
-      padding-top: 3rem;
-      padding-bottom: 3rem;
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+      margin-top: -3rem;
     }
   
     .rules-title h1 {

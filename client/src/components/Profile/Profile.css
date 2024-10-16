@@ -1,5 +1,5 @@
 .fon_profil {
-    background-image: url('../../../public/fon/fon_profil.svg');
+    background-image: url('../../../public/img/fon/fon_profil.svg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -17,9 +17,13 @@
     background-color: transparent !important;
   }
 
-  .friend-button {
+  .friend-button, .add-button {
     border: none;
     background-color: transparent;
+  }
+
+  .friend-button img, .add-button img {
+    z-index: 1000;
     width: 2rem;
     height: auto;
   }
@@ -47,14 +51,15 @@
     cursor: pointer;
     text-align: center;
     background-color: transparent;
+    border-radius: 7px;
   }
   
   .btn_1 {
-    background-image: url('../../../public/btn/btn_1.svg');
+    background-image: url('../../../public/img/btn/btn_1.svg');
   }
   
   .btn_2 {
-    background-image: url('../../../public/btn/btn_2.svg');
+    background-image: url('../../../public/img/btn/btn_2.svg');
   }
 
   .pseudo-input {
@@ -65,7 +70,7 @@
     font-size: 16px;
     border-radius: 4px;
   }
-  
+
   .pseudo-input:focus {
     outline: none;
     border-color: #ff9800;
@@ -74,13 +79,19 @@
   .pseudo-container  {
     width: 85%;
     background-color: #F3F2EE;
-    min-height: 40px;
-    max-height: 40px;
+    height: 40px;
   }
   
-  .btn-edit, .btn-save {
+  .container-numero  {
+    height: 60px;
+  }
+
+  .btn-edit, .btn-save-pseudo {
     border: none;
     background-color: transparent;
+  }
+
+  .btn-edit img, .btn-save-pseudo img {
     width: 2rem;
     height: auto;
   }
@@ -120,6 +131,7 @@
   .friend-button {
     width: 1.5rem;
     height: auto;
+    padding-bottom: -20px;
   }
 
   .friend-photo {
@@ -163,6 +175,14 @@
     margin-right: 0 !important;
     margin-bottom: 15rem!important;
   }
+
+  .pseudo-container  {
+    height: 50px;
+  }
+
+  .container-numero {
+    height: 75px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -200,5 +220,13 @@
   .me-4{
     margin-right: 0 !important;
     margin-bottom: 15rem!important;
+  }
+  
+  .pseudo-container  {
+    height: 50px;
+  }
+
+  .container-numero {
+    height: 75px;
   }
 }

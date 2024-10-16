@@ -3,6 +3,7 @@ import { useUserAuth } from "../../context/UserAuthContext.js";
 import Stats from "./Stats.js";
 import Friends from "./Friends.js";
 import Header from "../base/Header/Header.js";
+import Footer from "../base/Footer/Footer.js";
 import UserInfo from "./UserInfo.js";
 import { getOrCreateUser, acceptFriendRequest, declineFriendRequest } from "../../bd/Users.js";
 
@@ -68,6 +69,7 @@ const Profile = () => {
       </div>
 
       <div className="d-grid gap-2"></div>
+      <Footer />
     </>
   );
 };

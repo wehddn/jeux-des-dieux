@@ -47,6 +47,7 @@ async function handleWebSocketConnection(ws, wss) {
 
       switch (type) {
         case 'join':
+          console.log('Joining game:', room, userId);
           await joinGame(gameId, userId, ws, wss);
           break;
         case 'leave':

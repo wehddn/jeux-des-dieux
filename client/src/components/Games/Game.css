@@ -88,11 +88,11 @@
 }
 
 .curse-count {
-  background-image: url('../../../public/games/count_corruption.svg');
+  background-image: url('../../../public/img/games/count_corruption.svg');
 }
 
 .purification-count {
-  background-image: url('../../../public/games/count_purification.svg');
+  background-image: url('../../../public/img/games/count_purification.svg');
 }
 
 .card-count {
@@ -149,7 +149,7 @@
   min-height: 550px;
 }
 .btn-create-game {
-  background-image: url('../../../public/games/btn_cree.svg');
+  background-image: url('../../../public/img/games/btn_cree.svg');
   background-color: transparent;
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -181,8 +181,9 @@
   color: #F7E4C4;
   padding: 1rem;
   font-size: 1.2rem;
+  text-align: center;
   border: none;
-  text-align: left
+  text-align: center
 }
 
 .games-table td {
@@ -191,6 +192,7 @@
   text-align: left;
   color: #313131;
   font-size: 1rem;
+  text-align: center;
 }
 
 .games-table tr {
@@ -271,4 +273,11 @@
 
 .search-container button:hover {
   background-color: #953325;
+}
+
+@media (max-width: 480px) {
+  .games-table th, .games-table td {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
 }

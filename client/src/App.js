@@ -8,6 +8,7 @@ import "./components/Settings/Settings.css";
 import "./components/Profile/Profile.css";
 import "./components/base/Header/Header.css";
 import "./components/Rules/Rules.css";
+import "./components/base/Footer/Footer.css";
 import Profile from "./components/Profile/Profile";
 import Games from "./components/Games/Games";
 import Game from "./components/Games/Game/Game";
@@ -21,6 +22,7 @@ import EmailVerification from "./components/Authorization/EmailVerification";
 import ForgotPassword from "./components/Authorization/ForgotPassword";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { UserAuthContextProvider } from "./context/UserAuthContext";
+import 'boxicons/css/boxicons.min.css';
 
 function App() {
   return (

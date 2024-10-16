@@ -19,7 +19,7 @@ function GameRoom() {
   const ws = useRef(null);
   const hasJoined = useRef(false);
   const messageQueue = useRef([]);
-
+  const wsUrl = process.env.REACT_APP_WS_URL;
   const handleIncomingMessage = useCallback(
     (data) => {
       switch (data.type) {
@@ -91,7 +91,7 @@ function GameRoom() {
   );
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://13.60.180.227:3001");
+    ws.current = new WebSocket(wsUrl);
 
     ws.current.onopen = () => {
       if (ws.current && ws.current.readyState === WebSocket.OPEN) {
