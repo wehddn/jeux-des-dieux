@@ -63,7 +63,9 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
       <div className="row d-flex p-4 pt-4">
         {userProfile.friends &&
           userProfile.friends.map((friendId, index) => (
-            <Friend key={index} userId={friendId} />
+            <div className="col-md-6 col-12 mb-4" key={index}>
+              <Friend userId={friendId} />
+            </div>
           ))}
       </div>
     </div>
