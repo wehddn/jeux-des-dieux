@@ -172,6 +172,15 @@
   transition: transform 0.3s ease;
 }
 
+.game-over-modal h2 {
+  margin-bottom: 1rem;
+}
+
+.game-over-modal p {
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
+}
+
 @media (max-width: 480px) {
   .modal-overlay {
     background-image: url('../public/img/fon/fenetre_big.svg');

@@ -1,7 +1,5 @@
-// src/components/GameOverModal.js
 import React from "react";
 import Modal from "react-modal";
-import "./GameOverModal.css"; // Не забудьте создать CSS для стилизации модального окна
 
 Modal.setAppElement("#root");
 
@@ -9,27 +7,25 @@ function GameOverModal({ isOpen, onRequestClose, isDraw, isWinner }) {
   let message;
   
   if (isDraw) {
-    message = "Игра закончилась ничьей.";
+    message = "Le match s'est terminé par un match nul.";
   } else if (isWinner) {
-    message = "Поздравляем! Вы выиграли игру!";
+    message = "Félicitations ! Vous avez gagné le jeu !";
   } else {
-    message = "Вы проиграли игру.";
+    message = "Vous avez perdu la partie.";
   }
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      contentLabel="Игра окончена"
+      contentLabel="Fin du jeu"
       className="modal-content"
       overlayClassName="modal-overlay"
     >
       <div className="game-over-modal">
-        <h2>Игра окончена</h2>
+        <button onClick={onRequestClose} className="btn-close" />
+        <h2>Fin du jeu</h2>
         <p>{message}</p>
-        <button onClick={onRequestClose} className="btn-close-modal">
-          Закрыть
-        </button>
       </div>
     </Modal>
   );
