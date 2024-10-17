@@ -22,10 +22,10 @@ const Friend = ({ userId }) => {
   }
 
   return (
-    <div>
-      <div className="d-flex justify-content-center row">
+    <div className="d-flex justify-content-center align-items-center row">
+      <div>
         <img
-          className="col-12 friend-photo"
+          className="friend-photo"
           src={`/img/photoProfil/${userProfile.photo}`}
           alt="Profile"
         />
