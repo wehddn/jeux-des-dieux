@@ -25,7 +25,7 @@ function CreateGameModal({ isOpen, onRequestClose, contentLabel }) {
 
       if (isPrivate) {
         if (!password) {
-          alert("Пожалуйста, укажите пароль для закрытой игры.");
+          alert("S'il vous plaît fournir un mot de passe pour le jeu fermé.");
           return;
         }
         gameData.password = password;
@@ -49,6 +49,7 @@ function CreateGameModal({ isOpen, onRequestClose, contentLabel }) {
       overlayClassName="modal-overlay"
     >
       <div>
+        <button onClick={onRequestClose} className="btn-close" />
         <h2>Créer un jeux amical</h2>
         <hr />
         <form onSubmit={handleCreateGame}>

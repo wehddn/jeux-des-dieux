@@ -41,6 +41,7 @@ function PasswordModal({ isOpen, onRequestClose, room, onPasswordCorrect }) {
       className="modal-content"
     >
       <div>
+        <button onClick={onRequestClose} className="btn-close" />
         <h2>Entrez le mot de passe de la pièce</h2>
         <hr />
         <form onSubmit={handleSubmit}>
