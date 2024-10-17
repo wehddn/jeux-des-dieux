@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../context/UserAuthContext.js";
 import Game from "./Game/Game";
+import GameOverModal from "./GameOverModal";
 
 function GameRoom() {
   const { id } = useParams();
@@ -19,6 +20,12 @@ function GameRoom() {
   const ws = useRef(null);
   const hasJoined = useRef(false);
   const messageQueue = useRef([]);
+  const navigate = useNavigate();
+  
+  const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
+  const [isDraw, setIsDraw] = useState(false);
+  const [isWinner, setIsWinner] = useState(false);
+
   const handleIncomingMessage = useCallback(
     (data) => {
       switch (data.type) {
@@ -68,17 +75,15 @@ function GameRoom() {
           break;
 
         case "gameOver":
+          setStatus("gameOver");
           if (data.isDraw) {
-            setStatus("gameOver");
-            alert("Игра закончилась ничьей.");
+            setIsDraw(true);
+            setIsWinner(false);
           } else {
-            setStatus("gameOver");
-            if (data.winnerId === user.uid) {
-              alert("Поздравляем! Вы выиграли игру!");
-            } else {
-              alert("Вы проиграли игру.");
-            }
+            setIsDraw(false);
+            setIsWinner(data.winnerId === user.uid);
           }
+          setIsGameOverModalOpen(true);
           break;
 
         default:
@@ -215,6 +220,11 @@ function GameRoom() {
     }
   };
 
+  const closeGameOverModal = () => {
+    setIsGameOverModalOpen(false);
+    navigate("/games");
+  };
+
   return (
     <div>
       {status === "waiting" && <p>Waiting for players...</p>}
@@ -239,8 +249,15 @@ function GameRoom() {
       {status === "full" && <p>This room is full. You cannot join.</p>}
       {status === "disconnected" && <p>Disconnected from server.</p>}
       {status === "error" && <p>Error connecting to server.</p>}
+
+      <GameOverModal
+        isOpen={isGameOverModalOpen}
+        onRequestClose={closeGameOverModal}
+        isDraw={isDraw}
+        isWinner={isWinner}
+      />
     </div>
-  );  
+  );
 }
 
 export default GameRoom;
