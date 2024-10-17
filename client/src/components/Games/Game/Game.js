@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PlayerField from "./PlayerField";
 import Hand from "./Hand";
+import HelpModal from "./HelpModal";
 
 function Game({
   hand,
@@ -13,6 +14,7 @@ function Game({
   sendPlayPurificationCard,
 }) {
   const [selectedCard, setSelectedCard] = useState(null);
+  const [helpModalIsOpen, setHelpModalIsOpen] = useState(false);
   const isCurrentPlayer =
     gameState.players[gameState.currentPlayer].id === user.uid;
 
@@ -96,8 +98,26 @@ function Game({
     setSelectedCard(null);
   };
 
+  const openHelpModal = () => {
+    setHelpModalIsOpen(true);
+  };
+
+  const closeHelpModal = () => {
+    setHelpModalIsOpen(false);
+  };
+
   return (
     <div className="game">
+      <div className="d-flex justify-content-end align-items-center">
+      <button className="btn-help" onClick={openHelpModal}>
+      <i alt="Edit" className="bx bx-question-mark "></i>
+        </button>
+      </div>
+        <HelpModal
+          isOpen={helpModalIsOpen}
+          onRequestClose={closeHelpModal}
+          contentLabel="Aide"
+        />
       <div className="opponent-field">
         {gameState.players
           .filter((player) => player.id !== user.uid)

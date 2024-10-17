@@ -32,7 +32,7 @@ const Rules = () => {
             <li>Début du jeu : Chaque joueur commence avec 4 cartes.</li>
             <li>Le tour : Pendant son tour, chacun dois jouer une carte de héros ou une carte de puissance. Si le joueur ne veux pas jouer, il peut défausser une carte. À la fin de son tour, il pioche une nouvelle carte.</li>
             <li>Objectif du jeu : Le but est de rassembler 4 héros de la même faction pour gagner. Seuls les héros purifiés (non corrompus) comptent pour la victoire.</li>
-            <li>Corruption et Purification : Corruption rend un héros faible. Si un héros reçoit 2 cartes de corruption, il est éliminé du jeu. Purification enlève la corruption. Si un héros reçoit 2 cartes de purification, il est protégé et ne peut plus être corrompu.</li>
+            <li>Corruption et Purification : Corruption rend un héros faible. Si un héros reçoit 2 cartes de corruption, il est éliminé du jeu. Purification enlève la corruption.</li>
         </ul>
       </div>
 

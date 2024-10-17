@@ -181,6 +181,41 @@
   font-size: 1.2rem;
 }
 
+
+.btn-help {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  background-color: #ff9800; /* Пример фона, можно изменить по необходимости */
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.factions-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.factions-table th,
+.factions-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.factions-table th {
+  background-color: #f2f2f2;
+}
+
+.faction-image {
+  width: 100px; /* Настройте размер по необходимости */
+  height: auto;
+}
+
 @media (max-width: 480px) {
   .modal-overlay {
     background-image: url('../public/img/fon/fenetre_big.svg');
