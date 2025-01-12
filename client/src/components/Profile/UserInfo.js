@@ -29,13 +29,13 @@ const UserInfo = ({ userProfile }) => {
   };
 
   return (
-    <div className="card profile-info d-flex ms-4 mt-4">
+    <section className="card profile-info d-flex ms-4 mt-4" aria-label="User Information">
       <div className="p-4">
         <div className="d-flex justify-content-center">
           <img
             className="photoProfil"
             src={`/img/photoProfil/${userProfile.photo}`}
-            alt="Profile"
+            alt="User profile"
           />
         </div>
         <div className="d-flex justify-content-start">
@@ -50,8 +50,8 @@ const UserInfo = ({ userProfile }) => {
                 onChange={handleInputChange}
                 className="pseudo-input"
               />
-              <button onClick={handleSaveClick} className="btn-save-pseudo">
-                <img src={`/img/btn/save.svg`} alt="Save" className="btn-save-pseudo" />
+              <button onClick={handleSaveClick} className="btn-save-pseudo"  aria-label="Save Pseudo">
+                <img src={`/img/btn/save.svg`} alt="Save" className="btn-save-pseudo"/>
               </button>
             </div>
           ) : (
@@ -59,7 +59,7 @@ const UserInfo = ({ userProfile }) => {
               <div className="pseudo-container">
                 <p className="m-2">{userProfile.name || "Player"}</p>
               </div>
-              <button onClick={handleEditClick} className="btn-edit">
+              <button onClick={handleEditClick} className="btn-edit" aria-label="Edit Pseudo">
                 <img src={`/img/btn/edit.svg`} alt="Edit" className="btn-edit" />
               </button>
             </>
@@ -80,7 +80,7 @@ const UserInfo = ({ userProfile }) => {
           <p className="m-2 word-break">{userProfile.id}</p>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

@@ -37,11 +37,11 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
   };
 
   return (
-    <div className="card d-flex mt-4">
-      <h2 className="pt-4 profile-tittle">Mes Amis</h2>
+    <section className="card d-flex mt-4" aria-label="Friends List">
+      <h2 className="pt-4 profile-title">Mes Amis</h2>
       <div className="p-3 pt-4 row">
         <div className="d-flex justify-content-center col-6">
-          <button className="btn_1" onClick={openSearchModal}>Trouver</button>
+          <button className="btn_1" onClick={openSearchModal} aria-label="Search Friends">Trouver</button>
           <FriendSearchModal
             isOpen={isSearchModalOpen}
             onRequestClose={closeSearchModal}
@@ -49,7 +49,7 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
           />
         </div>
         <div className="d-flex justify-content-center col-6">
-          <button className="btn_2" onClick={openRequestsModal}>Demandes</button>
+          <button className="btn_2" onClick={openRequestsModal} aria-label="View Friend Requests">Demandes</button>
           <FriendRequestsModal
             isOpen={isRequestsModalOpen}
             onRequestClose={closeRequestsModal}
@@ -63,12 +63,12 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
       <div className="row d-flex p-4 pt-4">
         {userProfile.friends &&
           userProfile.friends.map((friendId, index) => (
-            <div className="col-md-6 col-12 mb-4" key={index}>
+            <article className="col-md-6 col-12 mb-4" key={index} aria-label="Friend">
               <Friend userId={friendId} />
-            </div>
+            </article>
           ))}
       </div>
-    </div>
+    </section>
   );
 };
 

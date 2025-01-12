@@ -22,16 +22,14 @@ const Friend = ({ userId }) => {
   }
 
   return (
-    <div className="d-flex justify-content-center align-items-center row">
-      <div>
-        <img
-          className="friend-photo"
-          src={`/img/photoProfil/${userProfile.photo}`}
-          alt="Profile"
-        />
-      </div>
+    <section className="friend" aria-label="Friend">
+      <img
+        className="friend-photo"
+        src={`/img/photoProfil/${userProfile.photo}`}
+        alt={`${userProfile.name}'s profile`}
+      />
       <p>{userProfile.name}</p>
-    </div>
+    </section>
   );
 };
 

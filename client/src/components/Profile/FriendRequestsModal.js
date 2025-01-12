@@ -9,30 +9,33 @@ const FriendRequestsModal = ({ isOpen, onRequestClose, receivedRequests, handleA
       onRequestClose={onRequestClose}
       overlayClassName="modal-overlay"
       className="modal-content"
+      contentLabel="Friend Requests"
     >
-      <button onClick={onRequestClose} className="btn-close" />
-      <h2>Demandes d'amis reçues</h2>
+      <header>
+        <button onClick={onRequestClose} className="btn-close" aria-label="Close" />
+        <h2>Demandes d'amis reçues</h2>
+      </header>
       <hr />
       {receivedRequests && receivedRequests.length > 0 ? (
-        <div className="container-modal-friend">
+        <section className="container-modal-friend">
           <div className="row">
             {receivedRequests.map((friendId, index) => (
-              <div className="col-md-4 mb-4" key={index}>
+              <article className="col-md-4 mb-4" key={index} aria-label="Friend Request">
                 <div className="friend-card text-center">
                   <div className="d-flex justify-content-between me-4 ms-4">
-                    <button onClick={() => handleDecline(friendId)} className="friend-button me-2">
+                    <button onClick={() => handleDecline(friendId)} className="friend-button me-2" aria-label="Decline">
                       <img src={`/img/btn/croix.svg`} alt="suppr." width="20" />
                     </button>
-                    <button onClick={() => handleAccept(friendId)} className=" add-button">
+                    <button onClick={() => handleAccept(friendId)} className=" add-button" aria-label="Accept">
                       <img src={`/img/btn/save.svg`} alt="add." width="20" />
                     </button>
                   </div>
                   <Friend userId={friendId} />
                 </div>
-              </div>
+              </article>
             ))}
           </div>
-        </div>
+        </section>
       ) : (
         <p>Vous n'avez pas de nouvelles demandes.</p>
       )}

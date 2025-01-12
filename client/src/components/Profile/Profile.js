@@ -44,33 +44,31 @@ const Profile = () => {
   }, [userId, userEmail]);
 
   return (
-    <>
-      <Header></Header>
-      <div className="fon_profil">
+    <main className="profile">
+      <Header />
+      <section className="fon_profil" aria-label="User Profile">
         {userProfile ? (
           <div className="row d-flex">
-            <div className="col-lg-4 col-12 colone-profil">
+            <section className="col-lg-4 col-12 colone-profil" aria-label="User Info">
               <UserInfo userProfile={userProfile} />
-            </div>
-            <div className="col-lg-4 col-12 colone-profil">
+            </section>
+            <section className="col-lg-4 col-12 colone-profil" aria-label="Friends Section">
               <Friends 
                 userProfile={userProfile}
                 handleAcceptFriendRequest={handleAcceptFriendRequest}
                 handleDeclineFriendRequest={handleDeclineFriendRequest}
               />
-            </div>
-            <div className="col-lg-4 col-12 colone-profil">
+            </section>
+            <section className="col-lg-4 col-12 colone-profil" aria-label="User Stats">
               <Stats userProfile={userProfile} />
-            </div>
+            </section>
           </div>
         ) : (
           <p>Loading...</p>
         )}
-      </div>
-
-      <div className="d-grid gap-2"></div>
+      </section>
       <Footer />
-    </>
+    </main>
   );
 };
 
