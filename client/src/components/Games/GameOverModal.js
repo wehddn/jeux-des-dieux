@@ -22,11 +22,11 @@ function GameOverModal({ isOpen, onRequestClose, isDraw, isWinner }) {
       className="modal-content"
       overlayClassName="modal-overlay"
     >
-      <div className="game-over-modal">
-        <button onClick={onRequestClose} className="btn-close" />
+      <section className="game-over-modal">
+        <button onClick={onRequestClose} className="btn-close" aria-label="Close"/>
         <h2>Fin du jeu</h2>
         <p>{message}</p>
-      </div>
+      </section>
     </Modal>
   );
 }

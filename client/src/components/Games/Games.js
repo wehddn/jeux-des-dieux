@@ -82,7 +82,7 @@ function Games() {
   return (
     <div>
       <Header />
-      <div className="games-container">
+      <main className="games-container">
         <button className="btn-create-game" onClick={openModal}>
           Créer un JEU
         </button>
@@ -91,7 +91,7 @@ function Games() {
           onRequestClose={closeModal}
           contentLabel="Fenetre pour créer un JEU"
         />
-        <table className="games-table">
+        <table className="games-table" aria-label="Games List">
           <thead>
             <tr>
               <th>Public ou non</th>
@@ -122,6 +122,7 @@ function Games() {
                   <button
                     className="btn-join-room"
                     onClick={() => joinRoom(room)}
+                    aria-label="Join Room"
                   >
                     <img src={`/img/games/door.svg`} alt="door" />
                   </button>
@@ -138,7 +139,7 @@ function Games() {
             onPasswordCorrect={handlePasswordCorrect}
           />
         )}
-      </div>
+      </main>
       <Footer />
     </div>
   );

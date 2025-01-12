@@ -48,49 +48,45 @@ function CreateGameModal({ isOpen, onRequestClose, contentLabel }) {
       className="modal-content"
       overlayClassName="modal-overlay"
     >
-      <div>
-        <button onClick={onRequestClose} className="btn-close" />
+      <section>
+        <button
+          onClick={onRequestClose}
+          className="btn-close"
+          aria-label="Close"
+        />
         <h2>Créer un jeux amical</h2>
         <hr />
         <form onSubmit={handleCreateGame}>
-          <div>
-            <label>
-              Nom du jeu :
-              <div>
-                <input
-                  type="text"
-                  value={gameName}
-                  onChange={(e) => setGameName(e.target.value)}
-                  required
-                />
-              </div>
-            </label>
-          </div>
-          <div className="checkbox-container">
-            <label>Jeu fermé : </label>
+          <label>
+            Nom du jeu :
+            <input
+              type="text"
+              value={gameName}
+              onChange={(e) => setGameName(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Jeu fermé :
             <input
               type="checkbox"
               checked={isPrivate}
               onChange={() => setIsPrivate(!isPrivate)}
             />
-          </div>
+          </label>
 
-          <div>
-            {isPrivate && (
-              <label>
-                Mot de passe :
-                <div>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-              </label>
-            )}
-          </div>
-          <div className="box-btn-modal">
+          {isPrivate && (
+            <label>
+              Mot de passe :
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </label>
+          )}
+          <footer className="box-btn-modal">
             <button type="submit" className="btn-save">
               Créer
             </button>
@@ -101,9 +97,9 @@ function CreateGameModal({ isOpen, onRequestClose, contentLabel }) {
             >
               Annulation
             </button>
-          </div>
+          </footer>
         </form>
-      </div>
+      </section>
     </Modal>
   );
 }

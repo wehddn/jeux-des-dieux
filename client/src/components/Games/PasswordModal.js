@@ -40,26 +40,22 @@ function PasswordModal({ isOpen, onRequestClose, room, onPasswordCorrect }) {
       overlayClassName="modal-overlay"
       className="modal-content"
     >
-      <div>
-        <button onClick={onRequestClose} className="btn-close" />
+      <section>
+        <button onClick={onRequestClose} className="btn-close" aria-label="Close" />
         <h2>Entrez le mot de passe de la pièce</h2>
         <hr />
         <form onSubmit={handleSubmit}>
-          <div>
-            <label>
-              Mot de passe:
-              <div>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-            </label>
-          </div>
+          <label>
+            Mot de passe:
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </label>
           {error && <p style={{ color: "red" }}>{error}</p>}
-          <div className="box-btn-modal">
+          <footer className="box-btn-modal">
             <button type="submit" className="btn-save">
               Entrer
             </button>
@@ -70,9 +66,9 @@ function PasswordModal({ isOpen, onRequestClose, room, onPasswordCorrect }) {
             >
               Annulation
             </button>
-          </div>
+          </footer>
         </form>
-      </div>
+      </section>
     </Modal>
   );
 }

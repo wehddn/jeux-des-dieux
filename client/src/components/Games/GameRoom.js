@@ -226,7 +226,7 @@ function GameRoom() {
   };
 
   return (
-    <div>
+    <main>
       {status === "waiting" && <p>Waiting for players...</p>}
       {status === "joined" && (
         <p>Player joined. Waiting for another player...</p>
@@ -256,7 +256,7 @@ function GameRoom() {
         isDraw={isDraw}
         isWinner={isWinner}
       />
-    </div>
+    </main>
   );
 }
 
