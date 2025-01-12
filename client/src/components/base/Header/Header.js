@@ -16,24 +16,39 @@ const Header = () => {
   };
 
   return (
-    <div className="header-buttons">
-      <button className="header-button header-btn-profile" onClick={() => navigate("/profile")}>
-        Profile
-      </button>
-      <button className="header-button header-btn-rules" onClick={() => navigate("/rules")}>
-        Règles
-      </button>
-      <button className="header-button header-btn-games" onClick={() => navigate("/games")}>
-        Games
-      </button>
-      <button className="header-button header-btn-settings" onClick={() => navigate("/settings")}>
-        Settings
-      </button>
-      <button className="header-button header-btn-logout" onClick={handleLogout}>
-        Log out
-      </button>
-    </div>
-  );
+    <header className="header-buttons">
+        <button 
+            className="header-button header-btn-profile" 
+            onClick={() => navigate("/profile")}
+            aria-label="Profile">
+            Profile
+        </button>
+        <button 
+            className="header-button header-btn-rules" 
+            onClick={() => navigate("/rules")}
+            aria-label="Rules">
+            Règles
+        </button>
+        <button 
+            className="header-button header-btn-games" 
+            onClick={() => navigate("/games")}
+            aria-label="Games">
+            Games
+        </button>
+        <button 
+            className="header-button header-btn-settings" 
+            onClick={() => navigate("/settings")}
+            aria-label="Settings">
+            Settings
+        </button>
+        <button 
+            className="header-button header-btn-logout" 
+            onClick={handleLogout}
+            aria-label="Log out">
+            Log out
+        </button>
+    </header>
+);
 };
 
 export default Header;
