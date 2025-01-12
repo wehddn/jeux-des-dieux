@@ -20,14 +20,14 @@ const Settings = () => {
   }
 
   return (
-    <>
-      <Header></Header>
-      <div className="settings_context">
+    <main>
+      <Header />
+      <section className="settings_context" aria-label="User Settings">
         <h1>Settings</h1>
-        <button onClick={handleDeleteClick} className="btn-del">Supprimer Le Profil</button>
-      </div>
+        <button onClick={handleDeleteClick} className="btn-del" aria-label="Delete Profile">Supprimer Le Profil</button>
+      </section>
       <Footer />
-    </>
+    </main>
   );
 };
 

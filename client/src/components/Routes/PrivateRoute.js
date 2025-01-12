@@ -63,7 +63,7 @@ function PrivateRoute({ children }) {
   }
 
   return (
-    <>
+    <main>
       {isAuthorized && children}
       {!isAuthorized && !loading && showPasswordModal && (
         <PasswordModal
@@ -71,12 +71,13 @@ function PrivateRoute({ children }) {
           onRequestClose={handlePasswordModalClose}
           room={ id }
           onPasswordCorrect={handlePasswordCorrect}
+          aria-label="Password Required"
         />
       )}
       {!isAuthorized && !loading && !showPasswordModal && (
         <Navigate to="/" replace />
       )}
-    </>
+    </main>
   );
 }
 
