@@ -22,9 +22,9 @@ function GameOverModal({ isOpen, onRequestClose }) {
         }
       }}
     >
-      <div className="game-over-modal">
+      <section className="game-over-modal">
       
-        <button onClick={onRequestClose} className="btn-close" />
+        <button onClick={onRequestClose} className="btn-close" aria-label="Close Help" />
         
         <h2>Aide</h2>
         <ul>
@@ -32,7 +32,7 @@ function GameOverModal({ isOpen, onRequestClose }) {
         <p>Le premier joueur qui réussit à avoir 4 héros de la même faction gagne la partie!</p>
         <p>Corruption et Purification : Corruption rend un héros faible. Si un héros reçoit 2 cartes de corruption, il est éliminé du jeu. Purification enlève la corruption.</p>
         <h2>Composants du jeu :</h2>
-        <table className="factions-table">
+        <table className="factions-table" aria-label="Game Components">
           <thead>
             <tr>
               <th>Fraction</th>
@@ -73,7 +73,7 @@ function GameOverModal({ isOpen, onRequestClose }) {
           </tbody>
         </table>
       </ul>  
-      </div>
+      </section>
     </Modal>
   );
 }

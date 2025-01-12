@@ -107,18 +107,18 @@ function Game({
   };
 
   return (
-    <div className="game">
+    <main className="game">
       <div className="d-flex justify-content-end align-items-center">
-      <button className="btn-help" onClick={openHelpModal}>
-      <i alt="Edit" className="bx bx-question-mark "></i>
+        <button className="btn-help" onClick={openHelpModal} aria-label="Open Help">
+          <i alt="Help" className="bx bx-question-mark "></i>
         </button>
       </div>
-        <HelpModal
-          isOpen={helpModalIsOpen}
-          onRequestClose={closeHelpModal}
-          contentLabel="Aide"
-        />
-      <div className="opponent-field">
+      <HelpModal
+        isOpen={helpModalIsOpen}
+        onRequestClose={closeHelpModal}
+        contentLabel="Aide"
+      />
+      <section className="opponent-field">
         {gameState.players
           .filter((player) => player.id !== user.uid)
           .map((player, index) => (
@@ -139,24 +139,26 @@ function Game({
               />
             </div>
           ))}
-      </div>
+      </section>
 
-      <div className="deck-and-discard">
+      <section className="deck-and-discard">
         <div
           className="discard-pile"
+          aria-label="Discard Pile"
           style={{ padding: "10px", border: "1px solid black" }}
         >
           Défausse : {gameState.discardPile.length} cartes
         </div>
         <div
           className="deck"
+          aria-label="Deck"
           style={{ padding: "10px", border: "1px solid black" }}
         >
           Pioche : {deck.length} cartes
         </div>
-      </div>
+      </section>
 
-      <div className="player-field">
+      <section className="player-field">
         <PlayerField
           player={gameState.players.find((p) => p.id === user.uid)}
           index={gameState.players.findIndex((p) => p.id === user.uid)}
@@ -170,7 +172,7 @@ function Game({
           currentPlayer={gameState.currentPlayer}
           slotColors={slotColors}
         />
-      </div>
+      </section>
 
       <Hand
         cards={hand || []}
@@ -183,7 +185,7 @@ function Game({
       {getPlayerStatusMessage(
         gameState.players.findIndex((p) => p.id === user.uid)
       )}
-    </div>
+    </main>
   );
 }
 

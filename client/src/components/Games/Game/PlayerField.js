@@ -21,7 +21,7 @@ function PlayerField({ player, index, colors, onDropCard, onSlotClick, currentPl
     }
   };
   return (
-    <div className="player-field pb-2">
+    <section className="player-field pb-2" aria-label="Player Field">
       <div className="card-slots">
         {colors.map((color, slotIndex) => {
           const cardsInSlot = player.table.filter(card => card.slot === slotIndex);
@@ -33,27 +33,28 @@ function PlayerField({ player, index, colors, onDropCard, onSlotClick, currentPl
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => onDropCard(e, index, slotIndex)}
               onClick={() => onSlotClick(slotIndex)}
+              aria-label={`Slot ${slotIndex}`}
             >
               {cardsInSlot.map((card, i) => <Card key={i} card={card} />)}
               <div 
                 className="card-count" 
-                style={{ backgroundImage: `url(${getBackgroundImage('count', Object.keys(slotColors)[slotIndex])})` }}
+                style={{ backgroundImage: `url(${getBackgroundImage('count', Object.keys(slotColors)[slotIndex])})` }} aria-label="Card Count"
               >
                 {cardsInSlot.length - cardsInSlot.filter(card => card.isCurse === true).length - cardsInSlot.filter(card => card.isPurification === true).length}
               </div>
               
-              <div className="curse-count" >
+              <div className="curse-count" aria-label="Curse Count">
                 {cardsInSlot.filter(card => card.isCurse === true).length}
               </div>
 
-              <div className="purification-count" >
+              <div className="purification-count" aria-label="Purification Count">
                 {cardsInSlot.filter(card => card.isPurification === true).length}
               </div>
             </div>
           );
         })}
       </div>
-    </div>
+    </section>
   );
 }
 

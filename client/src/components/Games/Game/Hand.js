@@ -3,7 +3,7 @@ import Card from './Card';
 
 function Hand({ cards, onDragStart, onCardClick, onCardDoubleClick }) {
   return (
-    <div className="hand">
+    <section className="hand" aria-label="Player Hand">
       {cards.map((card, index) => (
         <div
           key={`${card.suit}-${card.value}-${index}`}
@@ -16,7 +16,7 @@ function Hand({ cards, onDragStart, onCardClick, onCardDoubleClick }) {
           />
         </div>
       ))}
-    </div>
+    </section>
   );
 }
 
