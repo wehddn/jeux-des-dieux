@@ -28,7 +28,7 @@ const EmailVerification = () => {
   }, [user, navigate]);
 
   return (
-    <div className="p-4 box">
+    <section className="p-4 box">
       <h2 className="mb-3">Vérifiez Votre Adresse E-Mail</h2>
       <p>
         Merci de vous être inscrit! Un e-mail a été envoyé à votre adresse e-mail. Veuillez suivre les instructions dans l'e-mail pour vérifier votre compte.
@@ -40,7 +40,7 @@ const EmailVerification = () => {
         <Button variant="primary" className="button-custom" onClick={handleRefresh}>J'AI CONFIRMÉ MON EMAIL</Button>
         <Button variant="primary" className="button-custom" onClick={handleLogout}>DÉCONNECTER</Button>
       </div>
-    </div>
+    </section>
   );
 };
 

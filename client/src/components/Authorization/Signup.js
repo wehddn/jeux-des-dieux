@@ -23,39 +23,33 @@ const Signup = () => {
   };
 
   return (
-    <>
-      <div className="p-4 box">
-        {error && <Alert variant="danger">{error}</Alert>}
-
-        <Form onSubmit={handleSubmit}>
-          <h2 className="mb-3">MAIL</h2>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Control
-              type="email"
-              placeholder="Email address"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Form.Group>
-          <h2 className="mb-3">MOT DE PASSE</h2>
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Control
-              type="password"
-              placeholder="Password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </Form.Group>
-
-          <div className="d-flex justify-content-center align-items-center row">
-            <Button variant="primary" type="Submit" className="button-custom">S'INSCIRE</Button>
-          </div>
-        </Form>
+    <section className="p-4 box">
+      {error && <Alert variant="danger">{error}</Alert>}
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Label>MAIL</Form.Label>
+          <Form.Control
+            type="email"
+            placeholder="Email address"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+          <Form.Label>MOT DE PASSE</Form.Label>
+          <Form.Control
+            type="password"
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </Form.Group>
         <div className="d-flex justify-content-center align-items-center row">
-        <Button variant="primary" className="button-custom" onClick={() => navigate("/forgot-password")}>
-          MOT DE PASS OUBLIÉ
-        </Button>
+          <Button variant="primary" type="Submit" className="button-custom">S'INSCRIRE</Button>
         </div>
+      </Form>
+      <div className="d-flex justify-content-center align-items-center row">
+        <Button variant="primary" className="button-custom" onClick={() => navigate("/forgot-password")}>MOT DE PASS OUBLIÉ</Button>
       </div>
-    </>
+    </section>
   );
 };
 

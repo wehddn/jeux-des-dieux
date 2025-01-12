@@ -28,7 +28,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="p-4 box">
+    <section className="p-4 box">
       <h2 className="mb-3">Récupération de mot de passe</h2>
       {error && <Alert variant="danger">{error}</Alert>}
       {message && <Alert variant="success">{message}</Alert>}
@@ -51,7 +51,7 @@ const ForgotPassword = () => {
             RETOUR À LA CONNEXION
         </Button>
       </div>
-    </div>
+    </section>
   );
 };
 
