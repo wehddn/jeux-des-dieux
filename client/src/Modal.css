@@ -42,6 +42,8 @@
 /* Горизонтальная линия */
 .modal-content hr {
   border-bottom: 3px solid #313131;
+  margin-left: 2rem;
+  margin-right: 4rem;
 }
 
 /* Метки форм */
