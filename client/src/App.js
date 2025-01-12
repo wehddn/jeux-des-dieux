@@ -26,9 +26,9 @@ import 'boxicons/css/boxicons.min.css';
 
 function App() {
   return (
-    <div className="App-header">
-      <div className="App-overlay"></div>
-      <div className="App-content">
+    <header className="App-header">
+      <div className="App-overlay" aria-hidden="true"></div>
+      <main className="App-content">
         <Container>
           <Row>
             <Col>
@@ -91,8 +91,8 @@ function App() {
             </Col>
           </Row>
         </Container>
-      </div>
-    </div>
+      </main>
+    </header>
   );
 }
 
