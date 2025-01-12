@@ -26,7 +26,7 @@ import 'boxicons/css/boxicons.min.css';
 
 function App() {
   return (
-    <header className="App-header">
+    <div className="App-wrapper">
       <div className="App-overlay" aria-hidden="true"></div>
       <main className="App-content">
         <Container>
@@ -92,7 +92,7 @@ function App() {
           </Row>
         </Container>
       </main>
-    </header>
+    </div>
   );
 }
 
