@@ -8,7 +8,7 @@
   align-items: center;
   justify-content: center;
   background-size: cover;
-  background-position: center; 
+  background-position: center;
   min-height: 100vh;
 }
 
@@ -30,12 +30,11 @@
   color: white;
   background-color: #313131;
   min-height: 100vh;
-  min-width: 140vh;
-  max-width: 140vh;
+  padding: 10px;
 }
 
 .button-custom {
-  width: 60%;
+  width: 100%;
   font-size: 16px;
   font-weight: bold;
   background-color: #4f4e4e;
@@ -43,7 +42,7 @@
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
-  margin: 10px;
+  margin: 10px 0;
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -52,10 +51,24 @@
   background-color: #272727;
 }
 
-@media (max-width: 480px) {
+@media (min-width: 768px) {
   .App-content {
-    min-height: 100%;
-    min-width: 100%;
-    max-width: 100%;
+    padding: 20px;
+    max-width: 720px;
+  }
+
+  .button-custom {
+    width: 75%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .App-content {
+    padding: 40px;
+    max-width: 960px;
+  }
+
+  .button-custom {
+    width: 60%;
   }
 }
