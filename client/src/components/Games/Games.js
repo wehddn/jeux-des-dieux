@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
-import CreateGameModal from "./CreateGameModal";
 import { getGamesList, getUser } from "../../bd/Games";
-import PasswordModal from "./PasswordModal";
 import Header from "../base/Header/Header.js";
 import Footer from "../base/Footer/Footer.js";
+
+const CreateGameModal = React.lazy(() => import("./CreateGameModal"));
+const PasswordModal = React.lazy(() => import("./PasswordModal"));
 
 function Games() {
   const [rooms, setRooms] = useState([]);
@@ -82,15 +83,19 @@ function Games() {
   return (
     <div>
       <Header />
-      <main className="games-container">
+      <div className="games-container">
         <button className="btn-create-game" onClick={openModal}>
           Créer un JEU
         </button>
-        <CreateGameModal
-          isOpen={modalIsOpen}
-          onRequestClose={closeModal}
-          contentLabel="Fenetre pour créer un JEU"
-        />
+
+        <Suspense fallback={<div>Loading Create Game Modal...</div>}>
+          <CreateGameModal
+            isOpen={modalIsOpen}
+            onRequestClose={closeModal}
+            contentLabel="Fenetre pour créer un JEU"
+          />
+        </Suspense>
+
         <table className="games-table" aria-label="Games List">
           <thead>
             <tr>
@@ -131,15 +136,18 @@ function Games() {
             ))}
           </tbody>
         </table>
+
         {selectedRoom && (
-          <PasswordModal
-            isOpen={passwordModalIsOpen}
-            onRequestClose={closePasswordModal}
-            room={selectedRoom}
-            onPasswordCorrect={handlePasswordCorrect}
-          />
+          <Suspense fallback={<div>Loading Password Modal...</div>}>
+            <PasswordModal
+              isOpen={passwordModalIsOpen}
+              onRequestClose={closePasswordModal}
+              room={selectedRoom}
+              onPasswordCorrect={handlePasswordCorrect}
+            />
+          </Suspense>
         )}
-      </main>
+      </div>
       <Footer />
     </div>
   );

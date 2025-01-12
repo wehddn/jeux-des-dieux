@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../context/UserAuthContext.js";
 import Game from "./Game/Game";
-import GameOverModal from "./GameOverModal";
+
+const GameOverModal = React.lazy(() => import("./GameOverModal"));
 
 function GameRoom() {
   const { id } = useParams();
@@ -250,12 +251,14 @@ function GameRoom() {
       {status === "disconnected" && <p>Disconnected from server.</p>}
       {status === "error" && <p>Error connecting to server.</p>}
 
+      <Suspense fallback={<div>Loading...</div>}>
       <GameOverModal
         isOpen={isGameOverModalOpen}
         onRequestClose={closeGameOverModal}
         isDraw={isDraw}
         isWinner={isWinner}
       />
+      </Suspense>
     </main>
   );
 }

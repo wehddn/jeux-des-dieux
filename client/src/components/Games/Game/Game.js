@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import PlayerField from "./PlayerField";
 import Hand from "./Hand";
-import HelpModal from "./HelpModal";
+
+const HelpModal = React.lazy(() => import("./HelpModal"));
 
 function Game({
   hand,
@@ -113,11 +114,13 @@ function Game({
           <i alt="Help" className="bx bx-question-mark "></i>
         </button>
       </div>
-      <HelpModal
-        isOpen={helpModalIsOpen}
-        onRequestClose={closeHelpModal}
-        contentLabel="Aide"
-      />
+      <Suspense fallback={<div>Loading Help Modal...</div>}>
+        <HelpModal
+          isOpen={helpModalIsOpen}
+          onRequestClose={closeHelpModal}
+          contentLabel="Aide"
+        />
+      </Suspense>
       <section className="opponent-field">
         {gameState.players
           .filter((player) => player.id !== user.uid)
