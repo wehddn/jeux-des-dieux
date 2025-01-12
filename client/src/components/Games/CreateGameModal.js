@@ -60,6 +60,7 @@ function CreateGameModal({ isOpen, onRequestClose, contentLabel }) {
           <label>
             Nom du jeu :
             <input
+              className="create-game-input"
               type="text"
               value={gameName}
               onChange={(e) => setGameName(e.target.value)}
@@ -69,6 +70,7 @@ function CreateGameModal({ isOpen, onRequestClose, contentLabel }) {
           <label>
             Jeu fermé :
             <input
+              className="create-game-checkbox"
               type="checkbox"
               checked={isPrivate}
               onChange={() => setIsPrivate(!isPrivate)}
@@ -79,6 +81,7 @@ function CreateGameModal({ isOpen, onRequestClose, contentLabel }) {
             <label>
               Mot de passe :
               <input
+                className="create-game-input"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

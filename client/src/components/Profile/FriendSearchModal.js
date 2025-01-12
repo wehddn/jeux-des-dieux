@@ -48,6 +48,7 @@ const FriendSearchModal = ({ isOpen, onRequestClose, userProfile }) => {
       <hr />
       <div>
         <input
+          className="friend-search-input"
           type="text"
           placeholder="Cherche des amis"
           value={searchTerm}
