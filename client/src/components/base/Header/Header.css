@@ -8,6 +8,16 @@
   width: 100%;
   margin-top: 5px;
 }
+@media (min-width: 481px) and (max-width: 768px) {
+  .header-buttons {
+    gap: 10px;
+  }
+}
+@media (min-width: 769px) {
+  .header-buttons {
+    gap: 20px;
+  }
+}
 
 .header-button {
   text-align: center;
@@ -25,54 +35,45 @@
   border: none;
   font-weight: bold;
 }
-
-.header-btn-profile {
-  background-image: url('../../../../public/img/header/header_btn_v1.svg');
-  background-color: transparent;
-}
-
-.header-btn-rules {
-  background-image: url('../../../../public/img/header/header_btn_v2.svg');
-  background-color: transparent;
-}
-
-.header-btn-games {
-  background-image: url('../../../../public/img/header/header_btn_v3.svg');
-  background-color: transparent;
-}
-
-.header-btn-settings {
-  background-image: url('../../../../public/img/header/header_btn_v2.svg');
-  background-color: transparent;
-}
-
-.header-btn-logout {
-  background-image: url('../../../../public/img/header/header_btn_v1.svg');
-  background-color: transparent;
-}
-
 .header-button:hover {
   transform: scale(1.05);
 }
-
 @media (min-width: 481px) and (max-width: 768px) {
-  .header-buttons {
-    gap: 10px;
-  }
-
   .header-button {
     padding: 1.5rem;
     font-size: 14px;
   }
 }
-
 @media (min-width: 769px) {
-  .header-buttons {
-    gap: 20px;
-  }
-
   .header-button {
     padding: 2rem;
     font-size: 16px;
   }
 }
+
+.header-btn-profile {
+  background-image: url("../../../../public/img/header/header_btn_v1.svg");
+  background-color: transparent;
+}
+
+.header-btn-rules {
+  background-image: url("../../../../public/img/header/header_btn_v2.svg");
+  background-color: transparent;
+}
+
+.header-btn-games {
+  background-image: url("../../../../public/img/header/header_btn_v3.svg");
+  background-color: transparent;
+}
+
+.header-btn-settings {
+  background-image: url("../../../../public/img/header/header_btn_v2.svg");
+  background-color: transparent;
+}
+
+.header-btn-logout {
+  background-image: url("../../../../public/img/header/header_btn_v1.svg");
+  background-color: transparent;
+}
+
+/*# sourceMappingURL=Header.css.map */

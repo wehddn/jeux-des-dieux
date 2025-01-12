@@ -1,3 +1,14 @@
+// Variables
+$color-primary: #F7E4C4;
+$color-secondary: #313131;
+$color-accent: #B14330;
+$card-slot-size: 120px;
+$card-game-width: 90px;
+$card-game-height: 120px;
+$card-game-offset: 15px;
+$breakpoint-mobile: 480px;
+
+// Game container
 .game {
   display: flex;
   flex-direction: column;
@@ -7,6 +18,7 @@
   min-height: 100vh;
 }
 
+// Fields
 .fields {
   display: flex;
   justify-content: space-around;
@@ -25,6 +37,7 @@
   font-weight: bold;
 }
 
+// Card slots
 .card-slots {
   display: flex;
   justify-content: space-around;
@@ -32,34 +45,33 @@
   position: relative;
   padding: 2rem;
   border-radius: 30px;
-}
-@media (max-width: 480px) {
-  .card-slots {
+
+  @media (max-width: $breakpoint-mobile) {
     width: 80%;
   }
 }
 
 .card-slot {
   position: relative;
-  width: 120px;
+  width: $card-slot-size;
   height: 200px;
   border: 10px solid;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   overflow: visible;
-}
-@media (max-width: 480px) {
-  .card-slot {
+
+  @media (max-width: $breakpoint-mobile) {
     width: 100px;
     height: 130px;
   }
 }
 
+// Card game
 .card-game {
   position: absolute;
-  width: 90px;
-  height: 120px;
+  width: $card-game-width;
+  height: $card-game-height;
   background-size: cover;
   background-position: center;
   border: 1px solid #000;
@@ -68,59 +80,25 @@
   justify-content: center;
   cursor: pointer;
   font-size: 10px;
-}
-@media (max-width: 480px) {
-  .card-game {
+
+  @media (max-width: $breakpoint-mobile) {
     width: 65px !important;
     height: 86.5px !important;
   }
 }
 
-.card-game:nth-child(1) {
-  top: 0px;
-}
-@media (max-width: 480px) {
-  .card-game:nth-child(1) {
-    top: 0px;
+// Card stacking logic
+@for $i from 1 through 5 {
+  .card-game:nth-child(#{$i}) {
+    top: $card-game-offset * ($i - 1);
+
+    @media (max-width: $breakpoint-mobile) {
+      top: $card-game-offset * 0.67 * ($i - 1);
+    }
   }
 }
 
-.card-game:nth-child(2) {
-  top: 15px;
-}
-@media (max-width: 480px) {
-  .card-game:nth-child(2) {
-    top: 10.05px;
-  }
-}
-
-.card-game:nth-child(3) {
-  top: 30px;
-}
-@media (max-width: 480px) {
-  .card-game:nth-child(3) {
-    top: 20.1px;
-  }
-}
-
-.card-game:nth-child(4) {
-  top: 45px;
-}
-@media (max-width: 480px) {
-  .card-game:nth-child(4) {
-    top: 30.15px;
-  }
-}
-
-.card-game:nth-child(5) {
-  top: 60px;
-}
-@media (max-width: 480px) {
-  .card-game:nth-child(5) {
-    top: 40.2px;
-  }
-}
-
+// Count indicators
 .card-count,
 .curse-count,
 .purification-count {
@@ -143,15 +121,15 @@
 
 .curse-count {
   left: 40px;
-  background-image: url("../../../public/img/games/count_corruption.svg");
+  background-image: url('../../../public/img/games/count_corruption.svg');
 }
 
 .purification-count {
   left: 80px;
-  background-image: url("../../../public/img/games/count_purification.svg");
+  background-image: url('../../../public/img/games/count_purification.svg');
 }
 
-@media (max-width: 480px) {
+@media (max-width: $breakpoint-mobile) {
   .card-count,
   .curse-count,
   .purification-count {
@@ -159,16 +137,21 @@
     width: 20px;
     height: 20px;
   }
+
   .card-count {
     left: 0;
   }
+
   .curse-count {
     left: 20px;
   }
+
   .purification-count {
     left: 40px;
   }
 }
+
+// Deck and discard
 .deck-and-discard {
   display: flex;
   justify-content: space-around;
@@ -188,28 +171,32 @@
   justify-content: center;
 }
 
+// Hand
 .hand {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 20px;
-}
-.hand .card-game {
-  position: relative;
-  cursor: pointer;
+
+  .card-game {
+    position: relative;
+    cursor: pointer;
+  }
 }
 
+// Card curse
 .card-curse {
   background-color: #20B2AA;
   border: 2px solid #000;
 }
 
+// Games container and buttons
 .games-container {
   min-height: 550px;
 }
 
 .btn-create-game {
-  background-image: url("../../../public/img/games/btn_cree.svg");
+  background-image: url('../../../public/img/games/btn_cree.svg');
   background-color: transparent;
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -218,7 +205,7 @@
   align-items: center;
   justify-content: center;
   transition: transform 0.3s;
-  color: #F7E4C4;
+  color: $color-primary;
   border: none;
   padding: 1rem 2rem;
   font-size: 1.2rem;
@@ -227,79 +214,90 @@
   margin: 1rem auto;
 }
 
+// Games table
 .games-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 2rem;
-}
-.games-table th {
-  background-color: #637F59;
-  color: #F7E4C4;
-  padding: 1rem;
-  font-size: 1.2rem;
-  text-align: center;
-}
-.games-table td {
-  padding: 1rem;
-  border-bottom: 1px solid #F7E4C4;
-  color: #313131;
-  font-size: 1rem;
-  text-align: center;
-}
-.games-table tr {
-  background-color: #FAE8D8;
+
+  th {
+    background-color: #637F59;
+    color: $color-primary;
+    padding: 1rem;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  td {
+    padding: 1rem;
+    border-bottom: 1px solid $color-primary;
+    color: $color-secondary;
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  tr {
+    background-color: #FAE8D8;
+  }
 }
 
+// Pagination
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 1rem;
   margin-top: 2rem;
-}
-.pagination span {
-  font-size: 1.2rem;
-  color: #B14330;
-}
-.pagination button {
-  background-color: transparent;
-  border: none;
-  font-size: 1.5rem;
-  color: #B14330;
-  cursor: pointer;
-}
-.pagination button:hover {
-  color: rgb(136.88, 51.8133333333, 37.12);
+
+  span {
+    font-size: 1.2rem;
+    color: $color-accent;
+  }
+
+  button {
+    background-color: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: $color-accent;
+    cursor: pointer;
+
+    &:hover {
+        color: adjust-color($color-accent, $lightness: -10%);
+    }
+  }
 }
 
+// Search container
 .search-container {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 2rem;
-}
-.search-container input {
-  width: 20rem;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: none;
-  background-color: #F3F2EE;
-  color: #313131;
-  border-radius: 5px;
-}
-.search-container button {
-  background-color: #B14330;
-  border: none;
-  padding: 0.5rem 1rem;
-  margin-left: 1rem;
-  cursor: pointer;
-  border-radius: 5px;
-}
-.search-container button:hover {
-  background-color: rgb(136.88, 51.8133333333, 37.12);
-}
-.search-container button img {
-  width: 1.5rem;
-}
 
-/*# sourceMappingURL=Game.css.map */
+  input {
+    width: 20rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: none;
+    background-color: #F3F2EE;
+    color: $color-secondary;
+    border-radius: 5px;
+  }
+
+  button {
+    background-color: $color-accent;
+    border: none;
+    padding: 0.5rem 1rem;
+    margin-left: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+
+    &:hover {
+        background-color: adjust-color($color-accent, $lightness: -10%);
+    }
+
+    img {
+      width: 1.5rem;
+    }
+  }
+}

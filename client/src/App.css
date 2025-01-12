@@ -4,9 +4,9 @@
 
 .App-wrapper {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   background-size: cover;
   background-position: center;
   min-height: 100vh;
@@ -24,13 +24,25 @@
   position: relative;
   z-index: 2;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   color: white;
   background-color: #313131;
   min-height: 100vh;
   padding: 10px;
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .App-content {
+    padding: 20px;
+    max-width: 720px;
+  }
+}
+@media (min-width: 1024px) and (max-width: ) {
+  .App-content {
+    padding: 40px;
+    max-width: 960px;
+  }
 }
 
 .button-custom {
@@ -46,29 +58,18 @@
   cursor: pointer;
   transition: background-color 0.3s;
 }
-
 .button-custom:hover {
   background-color: #272727;
 }
-
-@media (min-width: 768px) {
-  .App-content {
-    padding: 20px;
-    max-width: 720px;
-  }
-
+@media (min-width: 768px) and (max-width: 1023px) {
   .button-custom {
     width: 75%;
   }
 }
-
-@media (min-width: 1024px) {
-  .App-content {
-    padding: 40px;
-    max-width: 960px;
-  }
-
+@media (min-width: 1024px) and (max-width: ) {
   .button-custom {
     width: 60%;
   }
 }
+
+/*# sourceMappingURL=App.css.map */

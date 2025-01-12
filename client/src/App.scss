@@ -1,0 +1,85 @@
+// Переменные
+$background-color: #313131;
+$button-bg-color: #4f4e4e;
+$button-hover-bg-color: #272727;
+$text-color: white;
+
+// Миксины
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin responsive($min-width, $max-width: null) {
+  @media (min-width: $min-width) and (max-width: $max-width) {
+    @content;
+  }
+}
+
+// Общие стили
+.App {
+  text-align: center;
+}
+
+.App-wrapper {
+  @include flex-center;
+  flex-direction: column;
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+}
+
+.App-overlay {
+  position: absolute;
+  @include flex-center;
+  z-index: 1;
+}
+
+.App-content {
+  position: relative;
+  z-index: 2;
+  @include flex-center;
+  flex-direction: column;
+  color: $text-color;
+  background-color: $background-color;
+  min-height: 100vh;
+  padding: 10px;
+
+  @include responsive(768px, 1023px) {
+    padding: 20px;
+    max-width: 720px;
+  }
+
+  @include responsive(1024px) {
+    padding: 40px;
+    max-width: 960px;
+  }
+}
+
+// Кнопки
+.button-custom {
+  width: 100%;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: $button-bg-color;
+  color: $text-color;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin: 10px 0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: $button-hover-bg-color;
+  }
+
+  @include responsive(768px, 1023px) {
+    width: 75%;
+  }
+
+  @include responsive(1024px) {
+    width: 60%;
+  }
+}

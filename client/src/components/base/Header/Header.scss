@@ -1,0 +1,69 @@
+$color-primary: #F7E4C4;
+$btn-images-path: '../../../../public/img/header/';
+$breakpoint-tablet: 481px;
+$breakpoint-desktop: 769px;
+
+$buttons: (
+  profile: 'header_btn_v1.svg',
+  rules: 'header_btn_v2.svg',
+  games: 'header_btn_v3.svg',
+  settings: 'header_btn_v2.svg',
+  logout: 'header_btn_v1.svg'
+);
+
+.header-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px 0;
+  z-index: 1000;
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 5px;
+
+  @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-desktop - 1) {
+    gap: 10px;
+  }
+
+  @media (min-width: $breakpoint-desktop) {
+    gap: 20px;
+  }
+}
+
+.header-button {
+  text-align: center;
+  color: $color-primary;
+  padding: 1rem;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s;
+  cursor: pointer;
+  font-size: 7.2px;
+  border: none;
+  font-weight: bold;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-desktop - 1) {
+    padding: 1.5rem;
+    font-size: 14px;
+  }
+
+  @media (min-width: $breakpoint-desktop) {
+    padding: 2rem;
+    font-size: 16px;
+  }
+}
+
+@each $key, $image in $buttons {
+  .header-btn-#{$key} {
+    background-image: url('#{$btn-images-path}#{$image}');
+    background-color: transparent;
+  }
+}

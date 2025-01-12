@@ -1,0 +1,198 @@
+// Variables
+$color-bg: #F3F2EE;
+$color-text: #313131;
+$color-focus: #ff9800;
+$padding-mobile: 2rem 1rem 4rem;
+$padding-tablet: 3rem 1rem 6rem;
+$padding-desktop: 7rem 2rem 10.3rem;
+
+// Mixins
+@mixin button-reset {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+@mixin image-style($width, $height: auto) {
+  width: $width;
+  height: $height;
+  z-index: 1000;
+}
+
+@mixin card-style($width: 120px, $height: 40px) {
+  background-size: cover;
+  color: $color-bg;
+  border: none;
+  padding: 0.25rem 1rem;
+  width: $width;
+  height: $height;
+  font-size: 14px;
+  text-align: center;
+  background-color: transparent;
+  border-radius: 7px;
+}
+
+// Base styles
+.fon_profil {
+  background-image: url('../../../public/img/fon/fon_profil.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: $padding-mobile;
+  text-align: center;
+}
+
+.card {
+  background-color: $color-bg;
+  border: none;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.profile-info {
+  background-color: transparent !important;
+}
+
+.friend-button,
+.add-button {
+  @include button-reset;
+}
+
+.friend-button img,
+.add-button img {
+  @include image-style(2rem);
+}
+
+.friend-photo {
+  @include image-style(5rem);
+}
+
+.photoProfil {
+  @include image-style(13rem);
+}
+
+.profile-tittle {
+  color: $color-text;
+}
+
+.btn_1 {
+  @include card-style();
+  background-image: url('../../../public/img/btn/btn_1.svg');
+}
+
+.btn_2 {
+  @include card-style();
+  background-image: url('../../../public/img/btn/btn_2.svg');
+}
+
+.pseudo-input {
+  width: 85%;
+  background-color: $color-bg;
+  height: 40px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  border-radius: 4px;
+  padding: 0.5rem;
+
+  &:focus {
+    outline: none;
+    border-color: $color-focus;
+  }
+}
+
+.pseudo-container {
+  width: 85%;
+  height: 50px;
+  background-color: $color-bg;
+  padding: 0.5rem;
+}
+
+.container-numero {
+  height: 75px;
+}
+
+.btn-edit,
+.btn-save-pseudo {
+  @include button-reset;
+  width: 3rem;
+}
+
+.btn-edit img,
+.btn-save-pseudo img {
+  @include image-style(2rem);
+}
+
+.word-break {
+  word-break: break-word;
+}
+
+.card-stats {
+  background-color: $color-bg;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.colone-profil {
+  margin: 0 !important;
+}
+
+.ms-4 {
+  margin-left: 0 !important;
+  margin-top: 10rem !important;
+}
+
+.me-4 {
+  margin-right: 0 !important;
+  margin-bottom: 15rem !important;
+}
+
+// Media queries
+@media (min-width: 481px) and (max-width: 768px) {
+  .fon_profil {
+    padding: $padding-tablet;
+  }
+
+  .friend-photo {
+    @include image-style(6rem);
+  }
+
+  .btn_1,
+  .btn_2 {
+    @include card-style(240px, 80px);
+    padding: 0.5rem 1.5rem;
+  }
+
+  .pseudo-input,
+  .pseudo-container {
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .container-numero {
+    height: 50px;
+  }
+}
+
+@media (min-width: 769px) {
+  .fon_profil {
+    padding: $padding-desktop;
+  }
+
+  .card {
+    height: 90%;
+  }
+
+  .btn_1,
+  .btn_2 {
+    @include card-style();
+    padding: 0.5rem 1rem;
+  }
+
+  .container-numero {
+    height: 60px;
+  }
+
+  .colone-profil {
+    margin-top: 1.5rem;
+  }
+}

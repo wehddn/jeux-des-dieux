@@ -228,7 +228,6 @@ function GameRoom() {
 
   return (
     <main>
-    <button onClick={() => setIsGameOverModalOpen(true)}>Open Game Over Modal</button>
       {status === "waiting" && <p>Waiting for players...</p>}
       {status === "joined" && (
         <p>Player joined. Waiting for another player...</p>

@@ -17,6 +17,7 @@
     "react-google-button": "^0.7.2",
     "react-modal": "^3.16.1",
     "react-scripts": "^5.0.1",
+    "sass": "^1.83.1",
     "web-vitals": "^2.1.4",
     "ws": "^8.18.0"
   },
@@ -24,7 +25,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "sass": "sass --watch src:src src/components/base/Header:src/components/base/Header src/components/Games:src/components/Games src/components/Profile:src/components/Profile"
   },
   "eslintConfig": {
     "extends": [

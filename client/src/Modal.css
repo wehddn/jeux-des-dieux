@@ -1,15 +1,10 @@
-/* =========================
-   Базовые стили (Mobile First)
-   ========================= */
-
-/* Оверлей модального окна */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('../public/img/fon/fenetre_fon_v2.svg');
+  background-image: url("../public/img/fon/fenetre_fon_v2.svg");
   padding: 0.5rem;
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -20,33 +15,45 @@
   z-index: 1000;
   background-color: rgba(0, 0, 0, 0.5);
 }
+@media (min-width: 481px) {
+  .modal-overlay {
+    background-image: url("../public/img/fon/fenetre.svg");
+    padding: 3rem;
+  }
+}
 
-/* Контент модального окна */
 .modal-content {
   background-color: transparent;
   padding: 0.5rem;
   border-radius: 10px;
   width: 100%;
-  max-width: 100%; /* Полная ширина для мобильных */
+  max-width: 100%;
   text-align: start;
 }
-
-/* Заголовок модального окна */
 .modal-content h2 {
   font-size: 1.2rem;
   padding-bottom: 0.1rem;
   margin-left: 2rem;
   color: #313131;
 }
-
-/* Горизонтальная линия */
+@media (min-width: 481px) {
+  .modal-content h2 {
+    padding-bottom: 1rem;
+    font-size: 1.6rem;
+    margin-left: 3rem;
+  }
+}
 .modal-content hr {
   border-bottom: 3px solid #313131;
   margin-left: 2rem;
   margin-right: 4rem;
 }
-
-/* Метки форм */
+@media (min-width: 481px) {
+  .modal-content hr {
+    margin-left: 3rem;
+    margin-right: 4rem;
+  }
+}
 .modal-content label {
   color: #313131;
   font-size: 0.7rem;
@@ -56,10 +63,14 @@
   margin-bottom: 0.3rem;
   margin-left: 2rem;
 }
-
-/* Поля ввода */
-.modal-content input[type="text"],
-.modal-content input[type="password"] {
+@media (min-width: 481px) {
+  .modal-content label {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    margin-left: 3rem;
+  }
+}
+.modal-content input[type=text], .modal-content input[type=password] {
   border: none;
   background-color: #F3F2EE;
   width: 8rem;
@@ -68,21 +79,13 @@
   font-size: 1rem;
   color: #313131;
 }
-
-.modal-content p {
-  margin-left: 2rem;
+@media (min-width: 481px) {
+  .modal-content input[type=text], .modal-content input[type=password] {
+    width: 15rem;
+    height: auto;
+  }
 }
-
-/* Контейнер для чекбоксов */
-.modal-content .checkbox-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1rem;
-}
-
-/* Чекбоксы */
-.modal-content input[type="checkbox"] {
+.modal-content input[type=checkbox] {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -95,13 +98,11 @@
   position: relative;
   background-color: transparent;
 }
-
-.modal-content input[type="checkbox"]:checked {
+.modal-content input[type=checkbox]:checked {
   background-color: #313131;
 }
-
-.modal-content input[type="checkbox"]:checked::before {
-  content: '';
+.modal-content input[type=checkbox]:checked::before {
+  content: "";
   display: block;
   width: 0.6rem;
   height: 0.6rem;
@@ -112,18 +113,40 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
-
-.friend-search-input {
+.modal-content p {
   margin-left: 2rem;
 }
-.create-game-checkbox,
-.create-game-input {
+@media (min-width: 481px) {
+  .modal-content p {
+    margin-left: 3rem;
+  }
+}
+.modal-content .checkbox-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+.modal-content .friend-search-input {
+  margin-left: 2rem;
+}
+@media (min-width: 481px) {
+  .modal-content .friend-search-input {
+    margin-left: 3rem;
+  }
+}
+.modal-content .create-game-checkbox,
+.modal-content .create-game-input {
   margin-right: 2rem;
 }
-
-/* Списки и контейнеры друзей */
+@media (min-width: 481px) {
+  .modal-content .create-game-checkbox,
+  .modal-content .create-game-input {
+    margin-right: 6rem;
+  }
+}
 .modal-content ul,
-.container-modal-friend {
+.modal-content .container-modal-friend {
   color: #313131;
   list-style: none;
   padding: 0;
@@ -132,41 +155,33 @@
   margin: 1rem 0;
   scroll-behavior: smooth;
 }
-
-/* Стили скроллбаров */
 .modal-content ul::-webkit-scrollbar,
-.container-modal-friend::-webkit-scrollbar {
+.modal-content .container-modal-friend::-webkit-scrollbar {
   width: 12px;
 }
-
 .modal-content ul::-webkit-scrollbar-track,
-.container-modal-friend::-webkit-scrollbar-track {
+.modal-content .container-modal-friend::-webkit-scrollbar-track {
   background-color: #F7E4C4;
   border-radius: 10px;
 }
-
 .modal-content ul::-webkit-scrollbar-thumb,
-.container-modal-friend::-webkit-scrollbar-thumb {
+.modal-content .container-modal-friend::-webkit-scrollbar-thumb {
   background-color: #B14330;
   border-radius: 10px;
   border: 2px solid #F7E4C4;
 }
-
 .modal-content ul::-webkit-scrollbar-thumb:hover,
-.container-modal-friend::-webkit-scrollbar-thumb:hover {
+.modal-content .container-modal-friend::-webkit-scrollbar-thumb:hover {
   background-color: #953325;
 }
-
-/* Контейнер для кнопок модального окна */
-.box-btn-modal {
+.modal-content .box-btn-modal {
   display: flex;
   justify-content: space-between;
   gap: 0;
   align-items: center;
+  margin-left: 3rem;
 }
-
-/* Кнопки модального окна */
-.box-btn-modal button {
+.modal-content .box-btn-modal button {
   width: 12rem;
   height: 3rem;
   margin-right: 2rem;
@@ -182,18 +197,20 @@
   font-size: 0.7rem;
   color: #F3F2EE;
 }
-
-/* Кнопки с фоновыми изображениями */
-.btn-cancel {
-  background-image: url('../public/img/btn/cancel_modal.svg');
+.modal-content .box-btn-modal button.btn-cancel {
+  background-image: url("../public/img/btn/cancel_modal.svg");
 }
-
-.btn-save {
-  background-image: url('../public/img/btn/save_modal.svg');
+.modal-content .box-btn-modal button.btn-save {
+  background-image: url("../public/img/btn/save_modal.svg");
 }
-
-/* Кнопка закрытия модального окна */
-.btn-close {
+@media (min-width: 481px) {
+  .modal-content .box-btn-modal button {
+    font-size: 1rem;
+    padding: 0.5rem 0.2rem 0.5rem 0.2rem;
+    margin-right: 6rem;
+  }
+}
+.modal-content .btn-close {
   position: absolute;
   right: 1rem;
   background-color: transparent;
@@ -204,127 +221,63 @@
   padding: 0;
   line-height: 1;
 }
-
-.btn-close:hover {
+.modal-content .btn-close:hover {
   transform: scale(1.1);
   transition: transform 0.3s ease;
 }
-
-/* Модальное окно окончания игры */
-.game-over-modal h2 {
+@media (min-width: 481px) {
+  .modal-content .btn-close {
+    font-size: 2.5rem;
+    margin-right: 6rem;
+  }
+}
+.modal-content.game-over-modal h2 {
   margin-bottom: 1rem;
 }
-
-.game-over-modal p {
+.modal-content.game-over-modal p {
   margin-bottom: 2rem;
   font-size: 1.2rem;
 }
-
-/* Кнопка помощи */
-.btn-help {
+.modal-content .btn-help {
   position: absolute;
   top: 10px;
   right: 10px;
   z-index: 1000;
-  background-color: #ff9800; /* Пример фона, можно изменить по необходимости */
+  background-color: #ff9800;
   border: none;
   border-radius: 50%;
   cursor: pointer;
   transition: background-color 0.3s;
 }
-
-/* Таблица фракций */
-.factions-table {
+.modal-content .factions-table {
   border-collapse: collapse;
   margin-top: 20px;
   margin-left: 2rem;
 }
-
-.factions-table th,
-.factions-table td {
+.modal-content .factions-table th,
+.modal-content .factions-table td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: center;
 }
-
-.factions-table th {
+.modal-content .factions-table th {
   background-color: #f2f2f2;
 }
-
-.faction-image {
-  width: 100px; /* Настройте размер по необходимости */
+.modal-content .factions-table .faction-image {
+  width: 100px;
   height: auto;
 }
 
-/* =========================
-   Стили для более широких экранов
-   ========================= */
 @media (min-width: 481px) {
-  
-  /* Оверлей модального окна */
-  .modal-overlay {
-    background-image: url('../public/img/fon/fenetre.svg');
-    padding: 3rem;
-    background-size: 100% 100%;
-  }
-
-  /* Контент модального окна */
   .modal-content {
     padding: 2rem;
     max-width: 40rem;
   }
-
-  /* Заголовок модального окна */
-  .modal-content h2 {
-    padding-bottom: 1rem;
-    font-size: 1.6rem; /* Восстановление размера для десктопа */
-    margin-left: 3rem;
-  }
-
-  /* Метки форм */
-  .modal-content label {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    margin-left: 3rem;
-  }
-
-  .friend-search-input {
-    margin-left: 3rem;
-  }
-  .create-game-checkbox,
-  .create-game-input {
-    margin-right: 6rem;
-  }
-
-  /* Поля ввода */
-  .modal-content input[type="text"],
-  .modal-content input[type="password"] {
-    width: 15rem;
-    height: auto; /* Удаление фиксированной высоты для десктопа */
-  }
-
-  .modal-content p {
-    margin-left: 3rem;
-  }
-
-  /* Кнопки модального окна */
-  .box-btn-modal button {
-    font-size: 1rem;
-    padding: 0.5rem 0.2rem 0.5rem 0.2rem; /* Корректировка паддингов */
-    margin-right: 6rem;
-  }
-
-  /* Кнопка закрытия модального окна */
-  .btn-close {
-    font-size: 2.5rem;
-    margin-right: 6rem;
-  }
 }
-
 @media (min-width: 768px) {
   .modal-content {
     max-width: 60rem;
   }
-
-  /* Другие стили для планшетов */
 }
+
+/*# sourceMappingURL=Modal.css.map */
