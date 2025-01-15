@@ -1,10 +1,8 @@
-// Переменные
 $background-color: #313131;
 $button-bg-color: #4f4e4e;
 $button-hover-bg-color: #272727;
 $text-color: white;
 
-// Миксины
 @mixin flex-center {
   display: flex;
   align-items: center;
@@ -12,12 +10,17 @@ $text-color: white;
 }
 
 @mixin responsive($min-width, $max-width: null) {
-  @media (min-width: $min-width) and (max-width: $max-width) {
-    @content;
+  @if $max-width {
+    @media (min-width: $min-width) and (max-width: $max-width) {
+      @content;
+    }
+  } @else {
+    @media (min-width: $min-width) {
+      @content;
+    }
   }
 }
 
-// Общие стили
 .App {
   text-align: center;
 }
@@ -45,19 +48,30 @@ $text-color: white;
   background-color: $background-color;
   min-height: 100vh;
   padding: 10px;
+  max-width: 960px;
+  margin: 0 auto;
 
   @include responsive(768px, 1023px) {
     padding: 20px;
-    max-width: 720px;
+    width: 720px;
   }
 
   @include responsive(1024px) {
     padding: 40px;
-    max-width: 960px;
+    width: 960px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  table {
+    width: 100%;
+    table-layout: fixed;
   }
 }
 
-// Кнопки
 .button-custom {
   width: 100%;
   font-size: 1em;

@@ -1,6 +1,22 @@
-.settings_context{
-min-height: 550px;
+.settings_context {
+  min-height: 550px;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
 }
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .settings_context {
+    width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .settings_context {
+    width: 768px;
+  }
+}
+
 h1{
   color: #F7E4C4;
 }
@@ -21,7 +37,7 @@ h1{
   cursor: pointer;
   border-radius: 10px;
   margin-bottom: 1rem;
-  display: block;
   margin-left: auto;
   margin-right: auto;
+  width: 100%;
 }

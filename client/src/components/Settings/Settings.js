@@ -68,7 +68,7 @@ const Settings = () => {
         {role === "admin" && (
           <button onClick={() => navigate("/admin")} className="btn-del" aria-label="Navigate to Admin page">Page d'admin</button>
           )}
-        <button onClick={handleDeleteClick} className="btn-del" aria-label="Delete Profile">Supprimer Le Profil</button>
+        <button onClick={handleDeleteClick} className="btn-del" aria-label="Delete Profile">Supprimer Profil</button>
         <button onClick={handleLogout} className="btn-del" aria-label="Logout">Logout</button>
       </section>
       <Footer />

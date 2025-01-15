@@ -31,18 +31,28 @@
   background-color: #313131;
   min-height: 100vh;
   padding: 10px;
+  max-width: 960px;
+  margin: 0 auto;
 }
 @media (min-width: 768px) and (max-width: 1023px) {
   .App-content {
     padding: 20px;
-    max-width: 720px;
+    width: 720px;
   }
 }
-@media (min-width: 1024px) and (max-width: ) {
+@media (min-width: 1024px) {
   .App-content {
     padding: 40px;
-    max-width: 960px;
+    width: 960px;
   }
+}
+.App-content img {
+  max-width: 100%;
+  height: auto;
+}
+.App-content table {
+  width: 100%;
+  table-layout: fixed;
 }
 
 .button-custom {
@@ -66,7 +76,7 @@
     width: 75%;
   }
 }
-@media (min-width: 1024px) and (max-width: ) {
+@media (min-width: 1024px) {
   .button-custom {
     width: 60%;
   }
