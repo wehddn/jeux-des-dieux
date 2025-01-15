@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { getGamesList, getUser } from "../../bd/Games";
-import Header from "../base/Header/Header.js";
 import Footer from "../base/Footer/Footer.js";
 
 const CreateGameModal = React.lazy(() => import("./CreateGameModal"));
@@ -82,7 +81,6 @@ function Games() {
 
   return (
     <div>
-      <Header />
       <div className="games-container">
         <button className="btn-create-game" onClick={openModal}>
           Créer un JEU

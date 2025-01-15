@@ -11,7 +11,7 @@ const getOrCreateUser = async (userId, userEmail) => {
       const userData = userSnap.data();
       return { id: userId, email: userEmail, ...userData };
     } else {
-      const newUser = { name: 'Player', photo: 'photo_1.png'};
+      const newUser = { name: 'Player', photo: 'photo_1.png', role: 'user'};
       await setDoc(userRef, newUser);
       return { id: userId, email: userEmail, newUser };
     }
@@ -86,7 +86,7 @@ const deleteUserProfile = async (userId) => {
   }
 };
 
-const getFilteredUsers = async (userId) => {
+const getNonFriendUsers = async (userId) => {
   const usersRef = collection(db, 'Users');
   const userRef = doc(db, 'Users', userId);
 
@@ -235,4 +235,53 @@ const declineFriendRequest = async (userId, friendId) => {
   }
 };
 
-export { getOrCreateUser, getUserPhoto, getUser, updateUserName, deleteUserProfile, getFilteredUsers, addFriend, acceptFriendRequest, declineFriendRequest };
+const updateUserRole = async (userId, newRole) => {
+  const userRef = doc(db, 'Users', userId);
+
+  try {
+    await updateDoc(userRef, { role: newRole });
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    throw new Error('Error updating user role');
+  }
+};
+
+const getUserRole = async (userId) => {
+  const userRef = doc(db, "Users", userId);
+
+  try {
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      const userData = userSnap.data();
+      return userData.role || "user";
+    } else {
+      throw new Error("User not found");
+    }
+  } catch (error) {
+    console.error("Error getting user role:", error);
+    throw new Error("Error getting user role");
+  }
+};
+
+const getUsers = async () => {
+  const usersRef = collection(db, "Users");
+
+  try {
+    const querySnapshot = await getDocs(usersRef);
+    const users = [];
+
+    querySnapshot.forEach((doc) => {
+      users.push({ id: doc.id, ...doc.data() });
+    });
+
+    return users; // Возвращаем массив пользователей
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+    throw new Error("Error fetching all users");
+  }
+};
+
+
+
+export { getOrCreateUser, getUserPhoto, getUser, updateUserName, deleteUserProfile, getNonFriendUsers, addFriend, acceptFriendRequest, declineFriendRequest, updateUserRole, getUserRole, getUsers};

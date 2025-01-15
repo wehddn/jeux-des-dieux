@@ -1,19 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router";
-import { useUserAuth } from "../../../context/UserAuthContext.js";
 
 const Header = () => {
-  const { logOut } = useUserAuth();
   const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await logOut();
-      navigate("/");
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
 
   return (
     <header className="header-buttons">
@@ -40,12 +29,6 @@ const Header = () => {
             onClick={() => navigate("/settings")}
             aria-label="Settings">
             Settings
-        </button>
-        <button 
-            className="header-button header-btn-logout" 
-            onClick={handleLogout}
-            aria-label="Log out">
-            Log out
         </button>
     </header>
 );

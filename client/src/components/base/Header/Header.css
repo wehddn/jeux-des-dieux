@@ -41,7 +41,7 @@
 @media (min-width: 481px) and (max-width: 768px) {
   .header-button {
     padding: 1.5rem;
-    font-size: 0.875em;
+    font-size: 14px;
   }
 }
 @media (min-width: 769px) {

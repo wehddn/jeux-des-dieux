@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
 import "./Modal.css";
 import "./components/Games/Game.css";
@@ -9,6 +9,7 @@ import "./components/Profile/Profile.css";
 import "./components/base/Header/Header.css";
 import "./components/Rules/Rules.css";
 import "./components/base/Footer/Footer.css";
+import Header from "./components/base/Header/Header";
 import Profile from "./components/Profile/Profile";
 import Games from "./components/Games/Games";
 import Game from "./components/Games/Game/Game";
@@ -20,14 +21,31 @@ import Login from "./components/Authorization/Login";
 import Signup from "./components/Authorization/Signup";
 import EmailVerification from "./components/Authorization/EmailVerification";
 import ForgotPassword from "./components/Authorization/ForgotPassword";
+import AdminPage from "./components/Admin/Admin";
+import NoAccess from "./components/base/NoAccess/NoAccess";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { UserAuthContextProvider } from "./context/UserAuthContext";
 import 'boxicons/css/boxicons.min.css';
+
+const AppLayout = ({ children }) => {
+  const location = useLocation();
+  const noHeaderRoutes = ["/room/:id", "/signup", "/verify", "/forgot-password"];
+  
+  const shouldShowHeader = !noHeaderRoutes.includes(location.pathname);
+  
+  return (
+    <>
+      {shouldShowHeader && <Header />}
+      {children}
+    </>
+  );
+};
 
 function App() {
   return (
     <div className="App-wrapper">
       <div className="App-overlay" aria-hidden="true"></div>
+      <AppLayout>
       <main className="App-content">
         <Container>
           <Row>
@@ -82,6 +100,15 @@ function App() {
                       </PrivateRoute>
                     }
                   />
+                  <Route
+                    path="/admin"
+                    element={
+                      <ProtectedRoute requiredRole="admin">
+                        <AdminPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="/no-access" element={<NoAccess />} />
                   <Route path="/" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/verify" element={<EmailVerification />} />
@@ -92,6 +119,7 @@ function App() {
           </Row>
         </Container>
       </main>
+      </AppLayout>
     </div>
   );
 }

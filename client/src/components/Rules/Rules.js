@@ -1,11 +1,9 @@
 import React from "react";
-import Header from "../base/Header/Header.js";
 import Footer from "../base/Footer/Footer.js";
 
 const Rules = () => {
   return (
     <main className="rules-container" aria-label="Game Rules">
-      <Header />
       <section className="rules-title">
         <h1>Règles du jeu "Jeux des dieux"</h1>
       </section>

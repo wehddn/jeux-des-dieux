@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
-import { getFilteredUsers, addFriend } from "../../bd/Users";
+import { getNonFriendUsers, addFriend } from "../../bd/Users";
 
 const FriendSearchModal = ({ isOpen, onRequestClose, userProfile }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -9,7 +9,7 @@ const FriendSearchModal = ({ isOpen, onRequestClose, userProfile }) => {
   useEffect(() => {
     const fetchFilteredUsers = async () => {
       if (searchTerm) {
-        const allUsers = await getFilteredUsers(userProfile.id);
+        const allUsers = await getNonFriendUsers(userProfile.id);
         setFilteredUsers(
           allUsers.filter((user) =>
             user.name.toLowerCase().includes(searchTerm.toLowerCase())

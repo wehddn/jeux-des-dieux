@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useUserAuth } from "../../context/UserAuthContext.js";
 import Stats from "./Stats.js";
 import Friends from "./Friends.js";
-import Header from "../base/Header/Header.js";
 import Footer from "../base/Footer/Footer.js";
 import UserInfo from "./UserInfo.js";
 import { getOrCreateUser, acceptFriendRequest, declineFriendRequest } from "../../bd/Users.js";
@@ -45,7 +44,6 @@ const Profile = () => {
 
   return (
     <main className="profile">
-      <Header />
       <section className="fon_profil" aria-label="User Profile">
         {userProfile ? (
           <div className="row d-flex">
