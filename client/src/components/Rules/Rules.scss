@@ -70,10 +70,6 @@ $text-fon-light: '../../../public/img/fon/text_fon_2.svg';
   .rules-title {
     margin-bottom: 2rem;
     padding: 3rem;
-
-    h1 {
-      font-size: 1.5rem;
-    }
   }
 
   .text-block {
@@ -93,11 +89,17 @@ $text-fon-light: '../../../public/img/fon/text_fon_2.svg';
 
 @media (min-width: 769px) {
   .rules-title h1 {
-    font-size: 1.125em;
+    font-size: 1.5em;
   }
 
   .text-block-dark {
     height: 25rem;
     padding: 5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .rules-title h1 {
+    font-size: 2em;
   }
 }
