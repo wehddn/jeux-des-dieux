@@ -52,12 +52,12 @@ $buttons: (
 
   @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-desktop - 1) {
     padding: 1.5rem;
-    font-size: 14px;
+    font-size: 0.875em;
   }
 
   @media (min-width: $breakpoint-desktop) {
     padding: 2rem;
-    font-size: 16px;
+    font-size: 1em;
   }
 }
 

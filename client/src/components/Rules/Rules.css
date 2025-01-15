@@ -82,11 +82,11 @@
 }
 @media (min-width: 769px) {
   .rules-title h1 {
-    font-size: 18px;
+    font-size: 1.125em;
   }
   .text-block-dark {
     height: 25rem;
-    padding: 5rem;
+    padding: 3.5rem;
   }
 }
 

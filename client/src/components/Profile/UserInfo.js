@@ -29,7 +29,7 @@ const UserInfo = ({ userProfile }) => {
   };
 
   return (
-    <section className="card profile-info d-flex ms-4 mt-4" aria-label="User Information">
+    <section className="card profile-info d-flex ms-3" aria-label="User Information">
         <div className="d-flex justify-content-center">
           <img
             className="photoProfil"
@@ -57,7 +57,7 @@ const UserInfo = ({ userProfile }) => {
           ) : (
             <>
               <div className="pseudo-container">
-                <p className="m-2">{userProfile.name || "Player"}</p>
+                <p>{userProfile.name || "Player"}</p>
               </div>
               <button onClick={handleEditClick} className="btn-edit" aria-label="Edit Pseudo">
                 <img src={`/img/btn/edit.svg`} alt="Edit" className="btn-edit-img"/>
@@ -70,14 +70,14 @@ const UserInfo = ({ userProfile }) => {
           <h5 className="profile-tittle">Mail</h5>
         </div>
         <div className="pseudo-container">
-          <p className="m-2">{userProfile.email}</p>
+          <p>{userProfile.email}</p>
         </div>
 
         <div className="pt-3 d-flex justify-content-start">
           <h5 className="profile-tittle">Numéro Unique</h5>
         </div>
         <div className="pseudo-container container-numero">
-          <p className="m-2 word-break">{userProfile.id}</p>
+          <p className="word-break">{userProfile.id}</p>
         </div>
     </section>
   );

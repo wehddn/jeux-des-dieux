@@ -38,8 +38,8 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
 
   return (
     <section className="card d-flex mt-4" aria-label="Friends List">
-      <h2 className="pt-4 profile-title">Mes Amis</h2>
-      <div className="p-3 pt-4 row">
+      <h2 className="mt-4 profile-title">Mes Amis</h2>
+      <div className="m-3 mt-4 row">
         <div className="d-flex justify-content-center col-6">
           <button className="btn_1" onClick={openSearchModal} aria-label="Search Friends">Trouver</button>
           <FriendSearchModal
@@ -63,7 +63,7 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
       <div className="row d-flex p-4 pt-4">
         {userProfile.friends &&
           userProfile.friends.map((friendId, index) => (
-            <article className="col-md-6 col-12 mb-4" key={index} aria-label="Friend">
+            <article className="col-6 mb-4" key={index} aria-label="Friend">
               <Friend userId={friendId} />
             </article>
           ))}
