@@ -1,4 +1,5 @@
-// Variables
+@use "sass:color";
+
 $color-primary: #F7E4C4;
 $color-secondary: #313131;
 $color-accent: #B14330;
@@ -8,7 +9,6 @@ $card-game-height: 120px;
 $card-game-offset: 15px;
 $breakpoint-mobile: 480px;
 
-// Game container
 .game {
   display: flex;
   flex-direction: column;
@@ -18,7 +18,6 @@ $breakpoint-mobile: 480px;
   min-height: 100vh;
 }
 
-// Fields
 .fields {
   display: flex;
   justify-content: space-around;
@@ -37,7 +36,6 @@ $breakpoint-mobile: 480px;
   font-weight: bold;
 }
 
-// Card slots
 .card-slots {
   display: flex;
   justify-content: space-around;
@@ -67,7 +65,6 @@ $breakpoint-mobile: 480px;
   }
 }
 
-// Card game
 .card-game {
   position: absolute;
   width: $card-game-width;
@@ -79,7 +76,7 @@ $breakpoint-mobile: 480px;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 0.6em;
 
   @media (max-width: $breakpoint-mobile) {
     width: 65px !important;
@@ -87,7 +84,6 @@ $breakpoint-mobile: 480px;
   }
 }
 
-// Card stacking logic
 @for $i from 1 through 5 {
   .card-game:nth-child(#{$i}) {
     top: $card-game-offset * ($i - 1);
@@ -98,7 +94,6 @@ $breakpoint-mobile: 480px;
   }
 }
 
-// Count indicators
 .card-count,
 .curse-count,
 .purification-count {
@@ -151,7 +146,6 @@ $breakpoint-mobile: 480px;
   }
 }
 
-// Deck and discard
 .deck-and-discard {
   display: flex;
   justify-content: space-around;
@@ -171,7 +165,6 @@ $breakpoint-mobile: 480px;
   justify-content: center;
 }
 
-// Hand
 .hand {
   display: flex;
   justify-content: center;
@@ -184,13 +177,11 @@ $breakpoint-mobile: 480px;
   }
 }
 
-// Card curse
 .card-curse {
   background-color: #20B2AA;
   border: 2px solid #000;
 }
 
-// Games container and buttons
 .games-container {
   min-height: 550px;
 }
@@ -212,9 +203,14 @@ $breakpoint-mobile: 480px;
   cursor: pointer;
   border-radius: 10px;
   margin: 1rem auto;
+
+  &:focus {
+    background-color: $color-primary;
+    border-radius: 1.5rem;
+    height: 4rem;
+  }
 }
 
-// Games table
 .games-table {
   width: 100%;
   border-collapse: collapse;
@@ -241,7 +237,6 @@ $breakpoint-mobile: 480px;
   }
 }
 
-// Pagination
 .pagination {
   display: flex;
   justify-content: center;
@@ -262,12 +257,11 @@ $breakpoint-mobile: 480px;
     cursor: pointer;
 
     &:hover {
-        color: adjust-color($color-accent, $lightness: -10%);
+        color: color.adjust($color-accent, $lightness: -10%);
     }
   }
 }
 
-// Search container
 .search-container {
   display: flex;
   justify-content: center;
@@ -293,7 +287,7 @@ $breakpoint-mobile: 480px;
     border-radius: 5px;
 
     &:hover {
-        background-color: adjust-color($color-accent, $lightness: -10%);
+        background-color: color.adjust($color-accent, $lightness: -10%);
     }
 
     img {

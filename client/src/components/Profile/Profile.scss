@@ -117,6 +117,10 @@ $padding-desktop: 7rem 2rem 10.3rem;
   width: 3rem;
 }
 
+.btn-edit:focus {
+  background-color: $color-text;
+}
+
 .btn-edit img,
 .btn-save-pseudo img {
   @include image-style(2rem);

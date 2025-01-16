@@ -8,11 +8,11 @@
 
 .btn-footer {
     border: none;
-    font-size: 24px;
+    font-size: 1.2em;
     transition: color 0.3s ease;
     background-color: #F7E4C4;
 }
 
 .btn-footer i {
-    font-size: 32px;
+    font-size: 1.4em;
 }

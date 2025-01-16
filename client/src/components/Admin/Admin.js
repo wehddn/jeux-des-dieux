@@ -26,7 +26,7 @@ const ManageRoles = () => {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div>
+    <main>
       <h1>Manage User Roles</h1>
       <ul>
         {users.map(user => (
@@ -42,7 +42,7 @@ const ManageRoles = () => {
           </li>
         ))}
       </ul>
-    </div>
+    </main>
   );
 };
 

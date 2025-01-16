@@ -11,10 +11,8 @@ const FriendRequestsModal = ({ isOpen, onRequestClose, receivedRequests, handleA
       className="modal-content"
       contentLabel="Friend Requests"
     >
-      <header>
-        <button onClick={onRequestClose} className="btn-close" aria-label="Close" />
-        <h2>Demandes d'amis reçues</h2>
-      </header>
+      <button onClick={onRequestClose} className="btn-close" aria-label="Close" />
+      <h2>Demandes d'amis reçues</h2>
       <hr />
       {receivedRequests && receivedRequests.length > 0 ? (
         <section className="container-modal-friend">

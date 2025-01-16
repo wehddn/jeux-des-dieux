@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { deleteUserProfile } from "../../bd/Users";
 import { useNavigate } from "react-router";
 import { useUserAuth } from "../../context/UserAuthContext.js";
-import Footer from "../base/Footer/Footer.js";
 import { getUserRole } from "../../bd/Users";
 
 const Settings = () => {
@@ -71,7 +70,6 @@ const Settings = () => {
         <button onClick={handleDeleteClick} className="btn-del" aria-label="Delete Profile">Supprimer Profil</button>
         <button onClick={handleLogout} className="btn-del" aria-label="Logout">Logout</button>
       </section>
-      <Footer />
     </main>
   );
 };

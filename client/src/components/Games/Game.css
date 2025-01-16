@@ -67,7 +67,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 0.6em;
 }
 @media (max-width: 480px) {
   .card-game {
@@ -225,6 +225,11 @@
   cursor: pointer;
   border-radius: 10px;
   margin: 1rem auto;
+}
+.btn-create-game:focus {
+  background-color: #F7E4C4;
+  border-radius: 1.5rem;
+  height: 4rem;
 }
 
 .games-table {

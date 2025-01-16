@@ -37,16 +37,19 @@
 .header-button:hover {
   transform: scale(1.05);
 }
+.header-button:focus {
+  background-color: #F7E4C4;
+  border-radius: 1.5rem;
+  height: 4.5rem;
+}
 @media (min-width: 768px) and (max-width: 1023px) {
   .header-button {
     padding: 1.5rem;
-    font-size: 14px;
   }
 }
 @media (min-width: 1024px) {
   .header-button {
     padding: 2rem;
-    font-size: 1em;
   }
 }
 

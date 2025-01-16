@@ -2,6 +2,7 @@ $color-primary: #F7E4C4;
 $btn-images-path: '../../../../public/img/header/';
 $breakpoint-tablet: 768px;
 $breakpoint-desktop: 1024px;
+$background-color-focus: #222222;
 $background-color: #313131;
 
 $buttons: (
@@ -50,14 +51,18 @@ $buttons: (
     transform: scale(1.05);
   }
 
+  &:focus {
+    background-color: $color-primary;
+    border-radius: 1.5rem;
+    height: 4.5rem;
+  }
+
   @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-desktop - 1) {
     padding: 1.5rem;
-    font-size: 14px;
   }
 
   @media (min-width: $breakpoint-desktop) {
     padding: 2rem;
-    font-size: 1em;
   }
 }
 

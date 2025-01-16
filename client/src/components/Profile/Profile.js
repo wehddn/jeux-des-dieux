@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useUserAuth } from "../../context/UserAuthContext.js";
 import Stats from "./Stats.js";
 import Friends from "./Friends.js";
-import Footer from "../base/Footer/Footer.js";
 import UserInfo from "./UserInfo.js";
 import { getOrCreateUser, acceptFriendRequest, declineFriendRequest } from "../../bd/Users.js";
 
@@ -65,7 +64,6 @@ const Profile = () => {
           <p>Loading...</p>
         )}
       </section>
-      <Footer />
     </main>
   );
 };

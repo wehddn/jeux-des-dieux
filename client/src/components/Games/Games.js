@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { getGamesList, getUser } from "../../bd/Games";
-import Footer from "../base/Footer/Footer.js";
 
 const CreateGameModal = React.lazy(() => import("./CreateGameModal"));
 const PasswordModal = React.lazy(() => import("./PasswordModal"));
@@ -80,74 +79,71 @@ function Games() {
   }, []);
 
   return (
-    <div>
-      <div className="games-container">
-        <button className="btn-create-game" onClick={openModal}>
-          Créer un JEU
-        </button>
+    <main className="games-container">
+      <button className="btn-create-game" onClick={openModal}>
+        Créer un JEU
+      </button>
 
-        <Suspense fallback={<div>Loading Create Game Modal...</div>}>
-          <CreateGameModal
-            isOpen={modalIsOpen}
-            onRequestClose={closeModal}
-            contentLabel="Fenetre pour créer un JEU"
+      <Suspense fallback={<div>Loading Create Game Modal...</div>}>
+        <CreateGameModal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          contentLabel="Fenetre pour créer un JEU"
+        />
+      </Suspense>
+
+      <table className="games-table" aria-label="Games List">
+        <thead>
+          <tr>
+            <th>Public ou non</th>
+            <th>Nom de jeu</th>
+            <th>Les joueurs</th>
+            <th>Entrée</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rooms.map((room) => (
+            <tr key={room.id}>
+              <td>
+                <img
+                  className="game-status-icon"
+                  src={
+                    room.password ? `/img/games/fermer.png` : `/img/games/ouver.png`
+                  }
+                  alt={room.password ? "closed" : "open"}
+                />
+              </td>
+              <td>{room.name}</td>
+              <td>
+                {players[room.id]
+                 ? players[room.id].join(", ")
+                  : "Loading..."}
+              </td>
+              <td>
+                <button
+                  className="btn-join-room"
+                  onClick={() => joinRoom(room)}
+                  aria-label="Join Room"
+                >
+                  <img src={`/img/games/door.svg`} alt="door" />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {selectedRoom && (
+        <Suspense fallback={<div>Loading Password Modal...</div>}>
+          <PasswordModal
+            isOpen={passwordModalIsOpen}
+            onRequestClose={closePasswordModal}
+            room={selectedRoom}
+            onPasswordCorrect={handlePasswordCorrect}
           />
         </Suspense>
-
-        <table className="games-table" aria-label="Games List">
-          <thead>
-            <tr>
-              <th>Public ou non</th>
-              <th>Nom de jeu</th>
-              <th>Les joueurs</th>
-              <th>Entrée</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rooms.map((room) => (
-              <tr key={room.id}>
-                <td>
-                  <img
-                    className="game-status-icon"
-                    src={
-                      room.password ? `/img/games/fermer.png` : `/img/games/ouver.png`
-                    }
-                    alt={room.password ? "closed" : "open"}
-                  />
-                </td>
-                <td>{room.name}</td>
-                <td>
-                  {players[room.id]
-                    ? players[room.id].join(", ")
-                    : "Loading..."}
-                </td>
-                <td>
-                  <button
-                    className="btn-join-room"
-                    onClick={() => joinRoom(room)}
-                    aria-label="Join Room"
-                  >
-                    <img src={`/img/games/door.svg`} alt="door" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {selectedRoom && (
-          <Suspense fallback={<div>Loading Password Modal...</div>}>
-            <PasswordModal
-              isOpen={passwordModalIsOpen}
-              onRequestClose={closePasswordModal}
-              room={selectedRoom}
-              onPasswordCorrect={handlePasswordCorrect}
-            />
-          </Suspense>
-        )}
-      </div>
-      <Footer />
-    </div>
+      )}
+    </main>
   );
 }
 

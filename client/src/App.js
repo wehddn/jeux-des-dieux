@@ -10,6 +10,7 @@ import "./components/base/Header/Header.css";
 import "./components/Rules/Rules.css";
 import "./components/base/Footer/Footer.css";
 import Header from "./components/base/Header/Header";
+import Footer from "./components/base/Footer/Footer";
 import Profile from "./components/Profile/Profile";
 import Games from "./components/Games/Games";
 import Game from "./components/Games/Game/Game";
@@ -29,7 +30,7 @@ import 'boxicons/css/boxicons.min.css';
 
 const AppLayout = ({ children }) => {
   const location = useLocation();
-  const noHeaderRoutes = ["/room/:id", "/signup", "/verify", "/forgot-password", "/"];
+  const noHeaderRoutes = ["/signup", "/verify", "/forgot-password", "/"];
   
   const shouldShowHeader = !noHeaderRoutes.includes(location.pathname);
   
@@ -37,6 +38,7 @@ const AppLayout = ({ children }) => {
     <>
       {shouldShowHeader && <Header />}
       {children}
+      {shouldShowHeader && <Footer />}
     </>
   );
 };
@@ -45,7 +47,7 @@ function App() {
   return (
     <div className="App-wrapper">
       <div className="App-overlay" aria-hidden="true"></div>
-      <main className="App-content">
+      <div className="App-content">
       <AppLayout>
         <Container>
               <UserAuthContextProvider>
@@ -115,7 +117,7 @@ function App() {
               </UserAuthContextProvider>
         </Container>
       </AppLayout>
-      </main>
+      </div>
     </div>
   );
 }

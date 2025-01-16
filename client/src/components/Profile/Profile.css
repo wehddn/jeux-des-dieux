@@ -34,7 +34,6 @@
 
 .friend-photo {
   width: 100%;
-  max-width: 5rem;
   height: auto;
   z-index: 1000;
 }
@@ -110,6 +109,10 @@
   width: 3rem;
 }
 
+.btn-edit:focus {
+  background-color: #313131;
+}
+
 .btn-edit img,
 .btn-save-pseudo img {
   width: 2rem;
@@ -147,7 +150,6 @@
   }
   .friend-photo {
     width: 100%;
-    max-width: 10rem;
     height: auto;
     z-index: 1000;
   }
