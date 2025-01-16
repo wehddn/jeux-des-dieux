@@ -1,56 +1,56 @@
 # Jeux des dieux
 
-## Описание проекта
+## Description du projet
 
-**Jeux des dieux** — это стратегическая карточная игра, где игроки принимают на себя роли богов, контролирующих судьбы фракций. Игроки используют героев, карты силы и манипуляций, чтобы добиться победы. Цель — собрать 4 героев одной фракции.
+**Jeux des dieux** est un jeu de cartes stratégique où les joueurs incarnent des dieux contrôlant le destin de différentes factions. Les joueurs utilisent des héros, des cartes de pouvoir et de manipulation pour atteindre la victoire. L'objectif est de rassembler 4 héros d'une même faction.
 
-Этот проект также служит рекламной платформой для книги *"Перепутье: Начало после конца"* Антуана Винорадо.
+Ce projet sert également de plateforme promotionnelle pour le livre *"Carrefour : Le début après la fin"* d'Antoine Vinorado.
 
-## Цель проекта
+## Objectif du projet
 
-Разработать веб-приложение, которое включает:
+Développer une application web comprenant :
 
-- Систему регистрации и авторизации игроков
-- Личный профиль со статистикой
-- Возможность создания и подключения к игровым комнатам
-- Игровой интерфейс для многопользовательских партий
-- Система настройки аккаунта
+- Un système d'inscription et d'authentification des joueurs
+- Un profil personnel avec des statistiques
+- La possibilité de créer et rejoindre des salles de jeu
+- Une interface de jeu pour des parties multijoueurs
+- Un système de personnalisation de compte
 
-## Технологический стек
+## Stack technologique
 
-- **Frontend**: React
-- **Backend**: Node.js
-- **База данных**: Firebase
-- **Коммуникации**: WebSocket
-- **Авторизация**: Firebase Authentication
+- **Frontend** : React
+- **Backend** : Node.js
+- **Base de données** : Firebase
+- **Communications** : WebSocket
+- **Authentification** : Firebase Authentication
 
-## Функциональные требования
+## Exigences fonctionnelles
 
-1. **Авторизация**:
-   - Регистрация через Google, социальные сети или e-mail
-   - Восстановление пароля
-   - Безопасные сессии с использованием токенов
+1. **Authentification** :
+   - Inscription via Google, réseaux sociaux ou e-mail
+   - Récupération de mot de passe
+   - Sessions sécurisées avec utilisation de tokens
 
-2. **Профиль игрока**:
-   - Настройка аватара и псевдонима
-   - Поиск пользователей и добавление в друзья
-   - Просмотр игровой статистики
+2. **Profil du joueur** :
+   - Personnalisation de l'avatar et du pseudonyme
+   - Recherche de joueurs et ajout en tant qu'amis
+   - Consultation des statistiques de jeu
 
-3. **Игровой процесс**:
-   - Лобби с доступными комнатами
-   - Создание и подключение к приватным и публичным играм
-   - Реализация игровой логики: карты героев, атаки, манипуляции, победные условия
+3. **Gameplay** :
+   - Un lobby avec les salles disponibles
+   - Création et participation à des jeux publics ou privés
+   - Implémentation de la logique de jeu : cartes de héros, attaques, manipulations, conditions de victoire
 
-4. **Монетизация**:
-   - Покупка косметических предметов: аватары, темы интерфейса, пакеты карт
+4. **Monétisation** :
+   - Achat d'éléments cosmétiques : avatars, thèmes d'interface, packs de cartes
 
-## Планы по развитию
+## Plans de développement
 
-- Добавление новых типов карт и правил
-- Улучшение статистики на странице профиля (например, победы по фракциям, успешность карт)
-- Введение внутриигрового чата
-- Расширение функциональности игры за счет новых фракций и карт
+- Ajout de nouveaux types de cartes et de règles
+- Amélioration des statistiques dans le profil (ex. : victoires par faction, efficacité des cartes)
+- Introduction d’un chat intégré au jeu
+- Extension des fonctionnalités avec de nouvelles factions et cartes
 
-## Дизайн и макеты
+## Design et maquettes
 
-[Ссылка на Figma](https://www.figma.com/proto/NzUvvQnPHH4e5zXTx7KJ7L/jeux-des-dieux)
+[Lien vers Figma](https://www.figma.com/proto/NzUvvQnPHH4e5zXTx7KJ7L/jeux-des-dieux)
