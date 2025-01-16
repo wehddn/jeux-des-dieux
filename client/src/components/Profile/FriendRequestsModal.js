@@ -1,6 +1,5 @@
 import React, { useState, useEffect }  from "react";
 import Modal from "react-modal";
-import Friend from "./Friend.js";
 import { getUserName } from "../../bd/Users";
 
 const FriendRequestsModal = ({ isOpen, onRequestClose, receivedRequests, handleAccept, handleDecline}) => {
