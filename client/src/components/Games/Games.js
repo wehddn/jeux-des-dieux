@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
-import { getGamesList, getUser } from "../../bd/Games";
+import { getGamesList } from "../../bd/Games";
+import { getUser } from "../../bd/Users";
 
 const CreateGameModal = React.lazy(() => import("./CreateGameModal"));
 const PasswordModal = React.lazy(() => import("./PasswordModal"));

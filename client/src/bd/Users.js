@@ -5,7 +5,11 @@ const getOrCreateUser = async (userId, userEmail) => {
   const userRef = doc(db, 'Users', userId);
 
   try {
-    const userSnap = await getDoc(userRef);
+    let userSnap = await getDoc(userRef, { source: 'cache' });
+
+    if (!userSnap.exists()) {
+      userSnap = await getDoc(userRef, { source: 'server' });
+    }
 
     if (userSnap.exists()) {
       const userData = userSnap.data();
@@ -25,7 +29,11 @@ const getUser = async (userId) => {
   const userRef = doc(db, 'Users', userId);
 
   try {
-    const userSnap = await getDoc(userRef);
+    let userSnap = await getDoc(userRef, { source: 'cache' });
+
+    if (!userSnap.exists()) {
+      userSnap = await getDoc(userRef, { source: 'server' });
+    }
 
     const userData = userSnap.data();
     return userData;
@@ -36,14 +44,19 @@ const getUser = async (userId) => {
   }
 };
 
-const getUserPhoto = async (userId) => {
+
+const getUserName = async (userId) => {
   const userRef = doc(db, 'Users', userId);
 
   try {
-    const userSnap = await getDoc(userRef);
+    let userSnap = await getDoc(userRef, { source: 'cache' });
+
+    if (!userSnap.exists()) {
+      userSnap = await getDoc(userRef, { source: 'server' });
+    }
 
     const userData = userSnap.data();
-    return userData.photo;
+    return userData.name;
 
   } catch (error) {
     console.error('Error accessing Firestore:', error);
@@ -250,7 +263,12 @@ const getUserRole = async (userId) => {
   const userRef = doc(db, "Users", userId);
 
   try {
-    const userSnap = await getDoc(userRef);
+    let userSnap = await getDoc(userRef, { source: 'cache' });
+
+    if (!userSnap.exists()) {
+      console.log('No cached data, fetching from server...');
+      userSnap = await getDoc(userRef, { source: 'server' });
+    }
 
     if (userSnap.exists()) {
       const userData = userSnap.data();
@@ -275,7 +293,7 @@ const getUsers = async () => {
       users.push({ id: doc.id, ...doc.data() });
     });
 
-    return users; // Возвращаем массив пользователей
+    return users;
   } catch (error) {
     console.error("Error fetching all users:", error);
     throw new Error("Error fetching all users");
@@ -284,4 +302,4 @@ const getUsers = async () => {
 
 
 
-export { getOrCreateUser, getUserPhoto, getUser, updateUserName, deleteUserProfile, getNonFriendUsers, addFriend, acceptFriendRequest, declineFriendRequest, updateUserRole, getUserRole, getUsers};
+export { getOrCreateUser, getUser, getUserName, updateUserName, deleteUserProfile, getNonFriendUsers, addFriend, acceptFriendRequest, declineFriendRequest, updateUserRole, getUserRole, getUsers};

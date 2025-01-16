@@ -1,5 +1,5 @@
-const { db } = require('./firebaseConfig');
-const { generateDeck } = require('./deck');
+const { db } = require('../firebaseConfig');
+const { generateDeck } = require('../deck');
 const games = {};
 
 function getGame(gameId) {

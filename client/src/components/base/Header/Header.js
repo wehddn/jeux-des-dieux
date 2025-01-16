@@ -10,7 +10,7 @@ const Header = () => {
   useEffect(() => {
     const focusedElement = document.activeElement;
     if (focusedElement) {
-      focusedElement.blur(); // Снимает фокус с текущего элемента
+      focusedElement.blur();
     }
   }, [location]);
 

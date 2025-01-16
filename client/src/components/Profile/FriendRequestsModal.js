@@ -1,8 +1,23 @@
-import React from "react";
+import React, { useState, useEffect }  from "react";
 import Modal from "react-modal";
 import Friend from "./Friend.js";
+import { getUserName } from "../../bd/Users";
 
-const FriendRequestsModal = ({ isOpen, onRequestClose, receivedRequests, handleAccept, handleDecline }) => {
+const FriendRequestsModal = ({ isOpen, onRequestClose, receivedRequests, handleAccept, handleDecline}) => {
+  const [friendNames, setFriendNames] = useState({});
+
+  useEffect(() => {
+    const fetchFriendNames = async () => {
+      const names = {};
+      for (const friendId of receivedRequests) {
+        const name = await getUserName(friendId);
+        names[friendId] = name;
+      }
+      setFriendNames(names);
+    };
+
+    fetchFriendNames();
+  }, [receivedRequests]);
   return (
     <Modal
       isOpen={isOpen}
@@ -16,19 +31,19 @@ const FriendRequestsModal = ({ isOpen, onRequestClose, receivedRequests, handleA
       <hr />
       {receivedRequests && receivedRequests.length > 0 ? (
         <section className="container-modal-friend">
-          <div className="row">
+          <div className="d-flex flex-column">
             {receivedRequests.map((friendId, index) => (
-              <article className="col-md-4 mb-4" key={index} aria-label="Friend Request">
+              <article className="mb-3" key={index} aria-label="Friend Request">
                 <div className="friend-card text-center">
-                  <div className="d-flex justify-content-between me-4 ms-4">
+                  <div className="box-btn-modal">
                     <button onClick={() => handleDecline(friendId)} className="friend-button me-2" aria-label="Decline">
                       <img src={`/img/btn/croix.svg`} alt="suppr." width="20" />
                     </button>
+                    {friendNames[friendId] || 'Loading...'}
                     <button onClick={() => handleAccept(friendId)} className=" add-button" aria-label="Accept">
                       <img src={`/img/btn/save.svg`} alt="add." width="20" />
                     </button>
                   </div>
-                  <Friend userId={friendId} />
                 </div>
               </article>
             ))}
