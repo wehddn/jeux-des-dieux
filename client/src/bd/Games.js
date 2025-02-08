@@ -2,7 +2,7 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 
 export const createGame = async ({ name, userId, isPrivate, password }) => {
-  try {
+/*  try {
     const gameData = {
       name: name || "",
       players: [{ id: userId }],
@@ -20,10 +20,11 @@ export const createGame = async ({ name, userId, isPrivate, password }) => {
     console.error("Ошибка при создании игры:", error);
     throw error;
   }
+    */
 };
 
 export const getGamesList = async () => {
-  try {
+/*  try {
     const querySnapshot = await getDocs(collection(db, "Games"));
     const gamesList = querySnapshot.docs.map((doc) => ({
       id: doc.id,
@@ -37,4 +38,5 @@ export const getGamesList = async () => {
     console.error("Ошибка при получении списка игр:", error);
     throw error;
   }
+    */
 };

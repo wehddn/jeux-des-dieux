@@ -2,15 +2,26 @@ import React, { useState, useEffect } from "react";
 import Friend from "./Friend.js";
 import FriendSearchModal from "./FriendSearchModal";
 import FriendRequestsModal from "./FriendRequestsModal";
+import { getPendingFriendRequests } from "../../bd/Users";
 
 const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRequest }) => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isRequestsModalOpen, setIsRequestsModalOpen] = useState(false);
-  const [receivedRequests, setReceivedRequests] = useState(userProfile.receivedRequests || []);
+  const [receivedRequests, setReceivedRequests] = useState([]);
 
   useEffect(() => {
-    setReceivedRequests(userProfile.receivedRequests || []);
-  }, [userProfile]);
+    const fetchPendingRequests = async () => {
+      try {
+        const pendingRequests = await getPendingFriendRequests(userProfile.id);
+        setReceivedRequests(pendingRequests);
+        console.log("Friends : useEffect pendingRequests", pendingRequests);
+      } catch (error) {
+        console.error("Ошибка при получении входящих заявок в друзья:", error);
+      }
+    };
+
+    fetchPendingRequests();
+  }, [userProfile.id]);
 
   const openSearchModal = () => setIsSearchModalOpen(true);
   const closeSearchModal = () => setIsSearchModalOpen(false);
@@ -21,18 +32,18 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
   const handleAccept = async (friendId) => {
     try {
       await handleAcceptFriendRequest(friendId);
-      setReceivedRequests(receivedRequests.filter((id) => id !== friendId));
+      setReceivedRequests(receivedRequests.filter((request) => request.id !== friendId));
     } catch (error) {
-      console.error("Error accepting friend request:", error);
+      console.error("Ошибка при принятии заявки:", error);
     }
   };
 
   const handleDecline = async (friendId) => {
     try {
       await handleDeclineFriendRequest(friendId);
-      setReceivedRequests(receivedRequests.filter((id) => id !== friendId));
+      setReceivedRequests(receivedRequests.filter((request) => request.id !== friendId));
     } catch (error) {
-      console.error("Error declining friend request:", error);
+      console.error("Ошибка при отклонении заявки:", error);
     }
   };
 
@@ -62,9 +73,9 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
       <hr className="m-2" />
       <div className="row d-flex p-4 pt-4">
         {userProfile.friends &&
-          userProfile.friends.map((friendId, index) => (
+          userProfile.friends.map((friend, index) => (
             <article className="col-6 mb-4" key={index} aria-label="Friend">
-              <Friend userId={friendId} />
+              <Friend userId={friend.id} />
             </article>
           ))}
       </div>

@@ -23,3 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 package-lock.json
 game_server/src/jeux-des-dieux-firebase-adminsdk-foy72-c25aeb4e27.json
+
+db_server/node_modules

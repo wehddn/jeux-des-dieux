@@ -1,22 +1,7 @@
-import React, { useState, useEffect }  from "react";
+import React from "react";
 import Modal from "react-modal";
-import { getUserName } from "../../bd/Users";
 
-const FriendRequestsModal = ({ isOpen, onRequestClose, receivedRequests, handleAccept, handleDecline}) => {
-  const [friendNames, setFriendNames] = useState({});
-
-  useEffect(() => {
-    const fetchFriendNames = async () => {
-      const names = {};
-      for (const friendId of receivedRequests) {
-        const name = await getUserName(friendId);
-        names[friendId] = name;
-      }
-      setFriendNames(names);
-    };
-
-    fetchFriendNames();
-  }, [receivedRequests]);
+const FriendRequestsModal = ({ isOpen, onRequestClose, receivedRequests, handleAccept, handleDecline }) => {
   return (
     <Modal
       isOpen={isOpen}
@@ -31,15 +16,15 @@ const FriendRequestsModal = ({ isOpen, onRequestClose, receivedRequests, handleA
       {receivedRequests && receivedRequests.length > 0 ? (
         <section className="container-modal-friend">
           <div className="d-flex flex-column">
-            {receivedRequests.map((friendId, index) => (
-              <article className="mb-3" key={index} aria-label="Friend Request">
+            {receivedRequests.map((friend, index) => (
+              <article className="mb-3" key={friend.id} aria-label="Friend Request">
                 <div className="friend-card text-center">
                   <div className="box-btn-modal">
-                    <button onClick={() => handleDecline(friendId)} className="friend-button me-2" aria-label="Decline">
+                    <button onClick={() => handleDecline(friend.id)} className="friend-button me-2" aria-label="Decline">
                       <img src={`/img/btn/croix.svg`} alt="suppr." width="20" />
                     </button>
-                    {friendNames[friendId] || 'Loading...'}
-                    <button onClick={() => handleAccept(friendId)} className=" add-button" aria-label="Accept">
+                    {friend.name}
+                    <button onClick={() => handleAccept(friend.id)} className="add-button" aria-label="Accept">
                       <img src={`/img/btn/save.svg`} alt="add." width="20" />
                     </button>
                   </div>
