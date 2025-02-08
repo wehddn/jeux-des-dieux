@@ -18,7 +18,8 @@
   justify-content: center;
 }
 .rules-title h1 {
-  font-size: 1.2rem;
+  font-size: 1.9rem;
+  margin-bottom: 1.5rem;
 }
 
 .text-block {
@@ -26,9 +27,9 @@
   background-image: none;
   background-size: cover;
   background-position: center;
-  padding: 10;
-  border-radius: 10;
-  margin-bottom: 15;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 2rem;
 }
 
 .text-block-clair {
