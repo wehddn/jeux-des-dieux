@@ -1,6 +1,7 @@
-const { db } = require('../firebaseConfig');
 const { generateDeck } = require('../deck');
 const games = {};
+
+const API_URL = "http://localhost:5000/api";
 
 function getGame(gameId) {
   return games[gameId];
@@ -29,28 +30,60 @@ function deleteGame(gameId) {
   delete games[gameId];
 }
 
-async function updatePlayersInFirestore(gameId, players) {
+async function updatePlayersInDB(gameId, players) {
   try {
     const filteredPlayers = players.map(player => ({ id: player.id }));
-    await db.collection('Games').doc(gameId).update({ players: filteredPlayers });
+
+    const response = await fetch(`${API_URL}/games/${gameId}/players`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ players: filteredPlayers }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Ошибка при обновлении списка игроков");
+    }
+
+    return await response.json();
   } catch (error) {
-    console.error('Error updating players in Firestore:', error);
+    console.error("Ошибка в updatePlayersInDB:", error);
+    throw new Error("Ошибка работы с API");
   }
 }
 
-async function deleteGameFromFirestore(gameId) {
+async function deleteGameFromDB(gameId) {
   try {
-    await db.collection('Games').doc(gameId).delete();
+    const response = await fetch(`${API_URL}/games/${gameId}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error("Ошибка при удалении игры");
+    }
+
+    return await response.json();
   } catch (error) {
-    console.error('Error deleting game from Firestore:', error);
+    console.error("Ошибка в deleteGameFromDB:", error);
+    throw new Error("Ошибка работы с API");
   }
 }
 
-async function updateGameInFirestore(gameId, gameData) {
+async function updateGameInDB(gameId, gameData) {
   try {
-    await db.collection('Games').doc(gameId).update({ started: gameData.started });
+    const response = await fetch(`${API_URL}/games/${gameId}/status`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ started: gameData.started }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Ошибка при обновлении статуса игры");
+    }
+
+    return await response.json();
   } catch (error) {
-    console.error('Error updating game started status in Firestore:', error);
+    console.error("Ошибка в updateGameInDB:", error);
+    throw new Error("Ошибка работы с API");
   }
 }
 
@@ -59,7 +92,7 @@ module.exports = {
   updateGameData,
   createGame,
   deleteGame,
-  updatePlayersInFirestore,
-  deleteGameFromFirestore,
-  updateGameInFirestore  
+  updatePlayersInDB,
+  deleteGameFromDB,
+  updateGameInDB  
 };

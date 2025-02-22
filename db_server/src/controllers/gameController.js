@@ -69,3 +69,63 @@ exports.getGame = async (req, res) => {
     return res.status(500).json({ message: "Ошибка сервера" });
   }
 };
+
+exports.updatePlayersInGame = async (req, res) => {
+  try {
+    const gameId = req.params.id;
+    const { players } = req.body;
+
+    if (!players || !Array.isArray(players)) {
+      return res.status(400).json({ message: "Некорректные данные игроков" });
+    }
+
+    await db.query(
+      "DELETE FROM game_players WHERE game_id = ?",
+      [gameId]
+    );
+
+    for (const player of players) {
+      await db.query(
+        "INSERT INTO game_players (game_id, player_id) VALUES (?, ?)",
+        [gameId, player.id]
+      );
+    }
+
+    return res.json({ message: "Список игроков обновлен" });
+  } catch (error) {
+    console.error("Ошибка при обновлении списка игроков:", error);
+    return res.status(500).json({ message: "Ошибка сервера" });
+  }
+};
+
+exports.deleteGame = async (req, res) => {
+  try {
+    const gameId = req.params.id;
+
+    await db.query("DELETE FROM game_players WHERE game_id = ?", [gameId]);
+    await db.query("DELETE FROM games WHERE id = ?", [gameId]);
+
+    return res.json({ message: "Игра удалена" });
+  } catch (error) {
+    console.error("Ошибка при удалении игры:", error);
+    return res.status(500).json({ message: "Ошибка сервера" });
+  }
+};
+
+exports.updateGameStatus = async (req, res) => {
+  try {
+    const gameId = req.params.id;
+    const { started } = req.body;
+
+    if (typeof started !== "boolean") {
+      return res.status(400).json({ message: "Некорректное значение статуса" });
+    }
+
+    await db.query("UPDATE games SET started = ? WHERE id = ?", [started, gameId]);
+
+    return res.json({ message: "Статус игры обновлен" });
+  } catch (error) {
+    console.error("Ошибка при обновлении статуса игры:", error);
+    return res.status(500).json({ message: "Ошибка сервера" });
+  }
+};

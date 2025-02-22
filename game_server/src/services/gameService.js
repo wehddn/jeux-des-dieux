@@ -3,8 +3,8 @@ const {
     updateGameData,
     createGame,
     deleteGame,
-    updatePlayersInFirestore,
-    deleteGameFromFirestore,
+    updatePlayersInDB,
+    deleteGameFromDB,
   } = require('../model/gameModel');
   const { generateDeck, drawInitialCards } = require('../deck');
   
@@ -17,7 +17,7 @@ const {
     if (!gameData) {
       gameData = createGame(gameId, userId);
       updateGameData(gameId, gameData);
-      await updatePlayersInFirestore(gameId, gameData.players);
+      await updatePlayersInDB(gameId, gameData.players);
   
       return { status: 'joined', gameData };
     } else {
@@ -42,7 +42,7 @@ const {
         }
   
         updateGameData(gameId, gameData);
-        await updatePlayersInFirestore(gameId, gameData.players);
+        await updatePlayersInDB(gameId, gameData.players);
   
         return { status: 'joined', gameData };
       } else {
@@ -74,7 +74,7 @@ const {
   
     if (updatedPlayers.length === 0) {
       deleteGame(gameId);
-      await deleteGameFromFirestore(gameId);
+      await deleteGameFromDB(gameId);
       processing[gameId] = false;
       return { status: 'gameDeleted' };
     } else {
@@ -82,7 +82,7 @@ const {
       gameData.started = false;
   
       updateGameData(gameId, gameData);
-      await updatePlayersInFirestore(gameId, updatedPlayers);
+      await updatePlayersInDB(gameId, updatedPlayers);
   
       processing[gameId] = false;
       return { status: 'waiting', gameData };

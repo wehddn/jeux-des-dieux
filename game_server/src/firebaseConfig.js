@@ -6,6 +6,4 @@ admin.initializeApp({
   databaseURL: "https://jeux-des-dieux.firebaseio.com"
 });
 
-const db = admin.firestore();
-
-module.exports = { admin, db };
+module.exports = { admin };
