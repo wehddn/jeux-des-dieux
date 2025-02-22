@@ -41,13 +41,13 @@ async function updatePlayersInDB(gameId, players) {
     });
 
     if (!response.ok) {
-      throw new Error("Ошибка при обновлении списка игроков");
+      throw new Error("Error updating players in DB");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Ошибка в updatePlayersInDB:", error);
-    throw new Error("Ошибка работы с API");
+    console.error("Error in updatePlayersInDB:", error);
+    throw new Error("API error");
   }
 }
 
@@ -58,13 +58,13 @@ async function deleteGameFromDB(gameId) {
     });
 
     if (!response.ok) {
-      throw new Error("Ошибка при удалении игры");
+      throw new Error("Error deleting game from DB");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Ошибка в deleteGameFromDB:", error);
-    throw new Error("Ошибка работы с API");
+    console.error("Error in deleteGameFromDB:", error);
+    throw new Error("API error");
   }
 }
 
@@ -77,13 +77,13 @@ async function updateGameInDB(gameId, gameData) {
     });
 
     if (!response.ok) {
-      throw new Error("Ошибка при обновлении статуса игры");
+      throw new Error("Error updating game in DB");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Ошибка в updateGameInDB:", error);
-    throw new Error("Ошибка работы с API");
+    console.error("Error in updateGameInDB:", error);
+    throw new Error("API error");
   }
 }
 

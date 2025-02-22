@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import { getGame } from "../../bd/Games"; // Импортируем новую функцию вместо Firestore
+import { getGame } from "../../bd/Games";
 import { useUserAuth } from "../../context/UserAuthContext";
 import PasswordModal from "../Games/PasswordModal";
 
@@ -36,7 +36,7 @@ function PrivateRoute({ children }) {
           setIsAuthorized(false);
         }
       } catch (error) {
-        console.error("Ошибка при проверке авторизации:", error);
+        console.error("Error checking authorization:", error);
         setIsAuthorized(false);
       } finally {
         setLoading(false);

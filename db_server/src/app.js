@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const db = require('./config/db'); // Наш пул MySQL
+const db = require('./config/db');
 //const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const friendRoutes = require('./routes/friendRoutes');
@@ -8,7 +8,6 @@ const gameRoutes = require('./routes/gameRoutes');
 
 const app = express();
 
-// Глобальные middleware
 app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true,
@@ -17,7 +16,6 @@ app.use(cors({
 
 app.use(express.json());
 
-// Проверка подключения к MySQL (опционально)
 (async () => {
     try {
         const connection = await db.getConnection();

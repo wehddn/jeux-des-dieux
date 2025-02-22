@@ -9,14 +9,14 @@ export const createGame = async ({ name, userId, isPrivate, password }) => {
     });
 
     if (!response.ok) {
-      throw new Error("Ошибка при создании игры");
+      throw new Error("Error creating game");
     }
 
     const data = await response.json();
     return data.gameId;
   } catch (error) {
-    console.error("Ошибка в createGame:", error);
-    throw new Error("Ошибка работы с API");
+    console.error("Error creating game:", error);
+    throw new Error("API error");
   }
 };
 
@@ -25,13 +25,13 @@ export const getGamesList = async () => {
     const response = await fetch(`${API_URL}/games`);
 
     if (!response.ok) {
-      throw new Error("Ошибка при получении списка игр");
+      throw new Error("Error getting games list");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Ошибка в getGamesList:", error);
-    throw new Error("Ошибка работы с API");
+    console.error("Error getting games list:", error);
+    throw new Error("API error");
   }
 };
 
@@ -40,12 +40,12 @@ export const getGame = async (gameId) => {
     const response = await fetch(`${API_URL}/games/${gameId}`);
 
     if (!response.ok) {
-      throw new Error("Ошибка при получении информации об игре");
+      throw new Error("Error getting game");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Ошибка в getGame:", error);
-    throw new Error("Ошибка работы с API");
+    console.error("Error getting game:", error);
+    throw new Error("API error");
   }
 };

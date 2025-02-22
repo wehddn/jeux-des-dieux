@@ -59,81 +59,74 @@ exports.getUserRole = async (req, res) => {
     try {
       const userId = req.params.id;
   
-      // Запрос к базе данных для получения роли
       const [rows] = await db.query(
         'SELECT role FROM users WHERE id = ?',
         [userId]
       );
   
       if (rows.length === 0) {
-        return res.status(404).json({ message: 'Пользователь не найден' });
+        return res.status(404).json({ message: 'User not found' });
       }
   
       return res.json({ role: rows[0].role });
     } catch (error) {
-      console.error('Ошибка при получении роли пользователя:', error);
-      return res.status(500).json({ message: 'Ошибка сервера' });
+      console.error('Error getting user role:', error);
+      return res.status(500).json({ message: 'Server error' });
     }
   };
 
-  // Получить список всех пользователей (GET /api/users)
 exports.getUsers = async (req, res) => {
     try {
-      // Запрос к базе данных
       const [rows] = await db.query(
         'SELECT id, name, email, role, photo FROM users'
       );
   
       return res.json(rows);
     } catch (error) {
-      console.error('Ошибка при получении списка пользователей:', error);
-      return res.status(500).json({ message: 'Ошибка сервера' });
+      console.error('Error getting users:', error);
+      return res.status(500).json({ message: 'Server error' });
     }
   };
   
-// Обновить роль пользователя (PUT /api/users/:id/role)
 exports.updateUserRole = async (req, res) => {
     try {
       const userId = req.params.id;
       const { role } = req.body;
   
       if (!role) {
-        return res.status(400).json({ message: 'Не указана новая роль' });
+        return res.status(400).json({ message: 'Role is required' });
       }
   
-      // Обновляем роль в базе данных
       const [result] = await db.query(
         'UPDATE users SET role = ? WHERE id = ?',
         [role, userId]
       );
   
       if (result.affectedRows === 0) {
-        return res.status(404).json({ message: 'Пользователь не найден' });
+        return res.status(404).json({ message: 'User not found' });
       }
   
-      return res.json({ message: 'Роль пользователя успешно обновлена' });
+      return res.json({ message: 'Role updated successfully' });
     } catch (error) {
-      console.error('Ошибка при обновлении роли пользователя:', error);
-      return res.status(500).json({ message: 'Ошибка сервера' });
+      console.error('Error updating user role:', error);
+      return res.status(500).json({ message: 'Server error' });
     }
   };
 
-  // Удалить профиль пользователя (DELETE /api/users/:id)
 exports.deleteUserProfile = async (req, res) => {
     try {
       const userId = req.params.id;
   
-      // Удаляем пользователя из базы
       const [result] = await db.query('DELETE FROM users WHERE id = ?', [userId]);
   
       if (result.affectedRows === 0) {
-        return res.status(404).json({ message: 'Пользователь не найден' });
+        return res.status(404).json({ message: 'User not found' });
       }
   
-      return res.json({ message: 'Профиль пользователя успешно удален' });
+      return res.json({ message: 'User profile deleted' });
     } catch (error) {
-      console.error('Ошибка при удалении пользователя:', error);
-      return res.status(500).json({ message: 'Ошибка сервера' });
+      console.error('Error deleting user profile:', error);
+      return res.status(500).json({ message: 'Server error' });
     }
   };
   

@@ -72,7 +72,7 @@ function Games() {
         setRooms(games);
         setPlayers(playersData);
       } catch (error) {
-        console.error("Ошибка при загрузке списка игр:", error);
+        console.error("Error getting games list:", error);
       }
     };
 

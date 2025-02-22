@@ -17,7 +17,7 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
         setReceivedRequests(pendingRequests);
         console.log("Friends : useEffect pendingRequests", pendingRequests);
       } catch (error) {
-        console.error("Ошибка при получении входящих заявок в друзья:", error);
+        console.error("Error getting pending friend requests:", error);
       }
     };
 
@@ -30,7 +30,7 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
       setFriends(friendsList);
       console.log("Friends : useEffect friendsList", friendsList);
     } catch (error) {
-      console.error("Ошибка при получении списка друзей:", error);
+      console.error("Error getting friends list:", error);
     }
   }, [userProfile.id]);
 
@@ -48,9 +48,9 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
     try {
       await handleAcceptFriendRequest(friendId);
       setReceivedRequests(receivedRequests.filter((request) => request.id !== friendId));
-      await fetchFriendsList(); // Теперь fetchFriendsList доступна и корректно обновляет список друзей
+      await fetchFriendsList();
     } catch (error) {
-      console.error("Ошибка при принятии заявки:", error);
+      console.error("Error accepting friend request:", error);
     }
   };
 
@@ -59,7 +59,7 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
       await handleDeclineFriendRequest(friendId);
       setReceivedRequests(receivedRequests.filter((request) => request.id !== friendId));
     } catch (error) {
-      console.error("Ошибка при отклонении заявки:", error);
+      console.error("Error declining friend request:", error);
     }
   };
 

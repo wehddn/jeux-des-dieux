@@ -23,8 +23,8 @@ exports.createGame = async (req, res) => {
 
     return res.status(201).json({ gameId: result.insertId });
   } catch (error) {
-    console.error("Ошибка при создании игры:", error);
-    return res.status(500).json({ message: "Ошибка сервера" });
+    console.error("Error creating game:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -38,8 +38,8 @@ exports.getGamesList = async (req, res) => {
 
     return res.json(games);
   } catch (error) {
-    console.error("Ошибка при получении списка игр:", error);
-    return res.status(500).json({ message: "Ошибка сервера" });
+    console.error("Error getting games list:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -53,7 +53,7 @@ exports.getGame = async (req, res) => {
     );
 
     if (gameRows.length === 0) {
-      return res.status(404).json({ message: "Игра не найдена" });
+      return res.status(404).json({ message: "Game not found" });
     }
 
     const game = gameRows[0];
@@ -65,8 +65,8 @@ exports.getGame = async (req, res) => {
 
     return res.json({ ...game, players });
   } catch (error) {
-    console.error("Ошибка при получении информации об игре:", error);
-    return res.status(500).json({ message: "Ошибка сервера" });
+    console.error("Error getting game:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -76,7 +76,7 @@ exports.updatePlayersInGame = async (req, res) => {
     const { players } = req.body;
 
     if (!players || !Array.isArray(players)) {
-      return res.status(400).json({ message: "Некорректные данные игроков" });
+      return res.status(400).json({ message: "Invalid players list" });
     }
 
     await db.query(
@@ -91,10 +91,10 @@ exports.updatePlayersInGame = async (req, res) => {
       );
     }
 
-    return res.json({ message: "Список игроков обновлен" });
+    return res.json({ message: "Players updated" });
   } catch (error) {
-    console.error("Ошибка при обновлении списка игроков:", error);
-    return res.status(500).json({ message: "Ошибка сервера" });
+    console.error("Error updating players in game:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -105,10 +105,10 @@ exports.deleteGame = async (req, res) => {
     await db.query("DELETE FROM game_players WHERE game_id = ?", [gameId]);
     await db.query("DELETE FROM games WHERE id = ?", [gameId]);
 
-    return res.json({ message: "Игра удалена" });
+    return res.json({ message: "Game deleted" });
   } catch (error) {
-    console.error("Ошибка при удалении игры:", error);
-    return res.status(500).json({ message: "Ошибка сервера" });
+    console.error("Error deleting game:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -118,14 +118,14 @@ exports.updateGameStatus = async (req, res) => {
     const { started } = req.body;
 
     if (typeof started !== "boolean") {
-      return res.status(400).json({ message: "Некорректное значение статуса" });
+      return res.status(400).json({ message: "Invalid game status" });
     }
 
     await db.query("UPDATE games SET started = ? WHERE id = ?", [started, gameId]);
 
-    return res.json({ message: "Статус игры обновлен" });
+    return res.json({ message: "Status updated" });
   } catch (error) {
-    console.error("Ошибка при обновлении статуса игры:", error);
-    return res.status(500).json({ message: "Ошибка сервера" });
+    console.error("Error updating game status:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 };

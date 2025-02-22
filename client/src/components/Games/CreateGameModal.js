@@ -36,7 +36,7 @@ function CreateGameModal({ isOpen, onRequestClose, contentLabel }) {
       navigate(`/room/${gameId}`);
       onRequestClose();
     } catch (error) {
-      console.error("Ошибка при создании игры:", error);
+      console.error("Error creating game:", error);
     }
   };
 
