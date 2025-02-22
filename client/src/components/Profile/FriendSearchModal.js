@@ -44,13 +44,13 @@ const FriendSearchModal = ({ isOpen, onRequestClose, userProfile }) => {
       className="modal-content"
     >
       <button onClick={onRequestClose} className="btn-close" />
-      <h2>Cherche des amis</h2>
+      <h2>Chercher des amis</h2>
       <hr />
       <div>
         <input
           className="friend-search-input"
           type="text"
-          placeholder="Cherche des amis"
+          placeholder="Chercher des amis"
           value={searchTerm}
           onChange={handleSearch}
         />

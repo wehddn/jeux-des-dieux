@@ -12,4 +12,6 @@ router.get('/:id/non-friends', friendController.getNonFriendUsers);
 
 router.get('/:id/pending-requests', friendController.getPendingFriendRequests);
 
+router.get('/:id/list', friendController.getFriendsList);
+
 module.exports = router;

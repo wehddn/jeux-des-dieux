@@ -83,28 +83,21 @@ const updateUserName = async (userId, newName) => {
 
 
 const deleteUserProfile = async (userId) => {
-/*  const userRef = doc(db, 'Users', userId);
-
   try {
-    await deleteDoc(userRef);
-    const user = auth.currentUser;
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    });
 
-    if (user) {
-      try {
-        await user.delete();
-      } catch (error) {
-        if (error.code === 'auth/requires-recent-login') {
-        } else {
-          console.error('Error deleting user profile:', error);
-          throw new Error('Error deleting user profile');
-        }
-      }
+    if (!response.ok) {
+      throw new Error('Ошибка при удалении пользователя');
     }
+
+    return await response.json();
   } catch (error) {
-    console.error('Error deleting user profile:', error);
-    throw new Error('Error deleting user profile');
+    console.error('Ошибка в deleteUserProfile:', error);
+    throw new Error('Ошибка работы с API');
   }
-    */
 };
 
 const getNonFriendUsers = async (userId) => {
@@ -139,6 +132,7 @@ const addFriend = async (userId, friendId) => {
 
 const getPendingFriendRequests = async (userId) => {
   try {
+    console.log('userId:', userId);
     const response = await fetch(`${API_URL}/friends/${userId}/pending-requests`);
     if (!response.ok) {
       throw new Error('Ошибка при получении входящих заявок в друзья');
@@ -152,6 +146,8 @@ const getPendingFriendRequests = async (userId) => {
 
 const acceptFriendRequest = async (userId, friendId) => {
   try {
+    console.log('userId:', userId);
+    console.log('friendId:', friendId);
     const response = await fetch(`${API_URL}/friends/accept`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -168,100 +164,81 @@ const acceptFriendRequest = async (userId, friendId) => {
 };
 
 const declineFriendRequest = async (userId, friendId) => {
-/*
-  const userRef = doc(db, 'Users', userId);
-  const friendRef = doc(db, 'Users', friendId);
-
   try {
-    const userSnap = await getDoc(userRef);
-    const friendSnap = await getDoc(friendRef);
+    const response = await fetch(`${API_URL}/friends/decline`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: userId, friend_id: friendId }),
+    });
 
-    if (userSnap.exists() && friendSnap.exists()) {
-      const userData = userSnap.data();
-      const friendData = friendSnap.data();
-
-      const userReceivedRequests = userData.receivedRequests || [];
-      const updatedReceivedRequests = userReceivedRequests.filter(id => id !== friendId);
-
-      await updateDoc(userRef, {
-        receivedRequests: updatedReceivedRequests
-      });
-
-      const friendSentRequests = friendData.sentRequests || [];
-      const updatedSentRequests = friendSentRequests.filter(id => id !== userId);
-
-      await updateDoc(friendRef, {
-        sentRequests: updatedSentRequests
-      });
-
-    } else {
-      throw new Error("User or friend not found.");
+    if (!response.ok) {
+      throw new Error('Ошибка при отклонении заявки в друзья');
     }
+    
+    return await response.json();
   } catch (error) {
-    console.error("Error declining friend request:", error);
-    throw new Error("Error declining friend request");
+    console.error('Ошибка в declineFriendRequest:', error);
+    throw new Error('Ошибка работы с API');
   }
-  */
+};
+
+const getFriendsList = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/friends/${userId}/list`);
+    if (!response.ok) {
+      throw new Error('Ошибка при получении списка друзей');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Ошибка в getFriendsList:', error);
+    throw new Error('Ошибка работы с API');
+  }
 };
 
 const updateUserRole = async (userId, newRole) => {
-/*
-  const userRef = doc(db, 'Users', userId);
-
   try {
-    await updateDoc(userRef, { role: newRole });
+    const response = await fetch(`${API_URL}/users/${userId}/role`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role: newRole }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Ошибка при обновлении роли пользователя');
+    }
+
+    return await response.json();
   } catch (error) {
-    console.error('Error updating user role:', error);
-    throw new Error('Error updating user role');
+    console.error('Ошибка в updateUserRole:', error);
+    throw new Error('Ошибка работы с API');
   }
-    */
 };
 
 const getUserRole = async (userId) => {
-/*
-  const userRef = doc(db, "Users", userId);
-
   try {
-    let userSnap = await getDoc(userRef, { source: 'cache' });
-
-    if (!userSnap.exists()) {
-      console.log('No cached data, fetching from server...');
-      userSnap = await getDoc(userRef, { source: 'server' });
+    const response = await fetch(`${API_URL}/users/${userId}/role`);
+    if (!response.ok) {
+      throw new Error('Ошибка при получении роли пользователя');
     }
-
-    if (userSnap.exists()) {
-      const userData = userSnap.data();
-      return userData.role || "user";
-    } else {
-      throw new Error("User not found");
-    }
+    const data = await response.json();
+    return data.role; // Возвращаем только роль
   } catch (error) {
-    console.error("Error getting user role:", error);
-    throw new Error("Error getting user role");
+    console.error('Ошибка в getUserRole:', error);
+    throw new Error('Ошибка работы с API');
   }
-    */
 };
 
 const getUsers = async () => {
-/*
-  const usersRef = collection(db, "Users");
-
   try {
-    const querySnapshot = await getDocs(usersRef);
-    const users = [];
-
-    querySnapshot.forEach((doc) => {
-      users.push({ id: doc.id, ...doc.data() });
-    });
-
-    return users;
+    const response = await fetch(`${API_URL}/users`);
+    if (!response.ok) {
+      throw new Error('Ошибка при получении списка пользователей');
+    }
+    return await response.json();
   } catch (error) {
-    console.error("Error fetching all users:", error);
-    throw new Error("Error fetching all users");
+    console.error('Ошибка в getUsers:', error);
+    throw new Error('Ошибка работы с API');
   }
-    */
 };
 
-
-
-export { getOrCreateUser, getUser, getUserName, updateUserName, deleteUserProfile, getNonFriendUsers, addFriend, getPendingFriendRequests, acceptFriendRequest, declineFriendRequest, updateUserRole, getUserRole, getUsers};
+export { getOrCreateUser, getUser, getUserName, updateUserName, deleteUserProfile, getNonFriendUsers, addFriend, getPendingFriendRequests, acceptFriendRequest, declineFriendRequest, getFriendsList, updateUserRole, getUserRole, getUsers};

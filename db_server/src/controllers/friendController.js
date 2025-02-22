@@ -79,28 +79,31 @@ exports.acceptFriendRequest = async (req, res) => {
   }
 };
 
-// Отклонить заявку (PUT /api/friends/decline) c body { user_id, friend_id }
-// Можно просто удалить запись или выставить status=2 ("declined") — на ваше усмотрение.
+// Отклонить заявку (PUT /api/friends/decline)
 exports.declineFriendRequest = async (req, res) => {
   try {
     const { user_id, friend_id } = req.body;
-    // Ищем запись
+
+    // Проверяем, существует ли заявка со статусом 0 (ожидание)
     const [rows] = await db.query(
       'SELECT * FROM friends WHERE user_id = ? AND friend_id = ? AND status = 0',
       [friend_id, user_id]
     );
+
     if (rows.length === 0) {
-      return res.status(404).json({ message: 'Friend request not found' });
+      return res.status(404).json({ message: 'Friend request not found or already processed' });
     }
 
-    // Удалим запись или пометим как отклонённую
-    // Здесь выберем удаление
-    await db.query('DELETE FROM friends WHERE id = ?', [rows[0].id]);
+    // Обновляем статус на 2 (отклонено)
+    await db.query(
+      'UPDATE friends SET status = 2 WHERE id = ?',
+      [rows[0].id]
+    );
 
     return res.json({ message: 'Friend request declined' });
   } catch (error) {
-    console.error('Error declining friend request:', error);
-    return res.status(500).json({ message: 'Server error' });
+    console.error('Ошибка при отклонении заявки в друзья:', error);
+    return res.status(500).json({ message: 'Ошибка сервера' });
   }
 };
 
@@ -131,3 +134,27 @@ exports.getNonFriendUsers = async (req, res) => {
     return res.status(500).json({ message: 'Server error' });
   }
 };
+
+// Получить список друзей (GET /api/friends/:id/list)
+exports.getFriendsList = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // Получаем список друзей, исключая самого пользователя из выборки
+    const [rows] = await db.query(`
+      SELECT users.id, users.name, users.email, users.photo
+      FROM friends
+      JOIN users ON 
+        (friends.friend_id = users.id AND friends.user_id = ?) 
+        OR 
+        (friends.user_id = users.id AND friends.friend_id = ?)
+      WHERE friends.status = 1
+    `, [userId, userId]);
+
+    return res.json(rows);
+  } catch (error) {
+    console.error('Ошибка при получении списка друзей:', error);
+    return res.status(500).json({ message: 'Ошибка сервера' });
+  }
+};
+

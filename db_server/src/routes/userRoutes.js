@@ -10,4 +10,12 @@ router.post('/', userController.createUser);
 
 router.patch('/:id', userController.updateUserName);
 
+router.get('/:id/role', userController.getUserRole);
+
+router.put('/:id/role', userController.updateUserRole);
+
+router.get('/', userController.getUsers);
+
+router.delete('/:id', userController.deleteUserProfile);
+
 module.exports = router;

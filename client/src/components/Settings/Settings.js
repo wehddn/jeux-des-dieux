@@ -32,6 +32,7 @@ const Settings = () => {
         try {
           const userRole = await getUserRole(user.uid);
           setRole(userRole);
+          console.log("User role:", userRole);  
         } catch (error) {
           console.error("Error fetching user role:", error);
         }

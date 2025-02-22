@@ -55,3 +55,85 @@ exports.updateUserName = async (req, res) => {
     }
   };
   
+exports.getUserRole = async (req, res) => {
+    try {
+      const userId = req.params.id;
+  
+      // Запрос к базе данных для получения роли
+      const [rows] = await db.query(
+        'SELECT role FROM users WHERE id = ?',
+        [userId]
+      );
+  
+      if (rows.length === 0) {
+        return res.status(404).json({ message: 'Пользователь не найден' });
+      }
+  
+      return res.json({ role: rows[0].role });
+    } catch (error) {
+      console.error('Ошибка при получении роли пользователя:', error);
+      return res.status(500).json({ message: 'Ошибка сервера' });
+    }
+  };
+
+  // Получить список всех пользователей (GET /api/users)
+exports.getUsers = async (req, res) => {
+    try {
+      // Запрос к базе данных
+      const [rows] = await db.query(
+        'SELECT id, name, email, role, photo FROM users'
+      );
+  
+      return res.json(rows);
+    } catch (error) {
+      console.error('Ошибка при получении списка пользователей:', error);
+      return res.status(500).json({ message: 'Ошибка сервера' });
+    }
+  };
+  
+// Обновить роль пользователя (PUT /api/users/:id/role)
+exports.updateUserRole = async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const { role } = req.body;
+  
+      if (!role) {
+        return res.status(400).json({ message: 'Не указана новая роль' });
+      }
+  
+      // Обновляем роль в базе данных
+      const [result] = await db.query(
+        'UPDATE users SET role = ? WHERE id = ?',
+        [role, userId]
+      );
+  
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: 'Пользователь не найден' });
+      }
+  
+      return res.json({ message: 'Роль пользователя успешно обновлена' });
+    } catch (error) {
+      console.error('Ошибка при обновлении роли пользователя:', error);
+      return res.status(500).json({ message: 'Ошибка сервера' });
+    }
+  };
+
+  // Удалить профиль пользователя (DELETE /api/users/:id)
+exports.deleteUserProfile = async (req, res) => {
+    try {
+      const userId = req.params.id;
+  
+      // Удаляем пользователя из базы
+      const [result] = await db.query('DELETE FROM users WHERE id = ?', [userId]);
+  
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: 'Пользователь не найден' });
+      }
+  
+      return res.json({ message: 'Профиль пользователя успешно удален' });
+    } catch (error) {
+      console.error('Ошибка при удалении пользователя:', error);
+      return res.status(500).json({ message: 'Ошибка сервера' });
+    }
+  };
+  

@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Friend from "./Friend.js";
 import FriendSearchModal from "./FriendSearchModal";
 import FriendRequestsModal from "./FriendRequestsModal";
-import { getPendingFriendRequests } from "../../bd/Users";
+import { getPendingFriendRequests, getFriendsList } from "../../bd/Users";
 
 const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRequest }) => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isRequestsModalOpen, setIsRequestsModalOpen] = useState(false);
   const [receivedRequests, setReceivedRequests] = useState([]);
+  const [friends, setFriends] = useState([]);
 
   useEffect(() => {
     const fetchPendingRequests = async () => {
@@ -23,6 +24,20 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
     fetchPendingRequests();
   }, [userProfile.id]);
 
+  const fetchFriendsList = useCallback(async () => {
+    try {
+      const friendsList = await getFriendsList(userProfile.id);
+      setFriends(friendsList);
+      console.log("Friends : useEffect friendsList", friendsList);
+    } catch (error) {
+      console.error("Ошибка при получении списка друзей:", error);
+    }
+  }, [userProfile.id]);
+
+  useEffect(() => {
+    fetchFriendsList();
+  }, [fetchFriendsList]);
+
   const openSearchModal = () => setIsSearchModalOpen(true);
   const closeSearchModal = () => setIsSearchModalOpen(false);
 
@@ -33,6 +48,7 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
     try {
       await handleAcceptFriendRequest(friendId);
       setReceivedRequests(receivedRequests.filter((request) => request.id !== friendId));
+      await fetchFriendsList(); // Теперь fetchFriendsList доступна и корректно обновляет список друзей
     } catch (error) {
       console.error("Ошибка при принятии заявки:", error);
     }
@@ -72,12 +88,15 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
       </div>
       <hr className="m-2" />
       <div className="row d-flex p-4 pt-4">
-        {userProfile.friends &&
-          userProfile.friends.map((friend, index) => (
-            <article className="col-6 mb-4" key={index} aria-label="Friend">
+        {friends.length > 0 ? (
+          friends.map((friend) => (
+            <article className="col-6 mb-4" key={friend.id} aria-label="Friend">
               <Friend userId={friend.id} />
             </article>
-          ))}
+          ))
+        ) : (
+          <p className="text-center">Vous n'avez pas encore d'amis.</p>
+        )}
       </div>
     </section>
   );

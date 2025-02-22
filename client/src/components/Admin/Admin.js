@@ -8,6 +8,7 @@ const ManageRoles = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       const userList = await getUsers();
+      console.log('User list:', userList);
       setUsers(userList);
       setLoading(false);
     };
