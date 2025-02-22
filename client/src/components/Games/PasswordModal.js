@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
-import { getDoc, doc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { getGame } from "../../bd/Games";
 import { useUserAuth } from "../../context/UserAuthContext";
 
 Modal.setAppElement("#root");
@@ -15,17 +14,17 @@ function PasswordModal({ isOpen, onRequestClose, room, onPasswordCorrect }) {
     e.preventDefault();
 
     try {
-      const roomRef = doc(db, "Games", room.id);
-      const roomDoc = await getDoc(roomRef);
+      const gameData = await getGame(room);
 
-      if (roomDoc.exists()) {
-        const roomData = roomDoc.data();
-        if (roomData.password === password) {
+      if (gameData) {
+        if (gameData.password === password) {
           authenticateRoom(room.id);
           onPasswordCorrect();
         } else {
           setError("Mot de passe incorrect. Veuillez réessayer.");
         }
+      } else {
+        setError("Jeu introuvable.");
       }
     } catch (error) {
       console.error("Erreur lors de la vérification du mot de passe:", error);

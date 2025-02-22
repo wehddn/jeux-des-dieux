@@ -1,42 +1,51 @@
-import { collection, addDoc, getDocs } from "firebase/firestore";
-import { db } from "../firebase";
+const API_URL = "http://localhost:5000/api";
 
 export const createGame = async ({ name, userId, isPrivate, password }) => {
-/*  try {
-    const gameData = {
-      name: name || "",
-      players: [{ id: userId }],
-      started: false,
-      isPrivate: Boolean(isPrivate),
-    };
+  try {
+    const response = await fetch(`${API_URL}/games`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, userId, isPrivate, password }),
+    });
 
-    if (isPrivate && password) {
-      gameData.password = password;
+    if (!response.ok) {
+      throw new Error("Ошибка при создании игры");
     }
 
-    const gameRef = await addDoc(collection(db, "Games"), gameData);
-    return gameRef.id;
+    const data = await response.json();
+    return data.gameId;
   } catch (error) {
-    console.error("Ошибка при создании игры:", error);
-    throw error;
+    console.error("Ошибка в createGame:", error);
+    throw new Error("Ошибка работы с API");
   }
-    */
 };
 
 export const getGamesList = async () => {
-/*  try {
-    const querySnapshot = await getDocs(collection(db, "Games"));
-    const gamesList = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      name: doc.data().name,
-      isPrivate: doc.data().isPrivate,
-      players: doc.data().players,
-      password: doc.data().password,
-    }));
-    return gamesList;
+  try {
+    const response = await fetch(`${API_URL}/games`);
+
+    if (!response.ok) {
+      throw new Error("Ошибка при получении списка игр");
+    }
+
+    return await response.json();
   } catch (error) {
-    console.error("Ошибка при получении списка игр:", error);
-    throw error;
+    console.error("Ошибка в getGamesList:", error);
+    throw new Error("Ошибка работы с API");
   }
-    */
+};
+
+export const getGame = async (gameId) => {
+  try {
+    const response = await fetch(`${API_URL}/games/${gameId}`);
+
+    if (!response.ok) {
+      throw new Error("Ошибка при получении информации об игре");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Ошибка в getGame:", error);
+    throw new Error("Ошибка работы с API");
+  }
 };
