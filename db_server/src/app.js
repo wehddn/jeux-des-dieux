@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const db = require('./config/db');
-//const authRoutes = require('./routes/authRoutes');
+const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const friendRoutes = require('./routes/friendRoutes');
 const gameRoutes = require('./routes/gameRoutes');
@@ -26,7 +26,7 @@ app.use(express.json());
     }
 })();
 
-//app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/friends', friendRoutes);
 app.use('/api/games', gameRoutes);
