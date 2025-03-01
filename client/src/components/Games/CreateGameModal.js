@@ -19,7 +19,7 @@ function CreateGameModal({ isOpen, onRequestClose, contentLabel }) {
     try {
       const gameData = {
         name: gameName || "",
-        userId: user.uid,
+        userId: user.id,
         isPrivate: Boolean(isPrivate),
       };
 

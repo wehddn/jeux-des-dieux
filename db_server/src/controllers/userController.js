@@ -57,6 +57,7 @@ exports.updateUserName = async (req, res) => {
   
 exports.getUserRole = async (req, res) => {
     try {
+      console.log(req.params.id);
       const userId = req.params.id;
   
       const [rows] = await db.query(

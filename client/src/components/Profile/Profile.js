@@ -8,7 +8,7 @@ import { getOrCreateUser, acceptFriendRequest, declineFriendRequest } from "../.
 const Profile = () => {
   const { user } = useUserAuth();
   const [userProfile, setUserProfile] = useState(null);
-  const userId = user.uid;
+  const userId = user.id;
   const userEmail = user.email;
 
   const handleAcceptFriendRequest = async (friendId) => {

@@ -11,7 +11,7 @@ const Settings = () => {
 
   const handleDeleteClick = async () => {
     try {
-      await deleteUserProfile(user.uid);
+      await deleteUserProfile(user.id);
     } catch (error) {
       console.error("Error deleting profile:", error);
     }
@@ -30,7 +30,7 @@ const Settings = () => {
     const fetchUserRole = async () => {
       if (user) {
         try {
-          const userRole = await getUserRole(user.uid);
+          const userRole = await getUserRole(user.id);
           setRole(userRole);
           console.log("User role:", userRole);  
         } catch (error) {
@@ -46,7 +46,7 @@ const Settings = () => {
     const fetchUserRole = async () => {
       if (user) {
         try {
-          const userRole = await getUserRole(user.uid);
+          const userRole = await getUserRole(user.id);
           setRole(userRole);
         } catch (error) {
           console.error("Error fetching user role:", error);

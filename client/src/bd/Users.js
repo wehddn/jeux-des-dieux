@@ -1,8 +1,17 @@
 const API_URL = 'http://localhost:5000/api';
 
+const getAuthHeaders = (additionalHeaders = {}) => {
+  const token = localStorage.getItem("token");
+  return token
+    ? { ...additionalHeaders, Authorization: `Bearer ${token}` }
+    : additionalHeaders;
+};
+
 const getOrCreateUser = async (userId, userEmail) => {
   try {
-    const response = await fetch(`${API_URL}/users/${userId}`);
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+      headers: getAuthHeaders()
+    });
 
     if (response.status === 404) {
       const newUser = {
@@ -13,7 +22,7 @@ const getOrCreateUser = async (userId, userEmail) => {
       };
       const createResponse = await fetch(`${API_URL}/users`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getAuthHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify(newUser),
       });
 
@@ -33,8 +42,9 @@ const getOrCreateUser = async (userId, userEmail) => {
 
 const getUser = async (userId) => {
   try {
-    const response = await fetch(`${API_URL}/users/${userId}`);
-
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+      headers: getAuthHeaders()
+    });
     if (!response.ok) {
       if (response.status === 404) {
         console.warn("User not found");
@@ -64,7 +74,7 @@ const updateUserName = async (userId, newName) => {
   try {
     const response = await fetch(`${API_URL}/users/${userId}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ name: newName }),
     });
 
@@ -84,7 +94,7 @@ const deleteUserProfile = async (userId) => {
   try {
     const response = await fetch(`${API_URL}/users/${userId}`, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
     });
 
     if (!response.ok) {
@@ -100,7 +110,9 @@ const deleteUserProfile = async (userId) => {
 
 const getNonFriendUsers = async (userId) => {
   try {
-    const response = await fetch(`${API_URL}/friends/${userId}/non-friends`);
+    const response = await fetch(`${API_URL}/friends/${userId}/non-friends`, {
+      headers: getAuthHeaders()
+    });
     if (!response.ok) {
       throw new Error('Error getting non-friend users');
     }
@@ -115,7 +127,7 @@ const addFriend = async (userId, friendId) => {
   try {
     const response = await fetch(`${API_URL}/friends`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ user_id: userId, friend_id: friendId }),
     });
     if (!response.ok) {
@@ -131,7 +143,9 @@ const addFriend = async (userId, friendId) => {
 const getPendingFriendRequests = async (userId) => {
   try {
     console.log('userId:', userId);
-    const response = await fetch(`${API_URL}/friends/${userId}/pending-requests`);
+    const response = await fetch(`${API_URL}/friends/${userId}/pending-requests`, {
+      headers: getAuthHeaders()
+    });
     if (!response.ok) {
       throw new Error('Error getting pending friend requests');
     }
@@ -148,7 +162,7 @@ const acceptFriendRequest = async (userId, friendId) => {
     console.log('friendId:', friendId);
     const response = await fetch(`${API_URL}/friends/accept`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ user_id: userId, friend_id: friendId }),
     });
     if (!response.ok) {
@@ -165,7 +179,7 @@ const declineFriendRequest = async (userId, friendId) => {
   try {
     const response = await fetch(`${API_URL}/friends/decline`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ user_id: userId, friend_id: friendId }),
     });
 
@@ -182,7 +196,9 @@ const declineFriendRequest = async (userId, friendId) => {
 
 const getFriendsList = async (userId) => {
   try {
-    const response = await fetch(`${API_URL}/friends/${userId}/list`);
+    const response = await fetch(`${API_URL}/friends/${userId}/list`, {
+      headers: getAuthHeaders()
+    });
     if (!response.ok) {
       throw new Error('Error getting friends list');
     }
@@ -197,7 +213,7 @@ const updateUserRole = async (userId, newRole) => {
   try {
     const response = await fetch(`${API_URL}/users/${userId}/role`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ role: newRole }),
     });
 
@@ -214,7 +230,9 @@ const updateUserRole = async (userId, newRole) => {
 
 const getUserRole = async (userId) => {
   try {
-    const response = await fetch(`${API_URL}/users/${userId}/role`);
+    const response = await fetch(`${API_URL}/users/${userId}/role`, {
+      headers: getAuthHeaders()
+    });
     if (!response.ok) {
       throw new Error('Error getting user role');
     }
@@ -228,7 +246,9 @@ const getUserRole = async (userId) => {
 
 const getUsers = async () => {
   try {
-    const response = await fetch(`${API_URL}/users`);
+    const response = await fetch(`${API_URL}/users`, {
+      headers: getAuthHeaders()
+    });
     if (!response.ok) {
       throw new Error('Error getting users list');
     }

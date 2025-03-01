@@ -17,7 +17,7 @@ function Game({
   const [selectedCard, setSelectedCard] = useState(null);
   const [helpModalIsOpen, setHelpModalIsOpen] = useState(false);
   const isCurrentPlayer =
-    gameState.players[gameState.currentPlayer].id === user.uid;
+    gameState.players[gameState.currentPlayer].id === user.id;
 
   const slotColors = {
     Crèdes: "#136E71",
@@ -40,7 +40,7 @@ function Game({
       if (isOpponentSlot) {
         return true;
       }
-      const player = gameState.players.find((p) => p.id === user.uid);
+      const player = gameState.players.find((p) => p.id === user.id);
       const slotHasCards = player.table.some((c) => c.slot === slotIndex);
       if (!slotHasCards) return true;
 
@@ -50,7 +50,7 @@ function Game({
       return card.suit !== slotSuit;
     } else if (card.value === 8) {
       if (isOpponentSlot) {
-        const opponent = gameState.players.find((p) => p.id !== user.uid);
+        const opponent = gameState.players.find((p) => p.id !== user.id);
         const slotHasCards = opponent.table.some((c) => c.slot === slotIndex);
         if (!slotHasCards) return true;
         if (card.suit === "Mercenaires") {
@@ -123,7 +123,7 @@ function Game({
       </Suspense>
       <section className="opponent-field">
         {gameState.players
-          .filter((player) => player.id !== user.uid)
+          .filter((player) => player.id !== user.id)
           .map((player, index) => (
             <div key={player.id}>
               <PlayerField
@@ -163,8 +163,8 @@ function Game({
 
       <section className="player-field">
         <PlayerField
-          player={gameState.players.find((p) => p.id === user.uid)}
-          index={gameState.players.findIndex((p) => p.id === user.uid)}
+          player={gameState.players.find((p) => p.id === user.id)}
+          index={gameState.players.findIndex((p) => p.id === user.id)}
           colors={Object.values(slotColors)}
           onSlotClick={(slotIndex) => {
             if (selectedCard && !isSlotBlocked(slotIndex, selectedCard)) {
@@ -186,7 +186,7 @@ function Game({
         isCurrentPlayer={isCurrentPlayer}
       />
       {getPlayerStatusMessage(
-        gameState.players.findIndex((p) => p.id === user.uid)
+        gameState.players.findIndex((p) => p.id === user.id)
       )}
     </main>
   );

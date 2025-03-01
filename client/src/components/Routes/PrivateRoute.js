@@ -22,7 +22,7 @@ function PrivateRoute({ children }) {
         const gameData = await getGame(id);
 
         if (gameData) {
-          if (gameData.creatorId === user.uid) {
+          if (gameData.creatorId === user.id) {
             authenticateRoom(id);
             setIsAuthorized(true);
           } else if (isRoomAuthenticated(id)) {

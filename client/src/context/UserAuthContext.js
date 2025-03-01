@@ -1,15 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut,
-  GoogleAuthProvider,
-  signInWithPopup,
-  sendEmailVerification,
-  sendPasswordResetEmail
-} from "firebase/auth";
-import { auth } from "../firebase";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const userAuthContext = createContext();
 
@@ -20,31 +11,60 @@ export function UserAuthContextProvider({ children }) {
     JSON.parse(localStorage.getItem("authenticatedRooms")) || []
   );
 
-  function logIn(email, password) {
-    return signInWithEmailAndPassword(auth, email, password);
+  // При инициализации проверяем наличие токена в localStorage
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decodedUser = jwtDecode(token);
+        setUser(decodedUser);
+      } catch (error) {
+        console.error("Ошибка декодирования токена:", error);
+        localStorage.removeItem("token");
+      }
+    }
+    setLoading(false);
+  }, []);
+
+  // Функция логина через API
+  async function logIn(email, password) {
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/login", { email, password });
+      const { token } = response.data;
+      localStorage.setItem("token", token);
+      const decodedUser = jwtDecode(token);
+      console.log("Decoded user:", decodedUser);
+      setUser(decodedUser);
+      return decodedUser;
+    } catch (error) {
+      console.error("Ошибка логина:", error);
+      throw error;
+    }
   }
 
+  // Функция регистрации через API
   async function signUp(email, password) {
-    const credential = await createUserWithEmailAndPassword(auth, email, password);
-    await sendEmailVerification(credential.user);
-    return credential;
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/register", { email, password });
+      return response.data;
+    } catch (error) {
+      console.error("Ошибка регистрации:", error);
+      const errorMessage = error.response && error.response.data && error.response.data.message
+      ? error.response.data.message
+      : error.message;
+      throw new Error(errorMessage);
+    }
   }
 
+  // Функция разлогинивания
   function logOut() {
+    setUser(null);
+    localStorage.removeItem("token");
     setAuthenticatedRooms([]);
     localStorage.removeItem("authenticatedRooms");
-    return signOut(auth);
   }
 
-  function googleSignIn() {
-    const googleAuthProvider = new GoogleAuthProvider();
-    return signInWithPopup(auth, googleAuthProvider);
-  }
-
-  function resetPassword(email) {
-    return sendPasswordResetEmail(auth, email);
-  }
-
+  // Логика для аутентификации игровых комнат (без изменений)
   function authenticateRoom(roomId) {
     setAuthenticatedRooms((prev) => {
       const updatedRooms = [...prev, roomId];
@@ -57,20 +77,9 @@ export function UserAuthContextProvider({ children }) {
     return authenticatedRooms.includes(roomId);
   }
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
   return (
     <userAuthContext.Provider
-      value={{ user, logIn, signUp, logOut, googleSignIn, resetPassword, authenticateRoom, isRoomAuthenticated }}
+      value={{ user, logIn, signUp, logOut, authenticateRoom, isRoomAuthenticated }}
     >
       {!loading && children}
     </userAuthContext.Provider>

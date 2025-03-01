@@ -12,8 +12,8 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     const fetchUserRole = async () => {
       if (user) {
         try {
-          console.log(user.uid);
-          const userRole = await getUserRole(user.uid);
+          console.log("user : ", user.id);
+          const userRole = await getUserRole(user.id);
           setRole(userRole);
         } catch (error) {
           console.error("Error fetching user role:", error);
@@ -30,10 +30,6 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 
   if (!user) {
     return <Navigate to="/" />;
-  }
-
-  if (!user.emailVerified) {
-    return <Navigate to="/verify" />;
   }
 
   if (loading) {

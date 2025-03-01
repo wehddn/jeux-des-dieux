@@ -5,8 +5,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 
 exports.register = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
-        if (!name || !email || !password) {
+        const { email, password } = req.body;
+        if (!email || !password) {
             return res.status(400).json({ message: 'Все поля обязательны' });
         }
         
@@ -17,13 +17,16 @@ exports.register = async (req, res) => {
         
         const hashedPassword = await bcrypt.hash(password, 10);
         
-        await db.query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [name, email, hashedPassword]);
-        res.status(201).json({ message: 'Пользователь успешно зарегистрирован' });
-    } catch (error) {
+        const result = await db.query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', ["Player", email, hashedPassword]);
+        const newUserId = result.insertId;
+       
+        const token = jwt.sign({ id: newUserId, email }, JWT_SECRET, { expiresIn: '1h' });
+        return res.status(201).json({ token, message: 'Пользователь успешно зарегистрирован' });
+        } catch (error) {
         console.error('Ошибка при регистрации:', error);
-        res.status(500).json({ message: 'Ошибка сервера' });
-    }
-};
+        return res.status(500).json({ message: 'Ошибка сервера' });
+        }
+  };
 
 
 exports.login = async (req, res) => {

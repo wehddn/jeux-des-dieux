@@ -22,7 +22,7 @@ const EmailVerification = () => {
   };
 
   useEffect(() => {
-    if (user && user.emailVerified) {
+    if (user) {
       navigate('/profile');
     }
   }, [user, navigate]);
