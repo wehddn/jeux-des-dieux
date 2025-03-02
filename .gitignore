@@ -24,4 +24,6 @@ yarn-error.log*
 package-lock.json
 
 db_server/node_modules
-db_server/.env
+db_server/src/.env
+
+game_server/src/.env
