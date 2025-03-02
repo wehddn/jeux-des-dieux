@@ -17,7 +17,7 @@ exports.register = async (req, res) => {
         
         const hashedPassword = await bcrypt.hash(password, 10);
         
-        const result = await db.query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', ["Player", email, hashedPassword]);
+        const result = await db.query('INSERT INTO users (name, email, photo, password) VALUES (?, ?, ?, ?)', ["Player", email, "photo_1.png", hashedPassword]);
         const newUserId = result.insertId;
        
         const token = jwt.sign({ id: newUserId, email }, JWT_SECRET, { expiresIn: '1h' });

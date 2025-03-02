@@ -32,8 +32,8 @@ const ManageRoles = () => {
       <ul>
         {users.map(user => (
           <li key={user.id}>
-            {user.name} - {user.role}
-            <select style={{ marginLeft: '1rem' }}
+            {user.name} :
+            <select style={{ marginLeft: '0.5rem' }}
               value={user.role}
               onChange={(e) => handleRoleChange(user.id, e.target.value)}
             >
