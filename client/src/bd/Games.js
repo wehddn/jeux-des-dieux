@@ -1,10 +1,17 @@
 const API_URL = "http://localhost:5000/api";
 
+const getAuthHeaders = (additionalHeaders = {}) => {
+  const token = localStorage.getItem("token");
+  return token
+    ? { ...additionalHeaders, Authorization: `Bearer ${token}` }
+    : additionalHeaders;
+};
+
 export const createGame = async ({ name, userId, isPrivate, password }) => {
   try {
     const response = await fetch(`${API_URL}/games`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: getAuthHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({ name, userId, isPrivate, password }),
     });
 
@@ -22,7 +29,9 @@ export const createGame = async ({ name, userId, isPrivate, password }) => {
 
 export const getGamesList = async () => {
   try {
-    const response = await fetch(`${API_URL}/games`);
+    const response = await fetch(`${API_URL}/games`, {
+      headers: getAuthHeaders()
+    });
 
     if (!response.ok) {
       throw new Error("Error getting games list");
@@ -37,7 +46,9 @@ export const getGamesList = async () => {
 
 export const getGame = async (gameId) => {
   try {
-    const response = await fetch(`${API_URL}/games/${gameId}`);
+    const response = await fetch(`${API_URL}/games/${gameId}`, {
+      headers: getAuthHeaders()
+    });
 
     if (!response.ok) {
       throw new Error("Error getting game");

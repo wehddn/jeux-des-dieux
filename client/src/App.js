@@ -20,7 +20,6 @@ import Settings from "./components/Settings/Settings";
 import Rules from "./components/Rules/Rules";
 import Login from "./components/Authorization/Login";
 import Signup from "./components/Authorization/Signup";
-import ForgotPassword from "./components/Authorization/ForgotPassword";
 import AdminPage from "./components/Admin/Admin";
 import NoAccess from "./components/base/NoAccess/NoAccess";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -29,7 +28,7 @@ import 'boxicons/css/boxicons.min.css';
 
 const AppLayout = ({ children }) => {
   const location = useLocation();
-  const noHeaderRoutes = ["/signup", "/forgot-password", "/"];
+  const noHeaderRoutes = ["/signup", "/"];
   
   const shouldShowHeader = !noHeaderRoutes.includes(location.pathname);
   
@@ -110,7 +109,6 @@ function App() {
                   <Route path="/no-access" element={<NoAccess />} />
                   <Route path="/" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
                 </Routes>
               </UserAuthContextProvider>
         </Container>

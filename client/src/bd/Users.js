@@ -7,39 +7,6 @@ const getAuthHeaders = (additionalHeaders = {}) => {
     : additionalHeaders;
 };
 
-const getOrCreateUser = async (userId, userEmail) => {
-  try {
-    const response = await fetch(`${API_URL}/users/${userId}`, {
-      headers: getAuthHeaders()
-    });
-
-    if (response.status === 404) {
-      const newUser = {
-        id: userId,
-        email: userEmail,
-        name: "Player",
-        photo: "photo_1.png",
-      };
-      const createResponse = await fetch(`${API_URL}/users`, {
-        method: "POST",
-        headers: getAuthHeaders({ "Content-Type": "application/json" }),
-        body: JSON.stringify(newUser),
-      });
-
-      if (!createResponse.ok) {
-        throw new Error("Error creating user");
-      }
-
-      return newUser;
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error getting or creating user:", error);
-    throw new Error("API error");
-  }
-};
-
 const getUser = async (userId) => {
   try {
     const response = await fetch(`${API_URL}/users/${userId}`, {
@@ -259,4 +226,4 @@ const getUsers = async () => {
   }
 };
 
-export { getOrCreateUser, getUser, getUserName, updateUserName, deleteUserProfile, getNonFriendUsers, addFriend, getPendingFriendRequests, acceptFriendRequest, declineFriendRequest, getFriendsList, updateUserRole, getUserRole, getUsers};
+export { getUser, getUserName, updateUserName, deleteUserProfile, getNonFriendUsers, addFriend, getPendingFriendRequests, acceptFriendRequest, declineFriendRequest, getFriendsList, updateUserRole, getUserRole, getUsers};

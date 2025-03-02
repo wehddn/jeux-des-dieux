@@ -38,7 +38,10 @@ export function UserAuthContextProvider({ children }) {
       return decodedUser;
     } catch (error) {
       console.error("Ошибка логина:", error);
-      throw error;
+      const errorMessage = error.response && error.response.data && error.response.data.message
+      ? error.response.data.message
+      : error.message;
+      throw new Error(errorMessage);
     }
   }
 
