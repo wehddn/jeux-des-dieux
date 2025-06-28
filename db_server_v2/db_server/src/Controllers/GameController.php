@@ -21,19 +21,32 @@ final class GameController
            ? password_hash($data['password'], PASSWORD_DEFAULT)
            : null;
 
-        $pdo = Database::get();
-        $pdo->prepare('INSERT INTO games (name,created_by,is_private,password) VALUES (?,?,?,?)')
-            ->execute([$name,$uid,$isPrivate,$pwdHash]);
-        $gid = (int)$pdo->lastInsertId();
+        try {
+            $pdo = Database::get();
+            error_log("GameController::create - About to insert game");
+            
+            $pdo->prepare('INSERT INTO games (name,created_by,is_private,password) VALUES (?,?,?,?)')
+                ->execute([$name,$uid,$isPrivate,$pwdHash]);
+            $gid = (int)$pdo->lastInsertId();
+            
+            error_log("GameController::create - Game created with ID: " . $gid);
 
-        // создатель сразу становится игроком
-        $pdo->prepare('INSERT INTO game_players (game_id,user_id) VALUES (?,?)')
-            ->execute([$gid,$uid]);
+            // создатель сразу становится игроком
+            $pdo->prepare('INSERT INTO game_players (game_id,user_id) VALUES (?,?)')
+                ->execute([$gid,$uid]);
+                
+            error_log("GameController::create - Player added");
 
-        Audit::record('games',$gid,null,['name'=>$name,'status'=>'waiting']);
-        EventLogger::log('game_created',"Game $gid by $uid",$uid);
+            Audit::record('games',$gid,null,['name'=>$name,'status'=>'waiting']);
+            EventLogger::log('game_created',"Game $gid by $uid",$uid);
+            
+            error_log("GameController::create - Audit and event logged");
 
-        Response::json(201,['gameId'=>$gid,'name'=>$name,'status'=>'waiting']);
+            Response::json(201,['gameId'=>$gid,'name'=>$name,'status'=>'waiting']);
+        } catch (\Exception $e) {
+            error_log("GameController::create - Error: " . $e->getMessage());
+            Response::json(500, ['error' => 'Database error']);
+        }
     }
 
     /** GET /games */
