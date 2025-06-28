@@ -11,9 +11,12 @@ class AuthController
     public function register(): void
     {
         $data = json_decode(file_get_contents('php://input'), true);
-        if (!isset($data['email'], $data['password'], $data['name'])) {
+        if (!isset($data['email'], $data['password'])) {
             Response::json(400, ['error' => 'Invalid payload']);
         }
+
+        // Если имя не указано, используем часть email до @
+        $name = $data['name'] ?? explode('@', $data['email'])[0];
 
         $pdo = Database::get();
         // проверка email
@@ -27,7 +30,7 @@ class AuthController
         $stmt = $pdo->prepare(
             'INSERT INTO users (name, email, password) VALUES (?,?,?)'
         );
-        $stmt->execute([$data['name'], $data['email'], $hash]);
+        $stmt->execute([$name, $data['email'], $hash]);
         Response::json(201, ['message' => 'User registered']);
     }
 

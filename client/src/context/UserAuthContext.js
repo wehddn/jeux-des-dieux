@@ -17,7 +17,14 @@ export function UserAuthContextProvider({ children }) {
     if (token) {
       try {
         const decodedUser = jwtDecode(token);
-        setUser(decodedUser);
+        // JWT использует 'sub' для user ID, преобразуем для удобства
+        const user = {
+          id: decodedUser.sub,
+          role: decodedUser.role,
+          iat: decodedUser.iat,
+          exp: decodedUser.exp
+        };
+        setUser(user);
       } catch (error) {
         console.error("Ошибка декодирования токена:", error);
         localStorage.removeItem("token");
@@ -33,9 +40,16 @@ export function UserAuthContextProvider({ children }) {
       const { token } = response.data;
       localStorage.setItem("token", token);
       const decodedUser = jwtDecode(token);
-      console.log("Decoded user:", decodedUser);
-      setUser(decodedUser);
-      return decodedUser;
+      // JWT использует 'sub' для user ID, преобразуем для удобства
+      const user = {
+        id: decodedUser.sub,
+        role: decodedUser.role,
+        iat: decodedUser.iat,
+        exp: decodedUser.exp
+      };
+      console.log("Decoded user:", user);
+      setUser(user);
+      return user;
     } catch (error) {
       console.error("Ошибка логина:", error);
       const errorMessage = error.response && error.response.data && error.response.data.message

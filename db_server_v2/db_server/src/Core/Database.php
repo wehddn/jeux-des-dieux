@@ -12,9 +12,6 @@ final class Database
     public static function get(): PDO
     {
         if (self::$instance === null) {
-            $dotenv = \Dotenv\Dotenv::createImmutable(dirname(__DIR__, 2));
-            $dotenv->load();
-
             $dsn = sprintf(
                 'mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4',
                 $_ENV['DB_HOST'], $_ENV['DB_PORT'], $_ENV['DB_NAME']
