@@ -112,7 +112,7 @@ final class FriendController
              )";
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['uid'=>$id]);
-        Response::json(200, ['list' => $stmt->fetchAll()]);
+        Response::json(200, $stmt->fetchAll());
     }
 
     /** GET /friends/{id}/pending-requests */
@@ -129,7 +129,7 @@ final class FriendController
              JOIN users u ON u.id=fr.sender_id
             WHERE fr.receiver_id=? AND fr.status="pending"');
         $stmt->execute([$id]);
-        Response::json(200, ['pending' => $stmt->fetchAll()]);
+        Response::json(200, $stmt->fetchAll());
     }
 
     /** GET /friends/{id}/list */
@@ -150,6 +150,6 @@ final class FriendController
              AND fr.status='accepted'";
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['uid'=>$id]);
-        Response::json(200, ['friends' => $stmt->fetchAll()]);
+        Response::json(200, $stmt->fetchAll());
     }
 }

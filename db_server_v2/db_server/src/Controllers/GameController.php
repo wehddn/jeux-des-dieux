@@ -33,7 +33,7 @@ final class GameController
         Audit::record('games',$gid,null,['name'=>$name,'status'=>'waiting']);
         EventLogger::log('game_created',"Game $gid by $uid",$uid);
 
-        Response::json(201,['id'=>$gid,'name'=>$name,'status'=>'waiting']);
+        Response::json(201,['gameId'=>$gid,'name'=>$name,'status'=>'waiting']);
     }
 
     /** GET /games */
@@ -45,7 +45,7 @@ final class GameController
             'SELECT g.id,g.name,g.status,u.name AS creator,g.created_at
                FROM games g JOIN users u ON u.id=g.created_by
             ORDER BY g.created_at DESC')->fetchAll();
-        Response::json(200,['games'=>$rows]);
+        Response::json(200,$rows);
     }
 
     /** GET /games/{id} */

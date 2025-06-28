@@ -45,7 +45,7 @@ final class UserController
         Auth::requireLogin(2);
         $rows = Database::get()->query(
           'SELECT id,name,email,role_id,created_at FROM users')->fetchAll();
-        Response::json(200,['users'=>$rows]);
+        Response::json(200,$rows);
     }
 
     /** PUT /users/{id}/role  body:{ "role":2 } */
