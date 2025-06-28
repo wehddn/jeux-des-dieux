@@ -45,12 +45,6 @@ class Router
         
         // Отладка
         error_log("Original URI: $uri");
-        error_log("Parsed path: $path");
-        
-        // Теперь сервер отвечает и на /friends и на /api/friends; Nginx-конфиг трогать не нужно, клиент менять не придётся; минимум трафика -> меньше CO₂
-        if (str_starts_with($path, '/api/')) {
-            $path = substr($path, 4);
-        }
         
         error_log("Final path: $path");
         error_log("Method: $method");

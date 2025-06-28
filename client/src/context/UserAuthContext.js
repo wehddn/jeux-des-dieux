@@ -36,7 +36,7 @@ export function UserAuthContextProvider({ children }) {
   // Функция логина через API
   async function logIn(email, password) {
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", { email, password });
+      const response = await axios.post("http://localhost:5000/auth/login", { email, password });
       const { token } = response.data;
       localStorage.setItem("token", token);
       const decodedUser = jwtDecode(token);
@@ -62,7 +62,7 @@ export function UserAuthContextProvider({ children }) {
   // Функция регистрации через API
   async function signUp(email, password) {
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/register", { email, password });
+      const response = await axios.post("http://localhost:5000/auth/register", { email, password });
       return response.data;
     } catch (error) {
       console.error("Ошибка регистрации:", error);
