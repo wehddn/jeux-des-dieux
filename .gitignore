@@ -27,3 +27,4 @@ db_server/node_modules
 db_server/src/.env
 
 game_server/src/.env
+db_server_v2/vendor
