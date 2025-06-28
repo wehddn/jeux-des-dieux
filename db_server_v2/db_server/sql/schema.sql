@@ -11,6 +11,7 @@ CREATE TABLE users (
   name      VARCHAR(80) NOT NULL,
   email     VARCHAR(120) NOT NULL UNIQUE,
   password  VARCHAR(255) NOT NULL,
+  photo     VARCHAR(50),
   role_id   TINYINT UNSIGNED NOT NULL DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX(role_id),

@@ -14,7 +14,7 @@ final class UserController
         Auth::requireLogin();
         $pdo = Database::get();
         $stmt = $pdo->prepare(
-          'SELECT id,name,email,role_id,created_at FROM users WHERE id=?');
+          'SELECT id,name,email,photo,role_id,created_at FROM users WHERE id=?');
         $stmt->execute([$id]);
         $u = $stmt->fetch();
         $u ?: Response::json(404,['error'=>'Not found']);
@@ -44,7 +44,7 @@ final class UserController
     {
         Auth::requireLogin(2);
         $rows = Database::get()->query(
-          'SELECT id,name,email,role_id,created_at FROM users')->fetchAll();
+          'SELECT id,name,email,photo,role_id,created_at FROM users')->fetchAll();
         Response::json(200,$rows);
     }
 

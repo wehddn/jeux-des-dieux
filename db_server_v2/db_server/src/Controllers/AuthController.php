@@ -28,9 +28,9 @@ class AuthController
 
         $hash = password_hash($data['password'], PASSWORD_ARGON2ID);
         $stmt = $pdo->prepare(
-            'INSERT INTO users (name, email, password) VALUES (?,?,?)'
+            'INSERT INTO users (name, email, password, photo) VALUES (?,?,?,?)'
         );
-        $stmt->execute([$name, $data['email'], $hash]);
+        $stmt->execute([$name, $data['email'], $hash, 'photo_1.png']);
         Response::json(201, ['message' => 'User registered']);
     }
 
