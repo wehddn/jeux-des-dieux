@@ -95,7 +95,7 @@ const addFriend = async (userId, friendId) => {
     const response = await fetch(`${API_URL}/friends`, {
       method: 'POST',
       headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ user_id: userId, friend_id: friendId }),
+      body: JSON.stringify({ receiver_id: friendId  }),
     });
     if (!response.ok) {
       throw new Error('Error adding friend');
@@ -130,7 +130,7 @@ const acceptFriendRequest = async (userId, friendId) => {
     const response = await fetch(`${API_URL}/friends/accept`, {
       method: 'PUT',
       headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ user_id: userId, friend_id: friendId }),
+      body: JSON.stringify({ sender_id: friendId }),
     });
     if (!response.ok) {
       throw new Error('Error accepting friend request');
@@ -147,7 +147,7 @@ const declineFriendRequest = async (userId, friendId) => {
     const response = await fetch(`${API_URL}/friends/decline`, {
       method: 'PUT',
       headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ user_id: userId, friend_id: friendId }),
+      body: JSON.stringify({ sender_id: friendId }),
     });
 
     if (!response.ok) {
