@@ -17,7 +17,14 @@ export function UserAuthContextProvider({ children }) {
     if (token) {
       try {
         const decodedUser = jwtDecode(token);
-        setUser(decodedUser);
+        // JWT использует 'sub' для user ID, преобразуем для удобства
+        const user = {
+          id: decodedUser.sub,
+          role: decodedUser.role,
+          iat: decodedUser.iat,
+          exp: decodedUser.exp
+        };
+        setUser(user);
       } catch (error) {
         console.error("Ошибка декодирования токена:", error);
         localStorage.removeItem("token");
@@ -29,13 +36,20 @@ export function UserAuthContextProvider({ children }) {
   // Функция логина через API
   async function logIn(email, password) {
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", { email, password });
+      const response = await axios.post("http://localhost:5000/auth/login", { email, password });
       const { token } = response.data;
       localStorage.setItem("token", token);
       const decodedUser = jwtDecode(token);
-      console.log("Decoded user:", decodedUser);
-      setUser(decodedUser);
-      return decodedUser;
+      // JWT использует 'sub' для user ID, преобразуем для удобства
+      const user = {
+        id: decodedUser.sub,
+        role: decodedUser.role,
+        iat: decodedUser.iat,
+        exp: decodedUser.exp
+      };
+      console.log("Decoded user:", user);
+      setUser(user);
+      return user;
     } catch (error) {
       console.error("Ошибка логина:", error);
       const errorMessage = error.response && error.response.data && error.response.data.message
@@ -48,7 +62,7 @@ export function UserAuthContextProvider({ children }) {
   // Функция регистрации через API
   async function signUp(email, password) {
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/register", { email, password });
+      const response = await axios.post("http://localhost:5000/auth/register", { email, password });
       return response.data;
     } catch (error) {
       console.error("Ошибка регистрации:", error);

@@ -30,3 +30,7 @@ game_server/src/.env
 
 db_server/src/config/db.js
 db_server_v2/vendor
+db_server_v2/db_server/vendor
+db_server_v2/db_server/.env*
+db_server/.env
+db_server/vendor
