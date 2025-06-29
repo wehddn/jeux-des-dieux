@@ -13,5 +13,4 @@ export const hasMinimumRole = (userRoleId, requiredRoleId) => {
 // Role check functions using numeric IDs
 export const isAdmin = (roleId) => roleId >= ROLES.ADMIN;
 export const isManager = (roleId) => roleId >= ROLES.MANAGER;
-export const isManagerOrAdmin = (roleId) => roleId >= ROLES.MANAGER;
 export const isUser = (roleId) => roleId >= ROLES.USER;

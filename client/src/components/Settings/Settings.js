@@ -2,7 +2,7 @@ import React from "react";
 import { deleteUserProfile } from "../../bd/Users";
 import { useNavigate } from "react-router";
 import { useUserAuth } from "../../context/UserAuthContext.js";
-import { isManagerOrAdmin } from "../../utils/roleUtils";
+import { isManager } from "../../utils/roleUtils";
 
 const Settings = () => {
   const { user, logOut } = useUserAuth();
@@ -33,7 +33,7 @@ const Settings = () => {
     <main>
       <section className="settings_context" aria-label="User Settings">
         <h1>Settings</h1>
-        {isManagerOrAdmin(user.role) && (
+        {isManager(user.role) && (
           <button onClick={() => navigate("/admin")} className="btn-del" aria-label="Navigate to Admin page">Page d'admin</button>
           )}
         <button onClick={handleDeleteClick} className="btn-del" aria-label="Delete Profile">Supprimer Profil</button>
