@@ -24,7 +24,12 @@ const Login = () => {
       await logIn(email, password);
       navigate("/profile");
     } catch (err) {
-      setError(err.message);
+      if (err.isBlocked) {
+        // Redirect to blocked page for blocked users
+        navigate("/blocked");
+      } else {
+        setError(err.message);
+      }
     }
   };
 

@@ -49,6 +49,13 @@ class AuthController
             Response::json(401, ['error' => 'Invalid credentials']);
         }
 
+        // Check if user is blocked
+        $blockStmt = $pdo->prepare('SELECT 1 FROM blocklist WHERE blocked_user_id = ?');
+        $blockStmt->execute([$user['id']]);
+        if ($blockStmt->fetch()) {
+            Response::json(403, ['error' => 'Account blocked', 'redirect' => 'blocked']);
+        }
+
         $payload = [
             'sub'  => $user['id'],
             'role' => $user['role_id'],

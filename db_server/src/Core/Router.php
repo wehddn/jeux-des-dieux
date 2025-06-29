@@ -18,6 +18,7 @@ class Router
             '#^/friends/accept$#'               => ['FriendController', 'acceptRequest'],
             '#^/friends/decline$#'              => ['FriendController', 'declineRequest'],
             '#^/games$#'                        => ['GameController', 'create'],
+            '#^/users/(\d+)/block$#'            => ['BlockController', 'blockUser'],
         ],
         'GET' => [
             '#^/users/(\d+)$#'                  => ['UserController', 'get'],
@@ -30,6 +31,7 @@ class Router
             '#^/users/(\d+)/role$#'             => ['UserController', 'getRole'],
             '#^/audit$#'                        => ['AuditController', 'list'],
             '#^/audit/record$#'                 => ['AuditController', 'getByRecord'],
+            '#^/blocked-users$#'                => ['BlockController', 'listBlockedUsers'],
         ],
         'PUT' => [
             '#^/users/(\d+)/role$#'             => ['UserController', 'setRole'],
@@ -44,6 +46,7 @@ class Router
         'DELETE' => [
             '#^/users/(\d+)$#'                  => ['UserController', 'delete'],
             '#^/games/(\d+)$#'                  => ['GameController', 'delete'],
+            '#^/users/(\d+)/block$#'            => ['BlockController', 'unblockUser'],
         ],
     ];
 

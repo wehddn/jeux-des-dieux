@@ -22,6 +22,7 @@ import Login from "./components/Authorization/Login";
 import Signup from "./components/Authorization/Signup";
 import AdminPage from "./components/Admin/Admin";
 import NoAccess from "./components/base/NoAccess/NoAccess";
+import Blocked from "./components/Blocked/Blocked";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { UserAuthContextProvider } from "./context/UserAuthContext";
 import { ROLES } from "./utils/roleUtils";
@@ -29,7 +30,7 @@ import 'boxicons/css/boxicons.min.css';
 
 const AppLayout = ({ children }) => {
   const location = useLocation();
-  const noHeaderRoutes = ["/signup", "/"];
+  const noHeaderRoutes = ["/signup", "/", "/blocked"];
   
   const shouldShowHeader = !noHeaderRoutes.includes(location.pathname);
   
@@ -108,6 +109,7 @@ function App() {
                     }
                   />
                   <Route path="/no-access" element={<NoAccess />} />
+                  <Route path="/blocked" element={<Blocked />} />
                   <Route path="/" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
                 </Routes>

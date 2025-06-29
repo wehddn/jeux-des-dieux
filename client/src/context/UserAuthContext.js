@@ -52,6 +52,15 @@ export function UserAuthContextProvider({ children }) {
       return user;
     } catch (error) {
       console.error("Ошибка логина:", error);
+      
+      // Check if user is blocked
+      if (error.response && error.response.data && error.response.data.redirect === 'blocked') {
+        // Throw a special error for blocked users
+        const blockedError = new Error("Account blocked");
+        blockedError.isBlocked = true;
+        throw blockedError;
+      }
+      
       const errorMessage = error.response && error.response.data && error.response.data.message
       ? error.response.data.message
       : error.message;

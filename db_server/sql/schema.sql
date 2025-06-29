@@ -58,6 +58,18 @@ CREATE TABLE audit_log (
   changed_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE blocklist (
+  id          BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  blocked_user_id BIGINT UNSIGNED NOT NULL,
+  blocker_user_id BIGINT UNSIGNED NOT NULL,
+  blocked_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_block (blocker_user_id, blocked_user_id),
+  INDEX ix_blocked_user (blocked_user_id),
+  INDEX ix_blocker_user (blocker_user_id),
+  CONSTRAINT fk_blocklist_blocked FOREIGN KEY (blocked_user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_blocklist_blocker FOREIGN KEY (blocker_user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 ALTER TABLE game_players
   ADD INDEX ix_game (game_id),
   ADD INDEX ix_user (user_id);
@@ -229,6 +241,33 @@ BEGIN
     'game_id', OLD.game_id,
     'user_id', OLD.user_id
   ), NULL, OLD.user_id, NOW());
+END$$
+
+-- Blocklist table triggers
+CREATE TRIGGER blocklist_after_insert 
+AFTER INSERT ON blocklist 
+FOR EACH ROW 
+BEGIN
+  INSERT INTO audit_log (table_name, record_id, old_data, new_data, changed_by, changed_at)
+  VALUES ('blocklist', NEW.id, NULL, JSON_OBJECT(
+    'id', NEW.id,
+    'blocked_user_id', NEW.blocked_user_id,
+    'blocker_user_id', NEW.blocker_user_id,
+    'blocked_at', NEW.blocked_at
+  ), NEW.blocker_user_id, NOW());
+END$$
+
+CREATE TRIGGER blocklist_after_delete 
+AFTER DELETE ON blocklist 
+FOR EACH ROW 
+BEGIN
+  INSERT INTO audit_log (table_name, record_id, old_data, new_data, changed_by, changed_at)
+  VALUES ('blocklist', OLD.id, JSON_OBJECT(
+    'id', OLD.id,
+    'blocked_user_id', OLD.blocked_user_id,
+    'blocker_user_id', OLD.blocker_user_id,
+    'blocked_at', OLD.blocked_at
+  ), NULL, OLD.blocker_user_id, NOW());
 END$$
 
 DELIMITER ;
