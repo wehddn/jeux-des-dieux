@@ -1,0 +1,68 @@
+/* Admin.css */
+
+/* Layout */
+.table-container {
+  overflow-x: auto;
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+/* Table */
+.admin-table th,
+.admin-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+.admin-table thead tr {
+  border-bottom: 2px solid #ddd;
+}
+.admin-table tbody tr {
+  border-bottom: 1px solid #ddd;
+}
+
+/* Role select */
+.role-select {
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.status-active {
+  background-color: #d4edda;
+  color: #155724;
+}
+.status-blocked {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Buttons */
+.btn {
+  padding: 4px 8px;
+  margin: 2px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  color: white;
+}
+.btn-view {
+  background-color: #007bff;
+}
+.btn-block {
+  background-color: #dc3545;
+}
+.btn-unblock {
+  background-color: #28a745;
+}

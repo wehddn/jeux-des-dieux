@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getUsers, updateUserRole, getBlockedUsers, blockUser, unblockUser } from '../../bd/Users';
 import { ROLES } from '../../utils/roleUtils';
+import './Admin.css';
 
 const Admin = () => {
   const [users, setUsers] = useState([]);
@@ -64,87 +65,71 @@ const Admin = () => {
       console.error('Error toggling block status:', error);
       alert('Error updating user block status');
     }
-  };  
+  };
 
   if (loading) return <p>Loading...</p>;
 // TODO : get roles from BD for maintenance
   return (
     <main>
       <h1>User Management</h1>
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
+      <div className="table-container">
+        <table className="admin-table">
           <thead>
-            <tr style={{ backgroundColor: '', borderBottom: '2px solid #ddd' }}>
-              <th style={{ padding: '12px', textAlign: 'left', border: '1px solid #ddd' }}>ID</th>
-              <th style={{ padding: '12px', textAlign: 'left', border: '1px solid #ddd' }}>Name</th>
-              <th style={{ padding: '12px', textAlign: 'left', border: '1px solid #ddd' }}>Email</th>
-              <th style={{ padding: '12px', textAlign: 'left', border: '1px solid #ddd' }}>Role</th>
-              <th style={{ padding: '12px', textAlign: 'left', border: '1px solid #ddd' }}>Status</th>
-              <th style={{ padding: '12px', textAlign: 'left', border: '1px solid #ddd' }}>Actions</th>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {users.map(user => (
-              <tr key={user.id} style={{ borderBottom: '1px solid #ddd' }}>
-                <td style={{ padding: '12px', border: '1px solid #ddd' }}>{user.id}</td>
-                <td style={{ padding: '12px', border: '1px solid #ddd' }}>{user.name}</td>
-                <td style={{ padding: '12px', border: '1px solid #ddd' }}>{user.email}</td>
-                <td style={{ padding: '12px', border: '1px solid #ddd' }}>
-                  <select 
-                    value={user.role_id}
-                    onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                    style={{ padding: '4px', border: '1px solid #ccc', borderRadius: '4px' }}
-                  >
-                    <option value={ROLES.USER}>User</option>
-                    <option value={ROLES.MANAGER}>Manager</option>
-                    <option value={ROLES.ADMIN}>Admin</option>
-                  </select>
-                </td>
-                <td style={{ padding: '12px', border: '1px solid #ddd' }}>
-                  <span style={{ 
-                    padding: '4px 8px', 
-                    borderRadius: '4px', 
-                    fontSize: '12px',
-                    backgroundColor: !isUserBlocked(user.id) ? '#d4edda' : '#f8d7da',
-                    color: !isUserBlocked(user.id) ? '#155724' : '#721c24'
-                  }}>
-                    {!isUserBlocked(user.id) ? 'Active' : 'Blocked'}
-                  </span>
-                </td>
-                <td style={{ padding: '12px', border: '1px solid #ddd' }}>
-                  <button 
-                    style={{ 
-                      padding: '4px 8px', 
-                      margin: '2px', 
-                      border: 'none', 
-                      borderRadius: '4px', 
-                      backgroundColor: '#007bff', 
-                      color: 'white', 
-                      cursor: 'pointer',
-                      fontSize: '12px'
-                    }}
-                    onClick={() => console.log('View user:', user.id)}
-                  >
-                    View
-                  </button>
-                  <button 
-                    style={{ 
-                      padding: '4px 8px', 
-                      margin: '2px', 
-                      border: 'none', 
-                      borderRadius: '4px', 
-                      backgroundColor: !isUserBlocked(user.id) ? '#dc3545' : '#28a745', 
-                      color: 'white', 
-                      cursor: 'pointer',
-                      fontSize: '12px'
-                    }}
-                    onClick={() => handleBlockToggle(user.id)}
-                  >
-                    {!isUserBlocked(user.id) ? 'Block' : 'Unblock'}
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {users.map((user) => {
+              const blocked = isUserBlocked(user.id);
+              return (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.name}</td>
+                  <td>{user.email}</td>
+                  <td>
+                    <select
+                      className="role-select"
+                      value={user.role_id}
+                      onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                    >
+                      <option value={ROLES.USER}>User</option>
+                      <option value={ROLES.MANAGER}>Manager</option>
+                      <option value={ROLES.ADMIN}>Admin</option>
+                    </select>
+                  </td>
+                  <td>
+                    <span
+                      className={`status-badge ${
+                        blocked ? 'status-blocked' : 'status-active'
+                      }`}
+                    >
+                      {blocked ? 'Blocked' : 'Active'}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-view"
+                      onClick={() => console.log('View user:', user.id)}
+                    >
+                      View
+                    </button>
+                    <button
+                      className={`btn ${
+                        blocked ? 'btn-unblock' : 'btn-block'
+                      }`}
+                      onClick={() => handleBlockToggle(user.id)}
+                    >
+                      {blocked ? 'Unblock' : 'Block'}
+                    </button>
+                  </td>
+                </tr>
+              );})}
           </tbody>
         </table>
       </div>
