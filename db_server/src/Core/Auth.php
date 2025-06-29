@@ -26,6 +26,54 @@ final class Auth
         }
     }
 
+    /** Check if current user is a manager (role_id >= 2) */
+    public static function requireManager(): void
+    {
+        if (!self::check() || self::$user['role_id'] < 2) {
+            Response::json(403, ['error' => 'Manager role required']);
+        }
+    }
+
+    /** Check if current user is an admin (role_id >= 3) */
+    public static function requireAdmin(): void
+    {
+        if (!self::check() || self::$user['role_id'] < 3) {
+            Response::json(403, ['error' => 'Admin role required']);
+        }
+    }
+
+    /** Check if current user owns the resource or is a manager+ */
+    public static function requireOwnerOrManager(int $ownerId): void
+    {
+        if (!self::check()) {
+            Response::json(401, ['error' => 'Unauthorized']);
+        }
+        
+        $currentUser = self::$user;
+        if ($currentUser['id'] !== $ownerId && $currentUser['role_id'] < 2) {
+            Response::json(403, ['error' => 'Access denied']);
+        }
+    }
+
+    /** Check if current user can access another user's data */
+    public static function requireSelfOrManager(int $userId): void
+    {
+        if (!self::check()) {
+            Response::json(401, ['error' => 'Unauthorized']);
+        }
+        
+        $currentUser = self::$user;
+        if ($currentUser['id'] !== $userId && $currentUser['role_id'] < 2) {
+            Response::json(403, ['error' => 'Can only access your own data']);
+        }
+    }
+
+    /** Get current user ID safely */
+    public static function userId(): int
+    {
+        return self::$user['id'] ?? 0;
+    }
+
     /** запускается из Front Controller до Router::dispatch() */
     public static function bootstrap(): void
     {

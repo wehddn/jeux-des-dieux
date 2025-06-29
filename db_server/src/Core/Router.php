@@ -3,11 +3,17 @@ namespace App\Core;
 
 class Router
 {
-    private const ROUTES = [
-        // method => [ regex => [Controller, action] ]
+    // Public routes that don't require authentication
+    private const PUBLIC_ROUTES = [
         'POST' => [
             '#^/auth/register$#'                => ['AuthController', 'register'],
             '#^/auth/login$#'                   => ['AuthController', 'login'],
+        ],
+    ];
+
+    // Protected routes that require authentication
+    private const PROTECTED_ROUTES = [
+        'POST' => [
             '#^/friends$#'                      => ['FriendController', 'sendRequest'],
             '#^/friends/accept$#'               => ['FriendController', 'acceptRequest'],
             '#^/friends/decline$#'              => ['FriendController', 'declineRequest'],
@@ -49,18 +55,39 @@ class Router
         error_log("Final path: $path");
         error_log("Method: $method");
         
-        foreach (self::ROUTES[$method] ?? [] as $regex => [$ctrl, $action]) {
-            error_log("Checking regex: $regex against path: $path");
-            if (preg_match($regex, $path, $matches)) {
-                error_log("Match found! Controller: $ctrl, Action: $action");
-                array_shift($matches);
-                $class = 'App\\Controllers\\' . $ctrl;
-                (new $class)->$action(...$matches);
-                return;
-            }
+        // First, try public routes (no authentication required)
+        if (self::tryRoutes(self::PUBLIC_ROUTES, $method, $path, false)) {
+            return;
+        }
+        
+        // Then try protected routes (authentication required)
+        if (self::tryRoutes(self::PROTECTED_ROUTES, $method, $path, true)) {
+            return;
         }
         
         error_log("No match found for $method $path");
         Response::json(404, ['error' => 'Not Found']);
+    }
+
+    private static function tryRoutes(array $routes, string $method, string $path, bool $requireAuth): bool
+    {
+        foreach ($routes[$method] ?? [] as $regex => [$ctrl, $action]) {
+            error_log("Checking regex: $regex against path: $path");
+            if (preg_match($regex, $path, $matches)) {
+                error_log("Match found! Controller: $ctrl, Action: $action");
+                
+                // Check authentication if required
+                if ($requireAuth && !Auth::check()) {
+                    Response::json(401, ['error' => 'Unauthorized']);
+                    return true; // Route was matched, but auth failed
+                }
+                
+                array_shift($matches);
+                $class = 'App\\Controllers\\' . $ctrl;
+                (new $class)->$action(...$matches);
+                return true;
+            }
+        }
+        return false;
     }
 }

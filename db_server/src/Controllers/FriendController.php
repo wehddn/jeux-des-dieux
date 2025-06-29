@@ -12,8 +12,7 @@ final class FriendController
     /** POST /friends  body:{ "receiver_id":123 } */
     public function sendRequest(): void
     {
-        Auth::requireLogin();
-        $uid = Auth::user()['id'];
+        $uid = Auth::userId();
         $data = json_decode(file_get_contents('php://input'), true);
 
         if (!isset($data['receiver_id']) || !is_numeric($data['receiver_id'])) {
@@ -60,8 +59,7 @@ final class FriendController
 
     private function changeStatus(string $to): void
     {
-        Auth::requireLogin();
-        $uid  = Auth::user()['id'];
+        $uid  = Auth::userId();
         $data = json_decode(file_get_contents('php://input'), true);
         if (!isset($data['sender_id']) || !is_numeric($data['sender_id'])) {
             Response::json(400, ['error' => 'sender_id required']);
@@ -92,10 +90,7 @@ final class FriendController
     /** GET /friends/{id}/non-friends */
     public function nonFriends(int $id): void
     {
-        Auth::requireLogin();
-        if (Auth::user()['id'] !== $id) {
-            Response::json(403, ['error' => 'Forbidden']);
-        }
+        Auth::requireSelfOrManager($id);
 
         $pdo = Database::get();
         // все пользователи, не связанные никакими заявками/дружбой
@@ -118,10 +113,8 @@ final class FriendController
     /** GET /friends/{id}/pending-requests */
     public function pending(int $id): void
     {
-        Auth::requireLogin();
-        if (Auth::user()['id'] !== $id) {
-            Response::json(403, ['error' => 'Forbidden']);
-        }
+        Auth::requireSelfOrManager($id);
+        
         $pdo = Database::get();
         $stmt = $pdo->prepare(
           'SELECT fr.id,sender_id as user_id,u.name,fr.created_at
@@ -135,10 +128,8 @@ final class FriendController
     /** GET /friends/{id}/list */
     public function list(int $id): void
     {
-        Auth::requireLogin();
-        if (Auth::user()['id'] !== $id) {
-            Response::json(403, ['error' => 'Forbidden']);
-        }
+        Auth::requireSelfOrManager($id);
+        
         $pdo = Database::get();
         $sql = "
           SELECT u.id,u.name

@@ -12,8 +12,7 @@ final class GameController
     /** POST /games   body:{ "name":"Foo" } */
     public function create(): void
     {
-        Auth::requireLogin();
-        $uid  = Auth::user()['id'];
+        $uid  = Auth::userId();
         $data = json_decode(file_get_contents('php://input'), true);
         $name = $data['name'] ?? null;
         $isPrivate = !empty($data['isPrivate']);
@@ -52,7 +51,6 @@ final class GameController
     /** GET /games */
     public function list(): void
     {
-        Auth::requireLogin();
         $pdo = Database::get();
         $rows = $pdo->query(
             'SELECT g.id,g.name,g.status,u.name AS creator,g.created_at
@@ -64,7 +62,6 @@ final class GameController
     /** GET /games/{id} */
     public function detail(int $id): void
     {
-        Auth::requireLogin();
         $pdo = Database::get();
         $stmt = $pdo->prepare(
             'SELECT g.id,g.name,g.status,u.name AS creator,g.created_at
@@ -87,17 +84,16 @@ final class GameController
     /** PUT /games/{id}/players   body:{ "add":[2,3], "remove":[4] } */
     public function setPlayers(int $id): void
     {
-        Auth::requireLogin();
-        $uid = Auth::user()['id'];
+        $uid = Auth::userId();
         $pdo = Database::get();
 
-        // проверяем, что текущий пользователь – создатель или менеджер/админ
+        // Check that current user is the creator or manager/admin
         $owner = $pdo->prepare('SELECT created_by FROM games WHERE id=?');
         $owner->execute([$id]);
         $createdBy = $owner->fetchColumn();
-        if (!$createdBy)      Response::json(404,['error'=>'Game not found']);
-        if ($createdBy!=$uid && Auth::user()['role_id']<2)
-            Response::json(403,['error'=>'Forbidden']);
+        if (!$createdBy) Response::json(404,['error'=>'Game not found']);
+        
+        Auth::requireOwnerOrManager($createdBy);
 
         $data = json_decode(file_get_contents('php://input'), true);
         $add = $data['add']??[];
@@ -124,8 +120,6 @@ final class GameController
     /** PUT /games/{id}/status  body:{ "status":"in_progress" } */
     public function setStatus(int $id): void
     {
-        Auth::requireLogin();
-        $uid = Auth::user()['id'];
         $pdo = Database::get();
 
         $cur = $pdo->prepare('SELECT status,created_by FROM games WHERE id=?');
@@ -133,8 +127,7 @@ final class GameController
         $row = $cur->fetch();
         if (!$row) Response::json(404,['error'=>'Game not found']);
 
-        if ($row['created_by']!=$uid && Auth::user()['role_id']<2)
-            Response::json(403,['error'=>'Forbidden']);
+        Auth::requireOwnerOrManager($row['created_by']);
 
         $data   = json_decode(file_get_contents('php://input'),true);
         $status = $data['status'] ?? null;
@@ -153,7 +146,8 @@ final class GameController
     /** DELETE /games/{id} */
     public function delete(int $id): void
     {
-        Auth::requireLogin(2);           // менеджер+
+        Auth::requireManager();
+        
         $pdo = Database::get();
         $stmt = $pdo->prepare('SELECT * FROM games WHERE id=?');
         $stmt->execute([$id]);
@@ -162,7 +156,7 @@ final class GameController
 
         $pdo->prepare('DELETE FROM games WHERE id=?')->execute([$id]);
         Audit::record('games',$id,$old,null);
-        EventLogger::log('game_deleted',"Game $id deleted",Auth::user()['id']);
+        EventLogger::log('game_deleted',"Game $id deleted",Auth::userId());
 
         Response::json(204,[]);
     }

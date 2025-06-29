@@ -11,7 +11,6 @@ final class UserController
     /** GET /users/{id} */
     public function get(int $id): void
     {
-        Auth::requireLogin();
         $pdo = Database::get();
         $stmt = $pdo->prepare(
           'SELECT id,name,email,photo,role_id,created_at FROM users WHERE id=?');
@@ -24,9 +23,7 @@ final class UserController
     /** PATCH /users/{id}  body:{ "name":"New" } */
     public function update(int $id): void
     {
-        Auth::requireLogin();
-        if (Auth::user()['id']!=$id && Auth::user()['role_id']<2)
-            Response::json(403,['error'=>'Forbidden']);
+        Auth::requireSelfOrManager($id);
 
         $data = json_decode(file_get_contents('php://input'),true);
         if (empty($data['name'])) Response::json(400,['error'=>'name required']);
@@ -42,7 +39,8 @@ final class UserController
     /** GET /users */
     public function list(): void
     {
-        Auth::requireLogin(2);
+        Auth::requireManager();
+        
         $rows = Database::get()->query(
           'SELECT id,name,email,photo,role_id,created_at FROM users')->fetchAll();
         Response::json(200,$rows);
@@ -51,7 +49,8 @@ final class UserController
     /** PUT /users/{id}/role  body:{ "role":2 } */
     public function setRole(int $id): void
     {
-        Auth::requireLogin(3);                    // только admin
+        Auth::requireAdmin();
+        
         $data = json_decode(file_get_contents('php://input'),true);
         $role = (int)($data['role']??0);
         if (!in_array($role,[1,2,3],true))
@@ -71,7 +70,8 @@ final class UserController
     /** DELETE /users/{id} */
     public function delete(int $id): void
     {
-        Auth::requireLogin(3);
+        Auth::requireAdmin();
+        
         $pdo = Database::get();
         $stmt = $pdo->prepare('SELECT * FROM users WHERE id=?');
         $stmt->execute([$id]);
@@ -86,26 +86,18 @@ final class UserController
     /** GET /users/{id}/role */
     public function getRole(int $id): void
     {
-        \App\Core\Auth::requireLogin();
+        Auth::requireSelfOrManager($id);
 
-        $user      = \App\Core\Auth::user();
-        $isSelf    = ($user['id'] === $id);
-        $isManager = ($user['role_id'] >= 2);
-
-        if (!$isSelf && !$isManager) {
-            \App\Core\Response::json(403, ['error' => 'Forbidden']);
-        }
-
-        $pdo  = \App\Core\Database::get();
+        $pdo  = Database::get();
         $stmt = $pdo->prepare('SELECT role_id FROM users WHERE id = ?');
         $stmt->execute([$id]);
         $role = $stmt->fetchColumn();
 
         if ($role === false) {
-            \App\Core\Response::json(404, ['error' => 'User not found']);
+            Response::json(404, ['error' => 'User not found']);
         }
 
-        \App\Core\Response::json(200, ['role' => (int)$role]);
+        Response::json(200, ['role' => (int)$role]);
     }
 
 }
