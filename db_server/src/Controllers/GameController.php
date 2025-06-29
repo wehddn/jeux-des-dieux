@@ -5,7 +5,6 @@ use App\Core\Auth;
 use App\Core\Database;
 use App\Core\Response;
 use App\Core\Audit;
-use App\Core\EventLogger;
 
 final class GameController
 {
@@ -37,9 +36,8 @@ final class GameController
             error_log("GameController::create - Player added");
 
             Audit::record('games',$gid,null,['name'=>$name,'status'=>'waiting']);
-            EventLogger::log('game_created',"Game $gid by $uid",$uid);
             
-            error_log("GameController::create - Audit and event logged");
+            error_log("GameController::create - Audit recorded");
 
             Response::json(201,['gameId'=>$gid,'name'=>$name,'status'=>'waiting']);
         } catch (\Exception $e) {
@@ -156,7 +154,6 @@ final class GameController
 
         $pdo->prepare('DELETE FROM games WHERE id=?')->execute([$id]);
         Audit::record('games',$id,$old,null);
-        EventLogger::log('game_deleted',"Game $id deleted",Auth::userId());
 
         Response::json(204,[]);
     }

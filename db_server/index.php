@@ -25,6 +25,6 @@ try {
     Router::dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 } catch (\Throwable $e) {
     // централизованный ловец исключений
-    \App\Core\EventLogger::error('unhandled_exception', $e->getMessage());
+    error_log('Unhandled exception: ' . $e->getMessage());
     Response::json(500, ['error' => 'Internal Server Error']);
 }

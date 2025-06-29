@@ -5,7 +5,6 @@ use App\Core\Auth;
 use App\Core\Database;
 use App\Core\Response;
 use App\Core\Audit;
-use App\Core\EventLogger;
 
 final class FriendController
 {
@@ -39,8 +38,6 @@ final class FriendController
 
         Audit::record('friend_requests', $pdo->lastInsertId(), null,
                       ['sender'=>$uid,'receiver'=>$rid,'status'=>'pending']);
-        EventLogger::log('friend_request_sent',
-            "User $uid -> $rid", $uid);
 
         Response::json(201, ['message' => 'Request sent']);
     }
@@ -81,8 +78,6 @@ final class FriendController
 
         Audit::record('friend_requests', $req['id'],
             ['status'=>'pending'], ['status'=>$to]);
-        EventLogger::log("friend_request_$to",
-            "Receiver $uid $to request from $sid", $uid);
 
         Response::json(200, ['status' => $to]);
     }

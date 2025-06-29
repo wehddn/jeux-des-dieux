@@ -58,14 +58,6 @@ CREATE TABLE audit_log (
   changed_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE event_log (
-  id         BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-  event_type VARCHAR(64),
-  description TEXT,
-  user_id    BIGINT UNSIGNED NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 ALTER TABLE game_players
   ADD INDEX ix_game (game_id),
   ADD INDEX ix_user (user_id);
