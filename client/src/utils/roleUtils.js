@@ -1,4 +1,4 @@
-// Role constants for better maintainability
+// TODO : get roles from BD for maintenance
 export const ROLES = {
   USER: 1,
   MANAGER: 2,

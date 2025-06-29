@@ -19,6 +19,7 @@ const ManageRoles = () => {
   const handleRoleChange = async (userId, roleId) => {
     try {
       await updateUserRole(userId, parseInt(roleId));
+      // TODO : use role name
       alert(`Role updated to ${roleId}`);
       // Refresh users list to show updated role
       const userList = await getUsers();
@@ -29,7 +30,7 @@ const ManageRoles = () => {
   };
 
   if (loading) return <p>Loading...</p>;
-
+// TODO : get roles from BD for maintenance
   return (
     <main>
       <h1>Manage User Roles</h1>
