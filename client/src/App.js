@@ -24,6 +24,7 @@ import AdminPage from "./components/Admin/Admin";
 import NoAccess from "./components/base/NoAccess/NoAccess";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { UserAuthContextProvider } from "./context/UserAuthContext";
+import { ROLES } from "./utils/roleUtils";
 import 'boxicons/css/boxicons.min.css';
 
 const AppLayout = ({ children }) => {
@@ -101,7 +102,7 @@ function App() {
                   <Route
                     path="/admin"
                     element={
-                      <ProtectedRoute requiredRole="admin">
+                      <ProtectedRoute requiredRole={ROLES.ADMIN}>
                         <AdminPage />
                       </ProtectedRoute>
                     }
