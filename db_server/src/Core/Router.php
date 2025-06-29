@@ -28,6 +28,8 @@ class Router
             '#^/games$#'                        => ['GameController', 'list'],
             '#^/games/(\d+)$#'                  => ['GameController', 'detail'],
             '#^/users/(\d+)/role$#'             => ['UserController', 'getRole'],
+            '#^/audit$#'                        => ['AuditController', 'list'],
+            '#^/audit/record$#'                 => ['AuditController', 'getByRecord'],
         ],
         'PUT' => [
             '#^/users/(\d+)/role$#'             => ['UserController', 'setRole'],
