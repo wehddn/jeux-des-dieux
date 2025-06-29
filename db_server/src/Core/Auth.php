@@ -74,6 +74,18 @@ final class Auth
         return self::$user['id'] ?? 0;
     }
 
+    /** Prevent users from targeting themselves (for role changes, blocking, etc.) */
+    public static function requireNotSelf(int $targetUserId, string $action = 'this action'): void
+    {
+        if (!self::check()) {
+            Response::json(401, ['error' => 'Unauthorized']);
+        }
+        
+        if (self::$user['id'] == $targetUserId) {
+            Response::json(403, ['error' => "Cannot perform $action on yourself"]);
+        }
+    }
+
     /** запускается из Front Controller до Router::dispatch() */
     public static function bootstrap(): void
     {

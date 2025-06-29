@@ -48,6 +48,7 @@ final class UserController
     public function setRole(int $id): void
     {
         Auth::requireAdmin();
+        Auth::requireNotSelf($id, 'role change');
         
         $data = json_decode(file_get_contents('php://input'),true);
         $role = (int)($data['role']??0);

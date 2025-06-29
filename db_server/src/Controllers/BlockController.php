@@ -11,6 +11,7 @@ final class BlockController
     public function blockUser(int $id): void
     {
         Auth::requireAdmin();
+        Auth::requireNotSelf($id, 'blocking');
         
         $currentUserId = Auth::userId();
         $pdo = Database::get();
@@ -40,6 +41,7 @@ final class BlockController
     public function unblockUser(int $id): void
     {
         Auth::requireAdmin();
+        Auth::requireNotSelf($id, 'unblocking');
         
         $pdo = Database::get();
         
