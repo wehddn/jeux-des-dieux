@@ -4,7 +4,6 @@ namespace App\Controllers;
 use App\Core\Auth;
 use App\Core\Database;
 use App\Core\Response;
-use App\Core\Audit;
 
 final class FriendController
 {
@@ -35,9 +34,6 @@ final class FriendController
 
         $pdo->prepare('INSERT INTO friend_requests (sender_id,receiver_id)
                        VALUES (?,?)')->execute([$uid,$rid]);
-
-        Audit::record('friend_requests', $pdo->lastInsertId(), null,
-                      ['sender'=>$uid,'receiver'=>$rid,'status'=>'pending']);
 
         Response::json(201, ['message' => 'Request sent']);
     }
@@ -75,9 +71,6 @@ final class FriendController
 
         $pdo->prepare('UPDATE friend_requests SET status=? WHERE id=?')
             ->execute([$to, $req['id']]);
-
-        Audit::record('friend_requests', $req['id'],
-            ['status'=>'pending'], ['status'=>$to]);
 
         Response::json(200, ['status' => $to]);
     }

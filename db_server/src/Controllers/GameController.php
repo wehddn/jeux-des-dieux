@@ -4,7 +4,6 @@ namespace App\Controllers;
 use App\Core\Auth;
 use App\Core\Database;
 use App\Core\Response;
-use App\Core\Audit;
 
 final class GameController
 {
@@ -35,9 +34,7 @@ final class GameController
                 
             error_log("GameController::create - Player added");
 
-            Audit::record('games',$gid,null,['name'=>$name,'status'=>'waiting']);
-            
-            error_log("GameController::create - Audit recorded");
+            error_log("GameController::create - Game created successfully");
 
             Response::json(201,['gameId'=>$gid,'name'=>$name,'status'=>'waiting']);
         } catch (\Exception $e) {
@@ -111,7 +108,6 @@ final class GameController
             $changes['removed'][] = $pid;
         }
 
-        Audit::record('game_players',$id,null,$changes);
         Response::json(200,$changes);
     }
 
@@ -135,9 +131,6 @@ final class GameController
         $pdo->prepare('UPDATE games SET status=? WHERE id=?')
             ->execute([$status,$id]);
 
-        Audit::record('games',$id,
-            ['status'=>$row['status']],['status'=>$status]);
-
         Response::json(200,['status'=>$status]);
     }
 
@@ -153,7 +146,6 @@ final class GameController
         if (!$old) Response::json(404,['error'=>'Game not found']);
 
         $pdo->prepare('DELETE FROM games WHERE id=?')->execute([$id]);
-        Audit::record('games',$id,$old,null);
 
         Response::json(204,[]);
     }

@@ -4,7 +4,6 @@ namespace App\Controllers;
 use App\Core\Auth;
 use App\Core\Database;
 use App\Core\Response;
-use App\Core\Audit;
 
 final class UserController
 {
@@ -32,7 +31,6 @@ final class UserController
         $pdo->prepare('UPDATE users SET name=? WHERE id=?')
             ->execute([$data['name'],$id]);
 
-        Audit::record('users',$id,['name'=>'*'],['name'=>$data['name']]);
         Response::json(200,['name'=>$data['name']]);
     }
 
@@ -63,7 +61,6 @@ final class UserController
 
         $pdo->prepare('UPDATE users SET role_id=? WHERE id=?')
             ->execute([$role,$id]);
-        Audit::record('users',$id,['role_id'=>$oldRole],['role_id'=>$role]);
         Response::json(200,['role'=>$role]);
     }
 
@@ -79,7 +76,6 @@ final class UserController
         if (!$old) Response::json(404,['error'=>'Not found']);
 
         $pdo->prepare('DELETE FROM users WHERE id=?')->execute([$id]);
-        Audit::record('users',$id,$old,null);
         Response::json(204,[]);
     }
 
