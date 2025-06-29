@@ -274,4 +274,19 @@ const unblockUser = async (userId) => {
   }
 };
 
-export { getUser, getUserName, updateUserName, deleteUserProfile, getNonFriendUsers, addFriend, getPendingFriendRequests, acceptFriendRequest, declineFriendRequest, getFriendsList, updateUserRole, getUserRole, getUsers, getBlockedUsers, blockUser, unblockUser};
+const getAuditLogs = async (limit = 50, offset = 0) => {
+  try {
+    const response = await fetch(`${API_URL}/audit?limit=${limit}&offset=${offset}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Error getting audit logs');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error in getAuditLogs:', error);
+    throw new Error('API error');
+  }
+};
+
+export { getUser, getUserName, updateUserName, deleteUserProfile, getNonFriendUsers, addFriend, getPendingFriendRequests, acceptFriendRequest, declineFriendRequest, getFriendsList, updateUserRole, getUserRole, getUsers, getBlockedUsers, blockUser, unblockUser, getAuditLogs};
