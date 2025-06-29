@@ -226,4 +226,52 @@ const getUsers = async () => {
   }
 };
 
-export { getUser, getUserName, updateUserName, deleteUserProfile, getNonFriendUsers, addFriend, getPendingFriendRequests, acceptFriendRequest, declineFriendRequest, getFriendsList, updateUserRole, getUserRole, getUsers};
+const getBlockedUsers = async () => {
+  try {
+    const response = await fetch(`${API_URL}/blocked-users`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Error getting blocked users list');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error in getBlockedUsers:', error);
+    throw new Error('API error');
+  }
+};
+
+const blockUser = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}/block`, {
+      method: 'POST',
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ user_id: userId }),
+    });
+    if (!response.ok) {
+      throw new Error('Error blocking user');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error in blockUser:', error);
+    throw new Error('API error');
+  }
+};
+
+const unblockUser = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}/block`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error('Error unblocking user');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error in unblockUser:', error);
+    throw new Error('API error');
+  }
+};
+
+export { getUser, getUserName, updateUserName, deleteUserProfile, getNonFriendUsers, addFriend, getPendingFriendRequests, acceptFriendRequest, declineFriendRequest, getFriendsList, updateUserRole, getUserRole, getUsers, getBlockedUsers, blockUser, unblockUser};
