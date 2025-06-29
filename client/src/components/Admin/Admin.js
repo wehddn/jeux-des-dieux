@@ -1,12 +1,30 @@
 import { useState, useEffect } from 'react';
 import { getUsers, updateUserRole, getBlockedUsers, blockUser, unblockUser } from '../../bd/Users';
 import { ROLES } from '../../utils/roleUtils';
+import { useUserAuth } from '../../context/UserAuthContext';
 import './Admin.css';
 
 const Admin = () => {
   const [users, setUsers] = useState([]);
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user: currentUser } = useUserAuth();
+
+  // Role definitions - single source of truth
+  const roleDefinitions = [
+    { id: ROLES.USER, name: 'User' },
+    { id: ROLES.MANAGER, name: 'Manager' },
+    { id: ROLES.ADMIN, name: 'Admin' }
+  ];
+
+  // Helper function to get role name
+  const getRoleName = (roleId) => {
+    const role = roleDefinitions.find(r => r.id === parseInt(roleId));
+    return role ? role.name : 'Unknown';
+  };
+
+  // Check if current user is admin (can edit roles)
+  const isAdmin = currentUser && currentUser.role >= ROLES.ADMIN;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,22 +111,23 @@ const Admin = () => {
                   <td>{user.name}</td>
                   <td>{user.email}</td>
                   <td>
-                    <select
-                      className="role-select"
-                      value={user.role_id}
-                      onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                    >
-                      <option value={ROLES.USER}>User</option>
-                      <option value={ROLES.MANAGER}>Manager</option>
-                      <option value={ROLES.ADMIN}>Admin</option>
-                    </select>
+                    {isAdmin ? (
+                      <select
+                        className="role-select"
+                        value={user.role_id}
+                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                      >
+                        {roleDefinitions.map(role => (
+                          <option key={role.id} value={role.id}> {role.name} </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span className="role-text">{getRoleName(user.role_id)}</span>
+                    )}
                   </td>
                   <td>
                     <span
-                      className={`status-badge ${
-                        blocked ? 'status-blocked' : 'status-active'
-                      }`}
-                    >
+                      className={`status-badge ${ blocked ? 'status-blocked' : 'status-active'}`}>
                       {blocked ? 'Blocked' : 'Active'}
                     </span>
                   </td>
@@ -116,13 +135,9 @@ const Admin = () => {
                     <button
                       className="btn btn-view"
                       onClick={() => console.log('View user:', user.id)}
-                    >
-                      View
-                    </button>
+                    > View </button>
                     <button
-                      className={`btn ${
-                        blocked ? 'btn-unblock' : 'btn-block'
-                      }`}
+                      className={`btn ${blocked ? 'btn-unblock' : 'btn-block'}`}
                       onClick={() => handleBlockToggle(user.id)}
                     >
                       {blocked ? 'Unblock' : 'Block'}
