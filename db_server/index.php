@@ -1,5 +1,7 @@
 <?php
-// Добавляем CORS заголовки
+// In development, allow all origins ( actually localhost )
+// For production deployment, specify allowed origins : 
+// header('Access-Control-Allow-Origin: https://futuredomain.com');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
