@@ -35,6 +35,15 @@ class AuditControllerTest extends BaseApiTest
         $this->assertIsInt($json['total']);
     }
 
+    public function testAuditListWithManagerAuth()
+    {
+        // Test with manager authorization (should get 403 - managers don't have audit access)
+        [$status, $json] = $this->get('/audit', $this->withManagerAuth());
+        
+        $this->assertEquals(403, $status);
+        $this->assertArrayHasKey('error', $json);
+    }
+
     public function testAuditListWithTableFilterUserAuth()
     {
         // Test table filter with regular user (should get 403)
@@ -53,6 +62,15 @@ class AuditControllerTest extends BaseApiTest
         $this->assertArrayHasKey('logs', $json);
         $this->assertArrayHasKey('total', $json);
         $this->assertIsArray($json['logs']);
+    }
+
+    public function testAuditListWithTableFilterManagerAuth()
+    {
+        // Test table filter with manager user (should get 403)
+        [$status, $json] = $this->get('/audit?table=users&limit=10', $this->withManagerAuth());
+        
+        $this->assertEquals(403, $status);
+        $this->assertArrayHasKey('error', $json);
     }
 
     public function testAuditRecordWithoutAuth()
@@ -81,6 +99,15 @@ class AuditControllerTest extends BaseApiTest
         $this->assertEquals(['error' => 'table and record_id are required'], $json);
     }
 
+    public function testAuditRecordMissingParamsManagerAuth()
+    {
+        // Test missing params with manager user (should get 403)
+        [$status, $json] = $this->get('/audit/record', $this->withManagerAuth());
+        
+        $this->assertEquals(403, $status);
+        $this->assertArrayHasKey('error', $json);
+    }
+
     public function testAuditRecordWithValidParamsUserAuth()
     {
         // Test valid params with regular user (should get 403)
@@ -97,5 +124,14 @@ class AuditControllerTest extends BaseApiTest
         
         $this->assertEquals(200, $status);
         $this->assertIsArray($json);
+    }
+
+    public function testAuditRecordWithValidParamsManagerAuth()
+    {
+        // Test valid params with manager user (should get 403)
+        [$status, $json] = $this->get('/audit/record?table=users&record_id=1', $this->withManagerAuth());
+        
+        $this->assertEquals(403, $status);
+        $this->assertArrayHasKey('error', $json);
     }
 }

@@ -8,12 +8,14 @@ abstract class BaseApiTest extends TestCase
     protected $baseUrl = 'http://localhost:5000';
     protected $userToken;
     protected $adminToken;
+    protected $managerToken;
 
     protected function setUp(): void
     {
         // Login to get tokens for authenticated requests
         $this->userToken = $this->getTokenForUser('test@test.test', '12345');
         $this->adminToken = $this->getTokenForUser('admin@admin.admin', 'admin');
+        $this->managerToken = $this->getTokenForUser('manager@manager.manager', 'manager');
     }
 
     /**
@@ -158,6 +160,18 @@ abstract class BaseApiTest extends TestCase
             $this->markTestSkipped('Admin token not available');
         }
         $authHeaders = ['Authorization: Bearer ' . $this->adminToken];
+        return array_merge($authHeaders, $additionalHeaders);
+    }
+
+    /**
+     * Get authorization headers with manager token
+     */
+    protected function withManagerAuth($additionalHeaders = [])
+    {
+        if (empty($this->managerToken)) {
+            $this->markTestSkipped('Manager token not available');
+        }
+        $authHeaders = ['Authorization: Bearer ' . $this->managerToken];
         return array_merge($authHeaders, $additionalHeaders);
     }
 }
