@@ -152,6 +152,31 @@ abstract class BaseApiTest extends TestCase
     }
 
     /**
+     * Make a PATCH request
+     */
+    protected function patch($endpoint, $data, $headers = [])
+    {
+        $defaultHeaders = ['Content-Type: application/json'];
+        $headers = array_merge($defaultHeaders, $headers);
+        
+        $ch = curl_init($this->baseUrl . $endpoint);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        
+        $response = curl_exec($ch);
+        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $header = substr($response, 0, $header_size);
+        $body = substr($response, $header_size);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        return [$status, json_decode($body, true)];
+    }
+
+    /**
      * Get authorization headers with token
      */
     protected function withUserAuth($additionalHeaders = [])
@@ -181,6 +206,15 @@ abstract class BaseApiTest extends TestCase
             $this->markTestSkipped('Manager token not available');
         }
         $authHeaders = ['Authorization: Bearer ' . $this->managerToken];
+        return array_merge($authHeaders, $additionalHeaders);
+    }
+
+    /**
+     * Get authorization headers with custom token
+     */
+    protected function withToken($token, $additionalHeaders = [])
+    {
+        $authHeaders = ['Authorization: Bearer ' . $token];
         return array_merge($authHeaders, $additionalHeaders);
     }
 }
