@@ -58,28 +58,4 @@ final class BlockController
         
         Response::json(200, ['message' => 'User unblocked successfully']);
     }
-    
-    /** GET /blocked-users */
-    public function listBlockedUsers(): void
-    {
-        Auth::requireManager();
-        
-        $pdo = Database::get();
-        $stmt = $pdo->prepare('
-            SELECT 
-                u.id,
-                u.name,
-                u.email,
-                b.blocked_at,
-                blocker.name as blocked_by_name
-            FROM blocklist b
-            JOIN users u ON b.blocked_user_id = u.id
-            JOIN users blocker ON b.blocker_user_id = blocker.id
-            ORDER BY b.blocked_at DESC
-        ');
-        $stmt->execute();
-        $blockedUsers = $stmt->fetchAll();
-        
-        Response::json(200, $blockedUsers);
-    }
 }

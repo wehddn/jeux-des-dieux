@@ -31,7 +31,6 @@ class Router
             '#^/users/(\d+)/role$#'             => ['UserController', 'getRole'],
             '#^/audit$#'                        => ['AuditController', 'list'],
             '#^/audit/record$#'                 => ['AuditController', 'getByRecord'],
-            '#^/blocked-users$#'                => ['BlockController', 'listBlockedUsers'],
         ],
         'PUT' => [
             '#^/users/(\d+)/role$#'             => ['UserController', 'setRole'],
