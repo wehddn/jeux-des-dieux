@@ -10,7 +10,7 @@ final class BlockController
     /** POST /users/{id}/block */
     public function blockUser(int $id): void
     {
-        Auth::requireAdmin();
+        Auth::requireManager();
         Auth::requireNotSelf($id, 'blocking');
         
         $currentUserId = Auth::userId();
@@ -40,7 +40,7 @@ final class BlockController
     /** DELETE /users/{id}/block */
     public function unblockUser(int $id): void
     {
-        Auth::requireAdmin();
+        Auth::requireManager();
         Auth::requireNotSelf($id, 'unblocking');
         
         $pdo = Database::get();
