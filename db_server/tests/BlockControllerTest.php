@@ -19,7 +19,7 @@ class BlockControllerTest extends BaseApiTest
     public function testUnblockUserWithUserAuth()
     {
         // Test with regular user (should get 403 - requires manager+)
-        [$status, $json] = $this->delete("/users/{$this->targetUserId}/block", $this->withUserAuth());
+        [$status, $json] = $this->delete("/users/{$this->targetUserId}/block", null, $this->withUserAuth());
         $this->assertEquals(403, $status);
         $this->assertArrayHasKey('error', $json);
     }
@@ -27,10 +27,10 @@ class BlockControllerTest extends BaseApiTest
     public function testUnblockUserNotBlocked()
     {
         // First ensure user is not blocked
-        $this->delete("/users/{$this->targetUserId}/block", $this->withManagerAuth());
+        $this->delete("/users/{$this->targetUserId}/block", null, $this->withManagerAuth());
         
         // Test unblocking a user that is not blocked
-        [$status, $json] = $this->delete("/users/{$this->targetUserId}/block", $this->withManagerAuth());
+        [$status, $json] = $this->delete("/users/{$this->targetUserId}/block", null, $this->withManagerAuth());
         $this->assertEquals(404, $status);
         $this->assertEquals(['error' => 'User is not blocked'], $json);
     }
@@ -55,7 +55,7 @@ class BlockControllerTest extends BaseApiTest
     public function testBlockUserWithManagerAuth()
     {
         // First ensure user is not blocked
-        $this->delete("/users/{$this->targetUserId}/block", $this->withManagerAuth());
+        $this->delete("/users/{$this->targetUserId}/block", null, $this->withManagerAuth());
         
         // Test with manager user (should succeed)
         [$status, $json] = $this->post("/users/{$this->targetUserId}/block", [], $this->withManagerAuth());
@@ -66,7 +66,7 @@ class BlockControllerTest extends BaseApiTest
     public function testBlockUserWithAdminAuth()
     {
         // First unblock user to ensure clean state
-        $this->delete("/users/{$this->targetUserId}/block", $this->withAdminAuth());
+        $this->delete("/users/{$this->targetUserId}/block", null, $this->withAdminAuth());
         
         // Test with admin user (should succeed)
         [$status, $json] = $this->post("/users/{$this->targetUserId}/block", [], $this->withAdminAuth());
@@ -89,7 +89,7 @@ class BlockControllerTest extends BaseApiTest
         $this->post("/users/{$this->targetUserId}/block", [], $this->withManagerAuth());
         
         // Test with manager user (should succeed)
-        [$status, $json] = $this->delete("/users/{$this->targetUserId}/block", $this->withManagerAuth());
+        [$status, $json] = $this->delete("/users/{$this->targetUserId}/block", null, $this->withManagerAuth());
         $this->assertEquals(200, $status);
         $this->assertEquals(['message' => 'User unblocked successfully'], $json);
     }
@@ -100,7 +100,7 @@ class BlockControllerTest extends BaseApiTest
         $this->post("/users/{$this->targetUserId}/block", [], $this->withAdminAuth());
         
         // Test with admin user (should succeed)
-        [$status, $json] = $this->delete("/users/{$this->targetUserId}/block", $this->withAdminAuth());
+        [$status, $json] = $this->delete("/users/{$this->targetUserId}/block", null, $this->withAdminAuth());
         $this->assertEquals(200, $status);
         $this->assertEquals(['message' => 'User unblocked successfully'], $json);
     }
@@ -120,7 +120,7 @@ class BlockControllerTest extends BaseApiTest
     {
         // Clean up: ensure test user is unblocked after each test
         try {
-            $this->delete("/users/{$this->targetUserId}/block", $this->withAdminAuth());
+            $this->delete("/users/{$this->targetUserId}/block", null, $this->withAdminAuth());
         } catch (Exception $e) {
             // Ignore errors in cleanup
         }
