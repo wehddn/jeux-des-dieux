@@ -77,9 +77,8 @@ class Router
     private static function tryRoutes(array $routes, string $method, string $path, bool $requireAuth): bool
     {
         foreach ($routes[$method] ?? [] as $regex => [$ctrl, $action]) {
-            error_log("Checking regex: $regex against path: $path");
             if (preg_match($regex, $path, $matches)) {
-                error_log("Match found! Controller: $ctrl, Action: $action");
+                error_log("Controller: $ctrl, Action: $action");
                 
                 // Check authentication if required
                 if ($requireAuth && !Auth::check()) {
