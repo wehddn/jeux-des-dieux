@@ -1,27 +1,14 @@
 <?php
 // filepath: tests/AuthControllerTest.php
 
-use PHPUnit\Framework\TestCase;
+require_once 'BaseApiTest.php';
 
-class AuthControllerTest extends TestCase
+class AuthControllerTest extends BaseApiTest
 {
-    private $baseUrl = 'http://localhost:5000';
-
-    private function post($endpoint, $data)
+    // Override setUp to not get token automatically for auth tests
+    protected function setUp(): void
     {
-        $ch = curl_init($this->baseUrl . $endpoint);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        $response = curl_exec($ch);
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $header = substr($response, 0, $header_size);
-        $body = substr($response, $header_size);
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        return [$status, json_decode($body, true)];
+        // Don't call parent::setUp() as we test auth without tokens
     }
 
     public function testRegisterMissingFields()
