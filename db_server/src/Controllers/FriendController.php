@@ -140,7 +140,7 @@ final class FriendController
         Response::json(200, $stmt->fetchAll());
     }
 
-    /** DELETE /friends - Remove an existing friendship (Admin only) 
+    /** DELETE /friends - Remove an existing friendship/friend request (Admin only) 
      *  body: { "user1_id": 123, "user2_id": 456 } */
     public function removeFriendship(): void
     {
@@ -161,22 +161,21 @@ final class FriendController
         
         $pdo = Database::get();
         
-        // Find the specific friendship record between these two users
+        // Find the specific friend request record between these two users (any status)
         $stmt = $pdo->prepare(
-            'SELECT id FROM friend_requests
-             WHERE ((sender_id=? AND receiver_id=?) OR (sender_id=? AND receiver_id=?))
-               AND status="accepted"');
+            'SELECT id, status FROM friend_requests
+             WHERE (sender_id=? AND receiver_id=?) OR (sender_id=? AND receiver_id=?)');
         $stmt->execute([$user1Id, $user2Id, $user2Id, $user1Id]);
         $friendship = $stmt->fetch();
         
         if (!$friendship) {
-            Response::json(404, ['error' => 'Friendship not found between specified users']);
+            Response::json(404, ['error' => 'Friend request not found between specified users']);
         }
         
-        // Delete the friendship record
+        // Delete the friend request record (regardless of status)
         $pdo->prepare('DELETE FROM friend_requests WHERE id=?')
             ->execute([$friendship['id']]);
             
-        Response::json(200, ['message' => 'Friendship removed']);
+        Response::json(200, ['message' => 'Friend request removed']);
     }
 }
