@@ -124,12 +124,21 @@ abstract class BaseApiTest extends TestCase
     /**
      * Make a DELETE request
      */
-    protected function delete($endpoint, $headers = [])
+    protected function delete($endpoint, $data = null, $headers = [])
     {
+        $defaultHeaders = ['Content-Type: application/json'];
+        $headers = array_merge($defaultHeaders, $headers);
+        
         $ch = curl_init($this->baseUrl . $endpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        
+        // If data is provided, include it in the request body
+        if ($data !== null) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        }
+        
         curl_setopt($ch, CURLOPT_HEADER, true);
         
         $response = curl_exec($ch);

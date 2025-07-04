@@ -15,8 +15,6 @@ class Router
     private const PROTECTED_ROUTES = [
         'POST' => [
             '#^/friends$#'                      => ['FriendController', 'sendRequest'],
-            '#^/friends/accept$#'               => ['FriendController', 'acceptRequest'],
-            '#^/friends/decline$#'              => ['FriendController', 'declineRequest'],
             '#^/games$#'                        => ['GameController', 'create'],
             '#^/users/(\d+)/block$#'            => ['BlockController', 'blockUser'],
         ],
@@ -48,6 +46,7 @@ class Router
             '#^/users/(\d+)$#'                  => ['UserController', 'delete'],
             '#^/games/(\d+)$#'                  => ['GameController', 'delete'],
             '#^/users/(\d+)/block$#'            => ['BlockController', 'unblockUser'],
+            '#^/friends$#'                      => ['FriendController', 'removeFriendship'],
         ],
     ];
 

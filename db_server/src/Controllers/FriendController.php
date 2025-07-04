@@ -22,6 +22,14 @@ final class FriendController
         }
 
         $pdo = Database::get();
+        
+        // Check if receiver user exists
+        $stmt = $pdo->prepare('SELECT id FROM users WHERE id = ?');
+        $stmt->execute([$rid]);
+        if (!$stmt->fetch()) {
+            Response::json(404, ['error' => 'User not found']);
+        }
+        
         // нет ли уже дружбы/заявки?
         $stmt = $pdo->prepare(
           'SELECT status FROM friend_requests
@@ -130,5 +138,45 @@ final class FriendController
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['uid'=>$id]);
         Response::json(200, $stmt->fetchAll());
+    }
+
+    /** DELETE /friends - Remove an existing friendship (Admin only) 
+     *  body: { "user1_id": 123, "user2_id": 456 } */
+    public function removeFriendship(): void
+    {
+        Auth::requireAdmin(); // Only admins can remove friendships
+        
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!isset($data['user1_id']) || !is_numeric($data['user1_id']) ||
+            !isset($data['user2_id']) || !is_numeric($data['user2_id'])) {
+            Response::json(400, ['error' => 'user1_id and user2_id required']);
+        }
+        
+        $user1Id = (int)$data['user1_id'];
+        $user2Id = (int)$data['user2_id'];
+        
+        if ($user1Id === $user2Id) {
+            Response::json(400, ['error' => 'Cannot remove friendship with oneself']);
+        }
+        
+        $pdo = Database::get();
+        
+        // Find the specific friendship record between these two users
+        $stmt = $pdo->prepare(
+            'SELECT id FROM friend_requests
+             WHERE ((sender_id=? AND receiver_id=?) OR (sender_id=? AND receiver_id=?))
+               AND status="accepted"');
+        $stmt->execute([$user1Id, $user2Id, $user2Id, $user1Id]);
+        $friendship = $stmt->fetch();
+        
+        if (!$friendship) {
+            Response::json(404, ['error' => 'Friendship not found between specified users']);
+        }
+        
+        // Delete the friendship record
+        $pdo->prepare('DELETE FROM friend_requests WHERE id=?')
+            ->execute([$friendship['id']]);
+            
+        Response::json(200, ['message' => 'Friendship removed']);
     }
 }
