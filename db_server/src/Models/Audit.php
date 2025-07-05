@@ -97,4 +97,24 @@ final class Audit extends Model
     }
     public function getChangedBy(): ?int { return $this->get('changed_by'); }
     public function getChangedAt(): string { return $this->get('changed_at'); }
+
+    /**
+     * Delete a specific audit log entry
+     */
+    public static function deleteLog(int $id): bool
+    {
+        $stmt = self::db()->prepare('DELETE FROM audit_log WHERE id = ?');
+        $result = $stmt->execute([$id]);
+        return $result && $stmt->rowCount() > 0;
+    }
+
+    /**
+     * Clear all audit logs
+     */
+    public static function clearAllLogs(): int
+    {
+        $stmt = self::db()->prepare('DELETE FROM audit_log');
+        $stmt->execute();
+        return $stmt->rowCount();
+    }
 }

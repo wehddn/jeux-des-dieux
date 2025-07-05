@@ -67,6 +67,30 @@ final class User extends Model
         ]);
     }
 
+    /** Create a new user (admin function) */
+    public static function createUser(string $name, string $email, string $password, int $roleId = self::ROLE_USER): int
+    {
+        if (!self::isValidRole($roleId)) {
+            throw new \InvalidArgumentException('Invalid role ID');
+        }
+        
+        if (self::emailExists($email)) {
+            throw new \Exception('Email already exists');
+        }
+        
+        $hash = password_hash($password, PASSWORD_ARGON2ID);
+        
+        $user = self::create([
+            'name' => $name,
+            'email' => $email,
+            'password' => $hash,
+            'role_id' => $roleId,
+            'photo' => 'photo_1.png'
+        ]);
+        
+        return $user->id();
+    }
+
     /** Check if user is blocked */
     public function isBlocked(): bool
     {

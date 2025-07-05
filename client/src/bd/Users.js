@@ -289,4 +289,163 @@ const getAuditLogs = async (limit = 50, offset = 0) => {
   }
 };
 
-export { getUser, getUserName, updateUserName, deleteUserProfile, getNonFriendUsers, addFriend, getPendingFriendRequests, acceptFriendRequest, declineFriendRequest, getFriendsList, updateUserRole, getUserRole, getUsers, getBlockedUsers, blockUser, unblockUser, getAuditLogs};
+const createUser = async (userData) => {
+  try {
+    const response = await fetch(`${API_URL}/users`, {
+      method: 'POST',
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify(userData),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      
+      if (response.status === 400) {
+        throw new Error(errorData.message || 'Invalid user data provided');
+      } else if (response.status === 409) {
+        throw new Error('A user with this email already exists');
+      } else if (response.status === 403) {
+        throw new Error('You do not have permission to create users');
+      } else if (response.status === 422) {
+        throw new Error('Validation error: Please check your input data');
+      } else {
+        throw new Error(errorData.message || 'Error creating user');
+      }
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error in createUser:', error);
+    
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw new Error('Network error: Unable to connect to server');
+    }
+    
+    throw error;
+  }
+};
+
+const updateUser = async (userId, userData) => {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+      method: 'PUT',
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify(userData),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      
+      if (response.status === 400) {
+        throw new Error(errorData.error || 'Invalid user data provided');
+      } else if (response.status === 404) {
+        throw new Error('User not found');
+      } else if (response.status === 409) {
+        throw new Error('Email already exists');
+      } else if (response.status === 403) {
+        throw new Error('You do not have permission to update users');
+      } else {
+        throw new Error(errorData.error || 'Error updating user');
+      }
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error in updateUser:', error);
+    
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw new Error('Network error: Unable to connect to server');
+    }
+    
+    if (error.message !== 'API error') {
+      throw error;
+    }
+    throw new Error('API error');
+  }
+};
+
+const deleteUser = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Error deleting user');
+    }
+    
+    const text = await response.text();
+    if (text) {
+      return JSON.parse(text);
+    } else {
+      return { message: 'User deleted successfully' };
+    }
+  } catch (error) {
+    console.error('Error in deleteUser:', error);
+    
+    if (error.message !== 'API error') {
+      throw error;
+    }
+    throw new Error('API error');
+  }
+};
+
+const deleteAuditLog = async (logId) => {
+  try {
+    const response = await fetch(`${API_URL}/audit/${logId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Error deleting audit log');
+    }
+    
+    const text = await response.text();
+    if (text) {
+      return JSON.parse(text);
+    } else {
+      return { message: 'Audit log deleted successfully' };
+    }
+  } catch (error) {
+    console.error('Error in deleteAuditLog:', error);
+    
+    if (error.message !== 'API error') {
+      throw error;
+    }
+    throw new Error('API error');
+  }
+};
+
+const clearAuditLogs = async () => {
+  try {
+    const response = await fetch(`${API_URL}/audit/clear`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Error clearing audit logs');
+    }
+    
+    const text = await response.text();
+    if (text) {
+      return JSON.parse(text);
+    } else {
+      return { message: 'All audit logs cleared successfully' };
+    }
+  } catch (error) {
+    console.error('Error in clearAuditLogs:', error);
+    
+    if (error.message !== 'API error') {
+      throw error;
+    }
+    throw new Error('API error');
+  }
+};
+
+export { getUser, getUserName, updateUserName, deleteUserProfile, getNonFriendUsers, addFriend, getPendingFriendRequests, acceptFriendRequest, declineFriendRequest, getFriendsList, updateUserRole, getUserRole, getUsers, getBlockedUsers, blockUser, unblockUser, getAuditLogs, createUser, updateUser, deleteUser, deleteAuditLog, clearAuditLogs};

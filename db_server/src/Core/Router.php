@@ -18,6 +18,7 @@ class Router
             '#^/games$#'                        => ['GameController', 'create'],
             '#^/games/(\d+)/join$#'             => ['GameController', 'join'],
             '#^/users/(\d+)/block$#'            => ['BlockController', 'blockUser'],
+            '#^/users$#'                        => ['UserController', 'create'],
         ],
         'GET' => [
             '#^/users/(\d+)$#'                  => ['UserController', 'get'],
@@ -34,6 +35,7 @@ class Router
 
         ],
         'PUT' => [
+            '#^/users/(\d+)$#'                  => ['UserController', 'updateUser'],
             '#^/users/(\d+)/role$#'             => ['UserController', 'setRole'],
             '#^/games/(\d+)/players$#'          => ['GameController', 'setPlayers'],
             '#^/games/(\d+)/status$#'           => ['GameController', 'setStatus'],
@@ -48,6 +50,8 @@ class Router
             '#^/games/(\d+)$#'                  => ['GameController', 'delete'],
             '#^/users/(\d+)/block$#'            => ['BlockController', 'unblockUser'],
             '#^/friends$#'                      => ['FriendController', 'removeFriendship'],
+            '#^/audit/(\d+)$#'                  => ['AuditController', 'delete'],
+            '#^/audit/clear$#'                  => ['AuditController', 'clear'],
         ],
     ];
 

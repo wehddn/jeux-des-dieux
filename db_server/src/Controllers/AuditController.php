@@ -12,12 +12,10 @@ final class AuditController
     {
         Auth::requireAdmin();
         
-        // Validate and sanitize input
         $limit = max(1, min(100, (int)($_GET['limit'] ?? 50))); // Between 1-100
         $offset = max(0, (int)($_GET['offset'] ?? 0));
         $table = !empty($_GET['table']) ? trim($_GET['table']) : null;
         
-        // Get data from model
         $logs = Audit::getAuditLogs($limit, $offset, $table);
         $total = Audit::getAuditLogsCount($table);
         
@@ -34,7 +32,6 @@ final class AuditController
     {
         Auth::requireAdmin();
         
-        // Validate required parameters
         $table = !empty($_GET['table']) ? trim($_GET['table']) : null;
         $recordId = !empty($_GET['record_id']) ? trim($_GET['record_id']) : null;
         
@@ -43,9 +40,43 @@ final class AuditController
             return;
         }
         
-        // Get data from model
         $logs = Audit::getLogsByRecord($table, $recordId);
         
         Response::json(200, $logs);
+    }
+
+    /** DELETE /audit/{id} - Delete specific audit log (admin only) */
+    public function delete(int $id): void
+    {
+        Auth::requireAdmin();
+
+        try {
+            $success = Audit::deleteLog($id);
+            if ($success) {
+                Response::json(200, ['message' => 'Audit log deleted successfully']);
+            } else {
+                Response::json(404, ['error' => 'Audit log not found']);
+            }
+        } catch (\Exception $e) {
+            error_log('Delete audit log error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to delete audit log']);
+        }
+    }
+
+    /** DELETE /audit/clear - Clear all audit logs (admin only) */
+    public function clear(): void
+    {
+        Auth::requireAdmin();
+
+        try {
+            $deletedCount = Audit::clearAllLogs();
+            Response::json(200, [
+                'message' => 'All audit logs cleared successfully',
+                'deleted_count' => $deletedCount
+            ]);
+        } catch (\Exception $e) {
+            error_log('Clear audit logs error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to clear audit logs']);
+        }
     }
 }
