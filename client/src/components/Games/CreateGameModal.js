@@ -19,7 +19,7 @@ function CreateGameModal({ isOpen, onRequestClose, contentLabel }) {
     try {
       const gameData = {
         name: gameName || "",
-        userId: user.uid,
+        userId: user.id,
         isPrivate: Boolean(isPrivate),
       };
 
@@ -36,7 +36,7 @@ function CreateGameModal({ isOpen, onRequestClose, contentLabel }) {
       navigate(`/room/${gameId}`);
       onRequestClose();
     } catch (error) {
-      console.error("Ошибка при создании игры:", error);
+      console.error("Error creating game:", error);
     }
   };
 

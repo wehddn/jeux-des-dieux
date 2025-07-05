@@ -3,12 +3,12 @@ import { useUserAuth } from "../../context/UserAuthContext.js";
 import Stats from "./Stats.js";
 import Friends from "./Friends.js";
 import UserInfo from "./UserInfo.js";
-import { getOrCreateUser, acceptFriendRequest, declineFriendRequest } from "../../bd/Users.js";
+import { getUser, acceptFriendRequest, declineFriendRequest } from "../../bd/Users.js";
 
 const Profile = () => {
   const { user } = useUserAuth();
   const [userProfile, setUserProfile] = useState(null);
-  const userId = user.uid;
+  const userId = user.id;
   const userEmail = user.email;
 
   const handleAcceptFriendRequest = async (friendId) => {
@@ -31,7 +31,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const userData = await getOrCreateUser(userId, userEmail);
+        const userData = await getUser(userId);
         setUserProfile(userData);
       } catch (error) {
         console.error("Error fetching user data:", error);

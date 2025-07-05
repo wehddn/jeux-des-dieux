@@ -20,9 +20,9 @@ Développer une application web comprenant :
 
 - **Frontend** : React
 - **Backend** : Node.js
-- **Base de données** : Firebase
+- **Base de données** : TODO
 - **Communications** : WebSocket
-- **Authentification** : Firebase Authentication
+- **Authentification** : TODO
 
 ## Exigences fonctionnelles
 

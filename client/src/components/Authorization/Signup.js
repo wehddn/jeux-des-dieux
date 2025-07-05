@@ -16,7 +16,7 @@ const Signup = () => {
     setError("");
     try {
       await signUp(email, password);
-      navigate("/verify");
+      navigate("/");
     } catch (err) {
       setError(err.message);
     }
@@ -46,9 +46,6 @@ const Signup = () => {
           <Button variant="primary" type="Submit" className="button-custom">S'INSCRIRE</Button>
         </div>
       </Form>
-      <div className="d-flex justify-content-center align-items-center row">
-        <Button variant="primary" className="button-custom" onClick={() => navigate("/forgot-password")}>MOT DE PASS OUBLIÉ</Button>
-      </div>
     </section>
   );
 };

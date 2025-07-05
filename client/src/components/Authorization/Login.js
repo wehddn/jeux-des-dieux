@@ -8,7 +8,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { logIn, googleSignIn, user, loading } = useUserAuth();
+  const { logIn, user, loading } = useUserAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,26 +24,17 @@ const Login = () => {
       await logIn(email, password);
       navigate("/profile");
     } catch (err) {
-      setError(err.message);
+      if (err.isBlocked) {
+        // Redirect to blocked page for blocked users
+        navigate("/blocked");
+      } else {
+        setError(err.message);
+      }
     }
-  };
-
-  const handleGoogleSignIn = async (e) => {
-    e.preventDefault();
-    try {
-      await googleSignIn();
-      navigate("/profile");
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const handleForgotPassword = () => {
-    navigate("/signup");
   };
 
   const handleNewPassword = () => {
-    navigate("/forgot-password");
+    navigate("/signup");
   };
 
   return (
@@ -72,9 +63,7 @@ const Login = () => {
         </div>
       </Form>
       <div className="d-flex justify-content-center align-items-center row" style={{ padding: 0 }}>
-        <Button variant="primary" className="button-custom" onClick={handleGoogleSignIn}>SE CONNECTER AVEC GOOGLE</Button>
-        <Button variant="primary" className="button-custom" onClick={handleForgotPassword}>S'INSCRIRE</Button>
-        <Button variant="primary" className="button-custom" onClick={handleNewPassword}>MOT DE PASS OUBLIÉ</Button>
+        <Button variant="primary" className="button-custom" onClick={handleNewPassword}>S'INSCRIRE</Button>
       </div>
     </section>
   );

@@ -3,7 +3,7 @@
 # dependencies
 /node_modules
 client/node_modules
-server/node_modules
+game_server/node_modules
 /.pnp
 .pnp.js
 # testing
@@ -22,4 +22,17 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 package-lock.json
-server/jeux-des-dieux-firebase-adminsdk-foy72-8a047523f4.json
+
+db_server/node_modules
+db_server/src/.env
+
+game_server/src/.env
+
+db_server/src/config/db.js
+db_server_v2/vendor
+db_server_v2/db_server/vendor
+db_server_v2/db_server/.env*
+db_server/.env
+db_server/vendor
+db_server/.phpunit.result.cache
+game_server/.env

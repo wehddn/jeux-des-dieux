@@ -20,17 +20,17 @@ import Settings from "./components/Settings/Settings";
 import Rules from "./components/Rules/Rules";
 import Login from "./components/Authorization/Login";
 import Signup from "./components/Authorization/Signup";
-import EmailVerification from "./components/Authorization/EmailVerification";
-import ForgotPassword from "./components/Authorization/ForgotPassword";
 import AdminPage from "./components/Admin/Admin";
 import NoAccess from "./components/base/NoAccess/NoAccess";
+import Blocked from "./components/Blocked/Blocked";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { UserAuthContextProvider } from "./context/UserAuthContext";
+import { ROLES } from "./utils/roleUtils";
 import 'boxicons/css/boxicons.min.css';
 
 const AppLayout = ({ children }) => {
   const location = useLocation();
-  const noHeaderRoutes = ["/signup", "/verify", "/forgot-password", "/"];
+  const noHeaderRoutes = ["/signup", "/", "/blocked"];
   
   const shouldShowHeader = !noHeaderRoutes.includes(location.pathname);
   
@@ -103,16 +103,15 @@ function App() {
                   <Route
                     path="/admin"
                     element={
-                      <ProtectedRoute requiredRole="admin">
+                      <ProtectedRoute requiredRole={ROLES.MANAGER}>
                         <AdminPage />
                       </ProtectedRoute>
                     }
                   />
                   <Route path="/no-access" element={<NoAccess />} />
+                  <Route path="/blocked" element={<Blocked />} />
                   <Route path="/" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
-                  <Route path="/verify" element={<EmailVerification />} />
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
                 </Routes>
               </UserAuthContextProvider>
         </Container>

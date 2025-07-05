@@ -82,7 +82,7 @@ function GameRoom() {
             setIsWinner(false);
           } else {
             setIsDraw(false);
-            setIsWinner(data.winnerId === user.uid);
+            setIsWinner(data.winnerId === user.id);
           }
           setIsGameOverModalOpen(true);
           break;
@@ -92,7 +92,7 @@ function GameRoom() {
           break;
       }
     },
-    [user.uid]
+    [user.id]
   );
 
   useEffect(() => {
@@ -104,7 +104,7 @@ function GameRoom() {
           JSON.stringify({
             type: "join",
             room: id,
-            userId: user.uid,
+            userId: user.id,
           })
         );
       }
@@ -141,7 +141,7 @@ function GameRoom() {
           JSON.stringify({
             type: "leave",
             room: id,
-            userId: user.uid,
+            userId: user.id,
           })
         );
         ws.current.close();
@@ -157,7 +157,7 @@ function GameRoom() {
           JSON.stringify({
             type: "leave",
             room: id,
-            userId: user.uid,
+            userId: user.id,
           })
         );
         ws.current.close();
@@ -172,7 +172,7 @@ function GameRoom() {
           type: "discardCard",
           card,
           room: id,
-          userId: user.uid,
+          userId: user.id,
         })
       );
     }
@@ -186,7 +186,7 @@ function GameRoom() {
           card,
           slotIndex,
           room: id,
-          userId: user.uid,
+          userId: user.id,
         })
       );
     }
@@ -201,7 +201,7 @@ function GameRoom() {
           slotIndex,
           targetPlayerId,
           room: id,
-          userId: user.uid,
+          userId: user.id,
         })
       );
     }
@@ -215,7 +215,7 @@ function GameRoom() {
           card,
           slotIndex,
           room: id,
-          userId: user.uid,
+          userId: user.id,
         })
       );
     }

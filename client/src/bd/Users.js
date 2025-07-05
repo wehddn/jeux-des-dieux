@@ -1,305 +1,292 @@
-import { doc, getDoc, setDoc, deleteDoc, collection, getDocs, updateDoc } from 'firebase/firestore';
-import { db, auth } from '../firebase';
+const API_URL = 'http://localhost:5000';
 
-const getOrCreateUser = async (userId, userEmail) => {
-  const userRef = doc(db, 'Users', userId);
-
-  try {
-    let userSnap = await getDoc(userRef, { source: 'cache' });
-
-    if (!userSnap.exists()) {
-      userSnap = await getDoc(userRef, { source: 'server' });
-    }
-
-    if (userSnap.exists()) {
-      const userData = userSnap.data();
-      return { id: userId, email: userEmail, ...userData };
-    } else {
-      const newUser = { name: 'Player', photo: 'photo_1.png', role: 'user'};
-      await setDoc(userRef, newUser);
-      return { id: userId, email: userEmail, newUser };
-    }
-  } catch (error) {
-    console.error('Error accessing Firestore:', error);
-    throw new Error('Error accessing Firestore');
-  }
+const getAuthHeaders = (additionalHeaders = {}) => {
+  const token = localStorage.getItem("token");
+  return token
+    ? { ...additionalHeaders, Authorization: `Bearer ${token}` }
+    : additionalHeaders;
 };
 
 const getUser = async (userId) => {
-  const userRef = doc(db, 'Users', userId);
-
   try {
-    let userSnap = await getDoc(userRef, { source: 'cache' });
-
-    if (!userSnap.exists()) {
-      userSnap = await getDoc(userRef, { source: 'server' });
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      if (response.status === 404) {
+        console.warn("User not found");
+        return null;
+      }
+      throw new Error("Server error");
     }
 
-    const userData = userSnap.data();
-    return userData;
-
+    return await response.json();
   } catch (error) {
-    console.error('Error accessing Firestore:', error);
-    throw new Error('Error accessing Firestore');
+    console.error("Error getting user:", error);
+    throw new Error("API error");
   }
 };
 
-
 const getUserName = async (userId) => {
-  const userRef = doc(db, 'Users', userId);
-
   try {
-    let userSnap = await getDoc(userRef, { source: 'cache' });
-
-    if (!userSnap.exists()) {
-      userSnap = await getDoc(userRef, { source: 'server' });
-    }
-
-    const userData = userSnap.data();
-    return userData.name;
-
+    const userData = await getUser(userId);
+    return userData ? userData.name : null;
   } catch (error) {
-    console.error('Error accessing Firestore:', error);
-    throw new Error('Error accessing Firestore');
+    console.error("Error getting user name:", error);
+    throw new Error("API error");
   }
 };
 
 const updateUserName = async (userId, newName) => {
-  const userRef = doc(db, 'Users', userId);
-
   try {
-    await setDoc(userRef, { name: newName }, { merge: true });
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+      method: 'PATCH',
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ name: newName }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Error updating user name');
+    }
+
+    return await response.json(); 
   } catch (error) {
-    console.error('Error updating name:', error);
-    throw new Error('Error updating name');
+    console.error('Error updating user name:', error);
+    throw new Error('Error updating user name');
   }
 };
 
+
 const deleteUserProfile = async (userId) => {
-  const userRef = doc(db, 'Users', userId);
-
   try {
-    await deleteDoc(userRef);
-    const user = auth.currentUser;
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+    });
 
-    if (user) {
-      try {
-        await user.delete();
-      } catch (error) {
-        if (error.code === 'auth/requires-recent-login') {
-        } else {
-          console.error('Error deleting user profile:', error);
-          throw new Error('Error deleting user profile');
-        }
-      }
+    if (!response.ok) {
+      throw new Error('Error deleting user profile');
     }
+
+    return await response.json();
   } catch (error) {
-    console.error('Error deleting user profile:', error);
-    throw new Error('Error deleting user profile');
+    console.error('Error in deleteUserProfile:', error);
+    throw new Error('API error');
   }
 };
 
 const getNonFriendUsers = async (userId) => {
-  const usersRef = collection(db, 'Users');
-  const userRef = doc(db, 'Users', userId);
-
   try {
-    const userSnap = await getDoc(userRef);
-    if (!userSnap.exists()) {
-      throw new Error('User not found');
-    }
-
-    const userData = userSnap.data();
-    const sentRequests = userData.sentRequests || [];
-    const receivedRequests = userData.receivedRequests || [];
-
-    const querySnapshot = await getDocs(usersRef);
-    const users = [];
-    
-    querySnapshot.forEach((doc) => {
-      const otherUserData = { id: doc.id, ...doc.data() };
-      
-      if (
-        otherUserData.id !== userId &&
-        !sentRequests.includes(otherUserData.id) &&
-        !receivedRequests.includes(otherUserData.id)
-      ) {
-        users.push(otherUserData);
-      }
+    const response = await fetch(`${API_URL}/friends/${userId}/non-friends`, {
+      headers: getAuthHeaders()
     });
-
-    return users;
+    if (!response.ok) {
+      throw new Error('Error getting non-friend users');
+    }
+    return await response.json();
   } catch (error) {
-    console.error('Error getting users:', error);
-    throw new Error('Error getting users');
+    console.error('Error in getNonFriendUsers:', error);
+    throw new Error('API error');
   }
 };
 
-
 const addFriend = async (userId, friendId) => {
-  const userRef = doc(db, 'Users', userId);
-  const friendRef = doc(db, 'Users', friendId);
-
   try {
-    const userSnap = await getDoc(userRef);
-    const friendSnap = await getDoc(friendRef);
-
-    if (userSnap.exists() && friendSnap.exists()) {
-      const userData = userSnap.data();
-      const friendData = friendSnap.data();
-
-      const currentFriends = userData.friends || [];
-      const sentRequests = userData.sentRequests || [];
-      const receivedRequests = friendData.receivedRequests || [];
-
-      if (currentFriends.includes(friendId)) {
-        return;
-      }
-
-      if (sentRequests.includes(friendId)) {
-        return;
-      }
-
-      await updateDoc(userRef, { sentRequests: [...sentRequests, friendId] });
-
-      await updateDoc(friendRef, { receivedRequests: [...receivedRequests, userId] });
-
-    } else {
-      throw new Error('User or friend not found');
+    const response = await fetch(`${API_URL}/friends`, {
+      method: 'POST',
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ receiver_id: friendId  }),
+    });
+    if (!response.ok) {
+      throw new Error('Error adding friend');
     }
+    return await response.json();
   } catch (error) {
-    console.error('Error sending friend request:', error);
-    throw new Error('Error sending friend request');
+    console.error('Error in addFriend:', error);
+    throw new Error('API error');
+  }
+};
+
+const getPendingFriendRequests = async (userId) => {
+  try {
+    console.log('userId:', userId);
+    const response = await fetch(`${API_URL}/friends/${userId}/pending-requests`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Error getting pending friend requests');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error in getPendingFriendRequests:', error);
+    throw new Error('API error');
   }
 };
 
 const acceptFriendRequest = async (userId, friendId) => {
-  const userRef = doc(db, 'Users', userId);
-  const friendRef = doc(db, 'Users', friendId);
-
   try {
-    const userSnap = await getDoc(userRef);
-    const friendSnap = await getDoc(friendRef);
-
-    if (userSnap.exists() && friendSnap.exists()) {
-      const userData = userSnap.data();
-      const friendData = friendSnap.data();
-
-      const userFriends = userData.friends || [];
-      const friendFriends = friendData.friends || [];
-
-      const userReceivedRequests = userData.receivedRequests || [];
-      const updatedReceivedRequests = userReceivedRequests.filter(id => id !== friendId);
-
-      await updateDoc(userRef, {
-        friends: [...userFriends, friendId],
-        receivedRequests: updatedReceivedRequests
-      });
-
-      const friendSentRequests = friendData.sentRequests || [];
-      const updatedSentRequests = friendSentRequests.filter(id => id !== userId);
-
-      await updateDoc(friendRef, {
-        friends: [...friendFriends, userId],
-        sentRequests: updatedSentRequests
-      });
-
-    } else {
-      throw new Error("User or friend not found.");
+    console.log('userId:', userId);
+    console.log('friendId:', friendId);
+    const response = await fetch(`${API_URL}/friends/accept`, {
+      method: 'PUT',
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ sender_id: friendId }),
+    });
+    if (!response.ok) {
+      throw new Error('Error accepting friend request');
     }
+    return await response.json();
   } catch (error) {
-    console.error("Error accepting friend request:", error);
-    throw new Error("Error accepting friend request");
+    console.error('Error in acceptFriendRequest:', error);
+    throw new Error('API error');
   }
 };
 
 const declineFriendRequest = async (userId, friendId) => {
-  const userRef = doc(db, 'Users', userId);
-  const friendRef = doc(db, 'Users', friendId);
-
   try {
-    const userSnap = await getDoc(userRef);
-    const friendSnap = await getDoc(friendRef);
+    const response = await fetch(`${API_URL}/friends/decline`, {
+      method: 'PUT',
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ sender_id: friendId }),
+    });
 
-    if (userSnap.exists() && friendSnap.exists()) {
-      const userData = userSnap.data();
-      const friendData = friendSnap.data();
-
-      const userReceivedRequests = userData.receivedRequests || [];
-      const updatedReceivedRequests = userReceivedRequests.filter(id => id !== friendId);
-
-      await updateDoc(userRef, {
-        receivedRequests: updatedReceivedRequests
-      });
-
-      const friendSentRequests = friendData.sentRequests || [];
-      const updatedSentRequests = friendSentRequests.filter(id => id !== userId);
-
-      await updateDoc(friendRef, {
-        sentRequests: updatedSentRequests
-      });
-
-    } else {
-      throw new Error("User or friend not found.");
+    if (!response.ok) {
+      throw new Error('Error declining friend request');
     }
+    
+    return await response.json();
   } catch (error) {
-    console.error("Error declining friend request:", error);
-    throw new Error("Error declining friend request");
+    console.error('Error in declineFriendRequest:', error);
+    throw new Error('API error');
+  }
+};
+
+const getFriendsList = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/friends/${userId}/list`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Error getting friends list');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error in getFriendsList:', error);
+    throw new Error('API error');
   }
 };
 
 const updateUserRole = async (userId, newRole) => {
-  const userRef = doc(db, 'Users', userId);
-
   try {
-    await updateDoc(userRef, { role: newRole });
+    const response = await fetch(`${API_URL}/users/${userId}/role`, {
+      method: 'PUT',
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ role: newRole }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Error updating user role');
+    }
+
+    return await response.json();
   } catch (error) {
     console.error('Error updating user role:', error);
-    throw new Error('Error updating user role');
+    throw new Error('API error');
   }
 };
 
 const getUserRole = async (userId) => {
-  const userRef = doc(db, "Users", userId);
-
   try {
-    let userSnap = await getDoc(userRef, { source: 'cache' });
-
-    if (!userSnap.exists()) {
-      console.log('No cached data, fetching from server...');
-      userSnap = await getDoc(userRef, { source: 'server' });
+    const response = await fetch(`${API_URL}/users/${userId}/role`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Error getting user role');
     }
-
-    if (userSnap.exists()) {
-      const userData = userSnap.data();
-      return userData.role || "user";
-    } else {
-      throw new Error("User not found");
-    }
+    const data = await response.json();
+    return data.role;
   } catch (error) {
-    console.error("Error getting user role:", error);
-    throw new Error("Error getting user role");
+    console.error('Error getting user role:', error);
+    throw new Error('API error');
   }
 };
 
 const getUsers = async () => {
-  const usersRef = collection(db, "Users");
-
   try {
-    const querySnapshot = await getDocs(usersRef);
-    const users = [];
-
-    querySnapshot.forEach((doc) => {
-      users.push({ id: doc.id, ...doc.data() });
+    const response = await fetch(`${API_URL}/users`, {
+      headers: getAuthHeaders()
     });
-
-    return users;
+    if (!response.ok) {
+      throw new Error('Error getting users list');
+    }
+    return await response.json();
   } catch (error) {
-    console.error("Error fetching all users:", error);
-    throw new Error("Error fetching all users");
+    console.error('Error in getUsers:', error);
+    throw new Error('API error');
   }
 };
 
+const getBlockedUsers = async () => {
+  try {
+    const response = await fetch(`${API_URL}/blocked-users`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Error getting blocked users list');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error in getBlockedUsers:', error);
+    throw new Error('API error');
+  }
+};
 
+const blockUser = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}/block`, {
+      method: 'POST',
+      headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ user_id: userId }),
+    });
+    if (!response.ok) {
+      throw new Error('Error blocking user');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error in blockUser:', error);
+    throw new Error('API error');
+  }
+};
 
-export { getOrCreateUser, getUser, getUserName, updateUserName, deleteUserProfile, getNonFriendUsers, addFriend, acceptFriendRequest, declineFriendRequest, updateUserRole, getUserRole, getUsers};
+const unblockUser = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}/block`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error('Error unblocking user');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error in unblockUser:', error);
+    throw new Error('API error');
+  }
+};
+
+const getAuditLogs = async (limit = 50, offset = 0) => {
+  try {
+    const response = await fetch(`${API_URL}/audit?limit=${limit}&offset=${offset}`, {
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      throw new Error('Error getting audit logs');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error in getAuditLogs:', error);
+    throw new Error('API error');
+  }
+};
+
+export { getUser, getUserName, updateUserName, deleteUserProfile, getNonFriendUsers, addFriend, getPendingFriendRequests, acceptFriendRequest, declineFriendRequest, getFriendsList, updateUserRole, getUserRole, getUsers, getBlockedUsers, blockUser, unblockUser, getAuditLogs};

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import { getDoc, doc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { getGame } from "../../bd/Games";
 import { useUserAuth } from "../../context/UserAuthContext";
 import PasswordModal from "../Games/PasswordModal";
 
@@ -20,17 +19,15 @@ function PrivateRoute({ children }) {
       }
 
       try {
-        const roomRef = doc(db, "Games", id);
-        const roomDoc = await getDoc(roomRef);
+        const gameData = await getGame(id);
 
-        if (roomDoc.exists()) {
-          const roomData = roomDoc.data();
-          if (roomData.creatorId === user.uid) {
+        if (gameData) {
+          if (gameData.creatorId === user.id) {
             authenticateRoom(id);
             setIsAuthorized(true);
           } else if (isRoomAuthenticated(id)) {
             setIsAuthorized(true);
-          } else if (roomData.isPrivate) {
+          } else if (gameData.isPrivate) {
             setShowPasswordModal(true);
           } else {
             setIsAuthorized(true);
@@ -39,7 +36,7 @@ function PrivateRoute({ children }) {
           setIsAuthorized(false);
         }
       } catch (error) {
-        console.error("Ошибка при проверке авторизации:", error);
+        console.error("Error checking authorization:", error);
         setIsAuthorized(false);
       } finally {
         setLoading(false);

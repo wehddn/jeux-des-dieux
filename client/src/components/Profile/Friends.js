@@ -1,16 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Friend from "./Friend.js";
 import FriendSearchModal from "./FriendSearchModal";
 import FriendRequestsModal from "./FriendRequestsModal";
+import { getPendingFriendRequests, getFriendsList } from "../../bd/Users";
 
 const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRequest }) => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isRequestsModalOpen, setIsRequestsModalOpen] = useState(false);
-  const [receivedRequests, setReceivedRequests] = useState(userProfile.receivedRequests || []);
+  const [receivedRequests, setReceivedRequests] = useState([]);
+  const [friends, setFriends] = useState([]);
 
   useEffect(() => {
-    setReceivedRequests(userProfile.receivedRequests || []);
-  }, [userProfile]);
+    const fetchPendingRequests = async () => {
+      try {
+        const pendingRequests = await getPendingFriendRequests(userProfile.id);
+        setReceivedRequests(pendingRequests);
+        console.log("Friends : useEffect pendingRequests", pendingRequests);
+      } catch (error) {
+        console.error("Error getting pending friend requests:", error);
+      }
+    };
+
+    fetchPendingRequests();
+  }, [userProfile.id]);
+
+  const fetchFriendsList = useCallback(async () => {
+    try {
+      const friendsList = await getFriendsList(userProfile.id);
+      setFriends(friendsList);
+      console.log("Friends : useEffect friendsList", friendsList);
+    } catch (error) {
+      console.error("Error getting friends list:", error);
+    }
+  }, [userProfile.id]);
+
+  useEffect(() => {
+    fetchFriendsList();
+  }, [fetchFriendsList]);
 
   const openSearchModal = () => setIsSearchModalOpen(true);
   const closeSearchModal = () => setIsSearchModalOpen(false);
@@ -21,7 +47,8 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
   const handleAccept = async (friendId) => {
     try {
       await handleAcceptFriendRequest(friendId);
-      setReceivedRequests(receivedRequests.filter((id) => id !== friendId));
+      setReceivedRequests(receivedRequests.filter((request) => request.id !== friendId));
+      await fetchFriendsList();
     } catch (error) {
       console.error("Error accepting friend request:", error);
     }
@@ -30,7 +57,7 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
   const handleDecline = async (friendId) => {
     try {
       await handleDeclineFriendRequest(friendId);
-      setReceivedRequests(receivedRequests.filter((id) => id !== friendId));
+      setReceivedRequests(receivedRequests.filter((request) => request.id !== friendId));
     } catch (error) {
       console.error("Error declining friend request:", error);
     }
@@ -61,12 +88,15 @@ const Friends = ({ userProfile, handleAcceptFriendRequest, handleDeclineFriendRe
       </div>
       <hr className="m-2" />
       <div className="row d-flex p-4 pt-4">
-        {userProfile.friends &&
-          userProfile.friends.map((friendId, index) => (
-            <article className="col-6 mb-4" key={index} aria-label="Friend">
-              <Friend userId={friendId} />
+        {friends.length > 0 ? (
+          friends.map((friend) => (
+            <article className="col-6 mb-4" key={friend.id} aria-label="Friend">
+              <Friend userId={friend.id} />
             </article>
-          ))}
+          ))
+        ) : (
+          <p className="text-center">Vous n'avez pas encore d'amis.</p>
+        )}
       </div>
     </section>
   );
