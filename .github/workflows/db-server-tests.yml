@@ -61,6 +61,29 @@ jobs:
         cd db_server
         mysql -h 127.0.0.1 -u root -proot jeux_des_dieux_test < sql/schema.sql
 
+    - name: Seed test data
+      run: |
+        cd db_server
+        # Hash the passwords using Argon2ID (like your production database)
+        TEST_HASH=$(php -r "echo password_hash('12345', PASSWORD_ARGON2ID);")
+        ADMIN_HASH=$(php -r "echo password_hash('admin', PASSWORD_ARGON2ID);")
+        MANAGER_HASH=$(php -r "echo password_hash('manager', PASSWORD_ARGON2ID);")
+        TEST2_HASH=$(php -r "echo password_hash('password123', PASSWORD_ARGON2ID);")
+        FRIEND1_HASH=$(php -r "echo password_hash('password123', PASSWORD_ARGON2ID);")
+        FRIEND2_HASH=$(php -r "echo password_hash('password123', PASSWORD_ARGON2ID);")
+        FRIEND3_HASH=$(php -r "echo password_hash('password123', PASSWORD_ARGON2ID);")
+        
+        mysql -h 127.0.0.1 -u root -proot jeux_des_dieux_test -e "
+        INSERT INTO users (id, pseudo, email, password, avatar, role, created_at) VALUES 
+        (1, 'test1', 'test@test.test', '$TEST_HASH', 'photo_1.png', 1, '2025-06-29 11:25:33'),
+        (2, 'admin', 'admin@admin.admin', '$ADMIN_HASH', 'photo_1.png', 3, '2025-06-29 11:47:40'),
+        (11, 'manager', 'manager@manager.manager', '$MANAGER_HASH', 'photo_1.png', 2, '2025-07-04 20:40:41'),
+        (12, 'dont_block', 'test2@test2.test2', '$TEST2_HASH', 'photo_1.png', 1, '2025-07-04 20:53:07'),
+        (13, 'friend1', 'friend1@friend1.friend1', '$FRIEND1_HASH', 'photo_1.png', 1, '2025-07-04 22:04:10'),
+        (14, 'friend2', 'friend2@friend2.friend2', '$FRIEND2_HASH', 'photo_1.png', 1, '2025-07-04 22:04:37'),
+        (15, 'friend3', 'friend3@friend3.friend3', '$FRIEND3_HASH', 'photo_1.png', 1, '2025-07-04 22:04:50');
+        "
+
     - name: Run tests
       run: |
         cd db_server
