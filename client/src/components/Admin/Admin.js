@@ -8,7 +8,11 @@ const Admin = () => {
   const [users, setUsers] = useState([]);
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [logsLoading, setLogsLoading] = useState(false);
+  const [showUsers, setShowUsers] = useState(false);
+  const [showLogs, setShowLogs] = useState(false);
   const { user: currentUser } = useUserAuth();
 
   // Role definitions - single source of truth
@@ -55,40 +59,55 @@ const Admin = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const promises = [
-          getUsers(),
-          getBlockedUsers()
-        ];
-        
-        // Only fetch audit logs for admins
-        if (isAdmin) {
-          promises.push(getAuditLogs(20)); // Get last 20 logs
-        }
-        
-        const results = await Promise.all(promises);
-        const [userList, blockedList, auditList] = results;
-        
-        console.log('User list:', userList);
-        console.log('Blocked users:', blockedList);
-        setUsers(userList);
-        setBlockedUsers(blockedList || []);
-        
-        if (isAdmin && auditList) {
-          console.log('Audit logs:', auditList);
-          console.log('First audit log entry:', auditList.logs[0]); // Debug the structure
-          // Extract the logs array from the response object
-          setAuditLogs(auditList.logs || []);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    // Component initialization without data loading
+    setLoading(false);
   }, [isAdmin]);
+
+  const loadUsers = async () => {
+    if (showUsers) {
+      setShowUsers(false);
+      return;
+    }
+    
+    setUsersLoading(true);
+    try {
+      const [userList, blockedList] = await Promise.all([
+        getUsers(),
+        getBlockedUsers()
+      ]);
+      
+      console.log('User list:', userList);
+      console.log('Blocked users:', blockedList);
+      setUsers(userList);
+      setBlockedUsers(blockedList || []);
+      setShowUsers(true);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
+  const loadLogs = async () => {
+    if (showLogs) {
+      setShowLogs(false);
+      return;
+    }
+    
+    setLogsLoading(true);
+    try {
+      const auditList = await getAuditLogs(20); // Get last 20 logs
+      console.log('Audit logs:', auditList);
+      console.log('First audit log entry:', auditList.logs[0]); // Debug the structure
+      // Extract the logs array from the response object
+      setAuditLogs(auditList.logs || []);
+      setShowLogs(true);
+    } catch (error) {
+      console.error('Error fetching audit logs:', error);
+    } finally {
+      setLogsLoading(false);
+    }
+  };
 
   const handleRoleChange = async (userId, roleId) => {
     try {
@@ -133,70 +152,98 @@ const Admin = () => {
 // TODO : get roles from BD for maintenance
   return (
     <main>
-      <h1>User Management</h1>
-      <div className="table-container">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => {
-              const blocked = isUserBlocked(user.id);
-              return (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>
-                    {isAdmin ? (
-                      <select
-                        className="role-select"
-                        value={user.role_id}
-                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                      >
-                        {roleDefinitions.map(role => (
-                          <option key={role.id} value={role.id}> {role.name} </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <span className="role-text">{getRoleName(user.role_id)}</span>
-                    )}
-                  </td>
-                  <td>
-                    <span
-                      className={`status-badge ${ blocked ? 'status-blocked' : 'status-active'}`}>
-                      {blocked ? 'Blocked' : 'Active'}
-                    </span>
-                  </td>
-                  <td>
-                    <button
-                      className="btn btn-view"
-                      onClick={() => console.log('View user:', user.id)}
-                    > View </button>
-                    <button
-                      className={`btn ${blocked ? 'btn-unblock' : 'btn-block'}`}
-                      onClick={() => handleBlockToggle(user.id)}
-                    >
-                      {blocked ? 'Unblock' : 'Block'}
-                    </button>
-                  </td>
-                </tr>
-              );})}
-          </tbody>
-        </table>
+      <h1>Admin Panel</h1>
+      
+      <div>
+        <button 
+          className="btn btn-primary" 
+          onClick={loadUsers}
+          disabled={usersLoading}
+        >
+          {usersLoading ? 'Loading...' : showUsers ? 'Hide Users' : 'Show Users'}
+        </button>
+        
+        {isAdmin && (
+          <button 
+            className="btn btn-primary" 
+            onClick={loadLogs}
+            disabled={logsLoading}
+            style={{ marginLeft: '10px' }}
+          >
+            {logsLoading ? 'Loading...' : showLogs ? 'Hide Logs' : 'Show Audit Logs'}
+          </button>
+        )}
       </div>
 
-      {/* Audit Logs - Only visible to admins */}
-      {isAdmin && (
+      {/* Users Table - Only visible when showUsers is true */}
+      {showUsers && (
         <div>
-          <h1>Recent Audit Logs</h1>
+          <h2>User Management</h2>
+          <div className="table-container">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => {
+                  const blocked = isUserBlocked(user.id);
+                  return (
+                    <tr key={user.id}>
+                      <td>{user.id}</td>
+                      <td>{user.name}</td>
+                      <td>{user.email}</td>
+                      <td>
+                        {isAdmin ? (
+                          <select
+                            className="role-select"
+                            value={user.role_id}
+                            onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                          >
+                            {roleDefinitions.map(role => (
+                              <option key={role.id} value={role.id}> {role.name} </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <span className="role-text">{getRoleName(user.role_id)}</span>
+                        )}
+                      </td>
+                      <td>
+                        <span
+                          className={`status-badge ${ blocked ? 'status-blocked' : 'status-active'}`}>
+                          {blocked ? 'Blocked' : 'Active'}
+                        </span>
+                      </td>
+                      <td>
+                        <button
+                          className="btn btn-view"
+                          onClick={() => console.log('View user:', user.id)}
+                        > View </button>
+                        <button
+                          className={`btn ${blocked ? 'btn-unblock' : 'btn-block'}`}
+                          onClick={() => handleBlockToggle(user.id)}
+                        >
+                          {blocked ? 'Unblock' : 'Block'}
+                        </button>
+                      </td>
+                    </tr>
+                  );})}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Audit Logs - Only visible to admins and when showLogs is true */}
+      {isAdmin && showLogs && (
+        <div>
+          <h2>Recent Audit Logs</h2>
           <div className="table-container">
             <table className="admin-table">
               <thead>
