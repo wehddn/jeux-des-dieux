@@ -30,10 +30,11 @@ final class Block extends Model
             throw new \RuntimeException('User already blocked');
         }
 
-        $stmt = self::db()->prepare(
-            'INSERT INTO blocklist (blocked_user_id, blocker_user_id, blocked_at) VALUES (?, ?, NOW())'
-        );
-        $stmt->execute([$userId, $blockerUserId]);
+        self::create([
+            'blocked_user_id' => $userId,
+            'blocker_user_id' => $blockerUserId,
+            'blocked_at' => date('Y-m-d H:i:s')
+        ]);
     }
 
     /**

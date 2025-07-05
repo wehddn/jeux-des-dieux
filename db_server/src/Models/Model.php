@@ -25,14 +25,6 @@ abstract class Model
         return $data ? new static($data) : null;
     }
 
-    /** Вернуть все записи (⚠️ paging для больших наборов) */
-    public static function all(): array
-    {
-        $rows = self::db()->query(
-            'SELECT * FROM ' . static::TABLE)->fetchAll();
-        return array_map(fn($r) => new static($r), $rows);
-    }
-
     /** Создать запись; $fields = ['col'=>val,…] */
     public static function create(array $fields): static
     {
@@ -43,13 +35,6 @@ abstract class Model
         self::db()->prepare($sql)->execute(array_values($fields));
         $id = (int)self::db()->lastInsertId();
         return static::find($id);
-    }
-
-    /** Удалить по id */
-    public static function destroy(int $id): void
-    {
-        self::db()->prepare(
-            'DELETE FROM ' . static::TABLE . ' WHERE id=?')->execute([$id]);
     }
 
     /* ---------- экземпляр ---------- */
