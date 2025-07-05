@@ -74,14 +74,14 @@ jobs:
         FRIEND3_HASH=$(php -r "echo password_hash('password123', PASSWORD_ARGON2ID);")
         
         mysql -h 127.0.0.1 -u root -proot jeux_des_dieux_test -e "
-        INSERT INTO users (id, pseudo, email, password, avatar, role, created_at) VALUES 
-        (1, 'test1', 'test@test.test', '$TEST_HASH', 'photo_1.png', 1, '2025-06-29 11:25:33'),
-        (2, 'admin', 'admin@admin.admin', '$ADMIN_HASH', 'photo_1.png', 3, '2025-06-29 11:47:40'),
-        (11, 'manager', 'manager@manager.manager', '$MANAGER_HASH', 'photo_1.png', 2, '2025-07-04 20:40:41'),
-        (12, 'dont_block', 'test2@test2.test2', '$TEST2_HASH', 'photo_1.png', 1, '2025-07-04 20:53:07'),
-        (13, 'friend1', 'friend1@friend1.friend1', '$FRIEND1_HASH', 'photo_1.png', 1, '2025-07-04 22:04:10'),
-        (14, 'friend2', 'friend2@friend2.friend2', '$FRIEND2_HASH', 'photo_1.png', 1, '2025-07-04 22:04:37'),
-        (15, 'friend3', 'friend3@friend3.friend3', '$FRIEND3_HASH', 'photo_1.png', 1, '2025-07-04 22:04:50');
+        INSERT INTO users (id, name, email, password, photo, role_id) VALUES 
+        (1, 'test1', 'test@test.test', '$TEST_HASH', 'photo_1.png', 1),
+        (2, 'admin', 'admin@admin.admin', '$ADMIN_HASH', 'photo_1.png', 3),
+        (11, 'manager', 'manager@manager.manager', '$MANAGER_HASH', 'photo_1.png', 2),
+        (12, 'dont_block', 'test2@test2.test2', '$TEST2_HASH', 'photo_1.png', 1),
+        (13, 'friend1', 'friend1@friend1.friend1', '$FRIEND1_HASH', 'photo_1.png', 1),
+        (14, 'friend2', 'friend2@friend2.friend2', '$FRIEND2_HASH', 'photo_1.png', 1),
+        (15, 'friend3', 'friend3@friend3.friend3', '$FRIEND3_HASH', 'photo_1.png', 1);
         "
 
     - name: Run tests
