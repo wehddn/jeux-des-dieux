@@ -80,7 +80,7 @@ class UserControllerTest extends BaseApiTest
         [$getStatus, $getResponse] = $this->get("/users/{$userId}", $this->withAdminAuth());
         $this->assertEquals(404, $getStatus, 'Deleted user should not be found');
         $this->assertArrayHasKey('error', $getResponse);
-        $this->assertEquals('Not found', $getResponse['error']);
+        $this->assertEquals('User not found', $getResponse['error']);
 
         // Clear the user ID since it's been deleted
         $this->createdUserId = null;
@@ -97,7 +97,7 @@ class UserControllerTest extends BaseApiTest
 
         $this->assertEquals(404, $status, 'Deleting non-existent user should return 404');
         $this->assertArrayHasKey('error', $response);
-        $this->assertEquals('Not found', $response['error']);
+        $this->assertEquals('User not found', $response['error']);
     }
 
     /**
@@ -264,7 +264,7 @@ class UserControllerTest extends BaseApiTest
 
         $this->assertEquals(400, $updateStatus, 'Update without name should return 400');
         $this->assertArrayHasKey('error', $updateResponse);
-        $this->assertEquals('name required', $updateResponse['error']);
+        $this->assertEquals('Name is required', $updateResponse['error']);
     }
 
     /**
@@ -325,7 +325,7 @@ class UserControllerTest extends BaseApiTest
 
         $this->assertEquals(400, $roleStatus, 'Invalid role should return 400');
         $this->assertArrayHasKey('error', $roleResponse);
-        $this->assertEquals('Bad role', $roleResponse['error']);
+        $this->assertEquals('Invalid role', $roleResponse['error']);
     }
 
     /**
@@ -373,7 +373,7 @@ class UserControllerTest extends BaseApiTest
 
         $this->assertEquals(404, $roleStatus, 'Setting role for non-existent user should return 404');
         $this->assertArrayHasKey('error', $roleResponse);
-        $this->assertEquals('User?', $roleResponse['error']);
+        $this->assertEquals('User not found', $roleResponse['error']);
     }
 
     /**

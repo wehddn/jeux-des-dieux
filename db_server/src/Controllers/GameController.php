@@ -2,136 +2,128 @@
 namespace App\Controllers;
 
 use App\Core\Auth;
-use App\Core\Database;
 use App\Core\Response;
+use App\Models\Game;
 
 final class GameController
 {
     /** POST /games   body:{ "name":"Foo" } */
     public function create(): void
     {
-        $uid  = Auth::userId();
+        $uid = Auth::userId();
         $data = json_decode(file_get_contents('php://input'), true);
-        $name = $data['name'] ?? null;
+        
+        // Validate JSON data
+        if ($data === null) {
+            Response::json(400, ['error' => 'Invalid JSON data']);
+            return;
+        }
+        
+        // Validate input
+        if (!isset($data['name']) || !is_string($data['name']) || trim($data['name']) === '') {
+            Response::json(400, ['error' => 'Game name is required']);
+            return;
+        }
+        
+        $name = trim($data['name']);
         $isPrivate = !empty($data['isPrivate']);
-        $pwdHash   = $isPrivate && !empty($data['password'])
-           ? password_hash($data['password'], PASSWORD_DEFAULT)
-           : null;
+        $password = $data['password'] ?? null;
 
         try {
-            $pdo = Database::get();
-            error_log("GameController::create - About to insert game");
+            $game = Game::createGame($name, $uid, $isPrivate, $password);
             
-            $pdo->prepare('INSERT INTO games (name,created_by,is_private,password) VALUES (?,?,?,?)')
-                ->execute([$name,$uid,$isPrivate,$pwdHash]);
-            $gid = (int)$pdo->lastInsertId();
-            
-            error_log("GameController::create - Game created with ID: " . $gid);
-
-            // создатель сразу становится игроком
-            $pdo->prepare('INSERT INTO game_players (game_id,user_id) VALUES (?,?)')
-                ->execute([$gid,$uid]);
-                
-            error_log("GameController::create - Player added");
-
-            error_log("GameController::create - Game created successfully");
-
-            Response::json(201,['gameId'=>$gid,'name'=>$name,'status'=>'waiting']);
+            Response::json(201, [
+                'gameId' => $game->id(),
+                'name' => $game->name(),
+                'status' => $game->status()
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            Response::json(400, ['error' => $e->getMessage()]);
         } catch (\Exception $e) {
-            error_log("GameController::create - Error: " . $e->getMessage());
-            Response::json(500, ['error' => 'Database error']);
+            error_log('Create game error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to create game']);
         }
     }
 
     /** GET /games */
     public function list(): void
     {
-        $pdo = Database::get();
-        $rows = $pdo->query(
-            'SELECT g.id,g.name,g.status,u.name AS creator,g.created_at
-               FROM games g JOIN users u ON u.id=g.created_by
-            ORDER BY g.created_at DESC')->fetchAll();
-        Response::json(200,$rows);
+        try {
+            $games = Game::getAllGames();
+            Response::json(200, $games);
+        } catch (\Exception $e) {
+            error_log('List games error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to retrieve games']);
+        }
     }
 
     /** GET /games/{id} */
     public function detail(int $id): void
     {
-        $pdo = Database::get();
-        $stmt = $pdo->prepare(
-            'SELECT g.id,g.name,g.status,u.name AS creator,g.created_at
-               FROM games g JOIN users u ON u.id=g.created_by
-              WHERE g.id=?');
-        $stmt->execute([$id]);
-        $game = $stmt->fetch();
-        if (!$game) Response::json(404,['error'=>'Game not found']);
+        try {
+            $gameDetails = Game::getGameDetails($id);
+            if (!$gameDetails) {
+                Response::json(404, ['error' => 'Game not found']);
+                return;
+            }
 
-        $players = $pdo->prepare(
-            'SELECT u.id,u.name
-               FROM game_players gp JOIN users u ON u.id=gp.user_id
-              WHERE gp.game_id=?');
-        $players->execute([$id]);
-        $game['players'] = $players->fetchAll();
-
-        Response::json(200,$game);
+            Response::json(200, $gameDetails);
+        } catch (\Exception $e) {
+            error_log('Get game details error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to retrieve game details']);
+        }
     }
 
     /** PUT /games/{id}/players   body:{ "add":[2,3], "remove":[4] } */
     public function setPlayers(int $id): void
     {
-        $uid = Auth::userId();
-        $pdo = Database::get();
+        try {
+            $game = Game::find($id);
+            if (!$game) {
+                Response::json(404, ['error' => 'Game not found']);
+                return;
+            }
 
-        // Check that current user is the creator or manager/admin
-        $owner = $pdo->prepare('SELECT created_by FROM games WHERE id=?');
-        $owner->execute([$id]);
-        $createdBy = $owner->fetchColumn();
-        if (!$createdBy) Response::json(404,['error'=>'Game not found']);
-        
-        Auth::requireOwnerOrManager($createdBy);
+            // Check that current user is the creator or manager/admin
+            Auth::requireOwnerOrManager($game->creatorId());
 
-        $data = json_decode(file_get_contents('php://input'), true);
-        $add = $data['add']??[];
-        $rem = $data['remove']??[];
+            $data = json_decode(file_get_contents('php://input'), true);
+            $playersToAdd = $data['add'] ?? [];
+            $playersToRemove = $data['remove'] ?? [];
 
-        $changes = ['added'=>[],'removed'=>[]];
-        foreach ($add as $pid){
-            $pdo->prepare(
-              'INSERT IGNORE INTO game_players (game_id,user_id) VALUES (?,?)')
-                ->execute([$id,$pid]);
-            $changes['added'][] = $pid;
+            $changes = $game->updatePlayers($playersToAdd, $playersToRemove);
+
+            Response::json(200, $changes);
+        } catch (\Exception $e) {
+            error_log('Set players error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to update players']);
         }
-        foreach ($rem as $pid){
-            $pdo->prepare(
-              'DELETE FROM game_players WHERE game_id=? AND user_id=?')
-                ->execute([$id,$pid]);
-            $changes['removed'][] = $pid;
-        }
-
-        Response::json(200,$changes);
     }
 
     /** PUT /games/{id}/status  body:{ "status":"in_progress" } */
     public function setStatus(int $id): void
     {
-        $pdo = Database::get();
+        try {
+            $game = Game::find($id);
+            if (!$game) {
+                Response::json(404, ['error' => 'Game not found']);
+                return;
+            }
 
-        $cur = $pdo->prepare('SELECT status,created_by FROM games WHERE id=?');
-        $cur->execute([$id]);
-        $row = $cur->fetch();
-        if (!$row) Response::json(404,['error'=>'Game not found']);
+            Auth::requireOwnerOrManager($game->creatorId());
 
-        Auth::requireOwnerOrManager($row['created_by']);
+            $data = json_decode(file_get_contents('php://input'), true);
+            $status = $data['status'] ?? null;
 
-        $data   = json_decode(file_get_contents('php://input'),true);
-        $status = $data['status'] ?? null;
-        if (!in_array($status,['waiting','in_progress','finished'],true))
-            Response::json(400,['error'=>'Invalid status']);
+            $game->setStatus($status);
 
-        $pdo->prepare('UPDATE games SET status=? WHERE id=?')
-            ->execute([$status,$id]);
-
-        Response::json(200,['status'=>$status]);
+            Response::json(200, ['status' => $status]);
+        } catch (\InvalidArgumentException $e) {
+            Response::json(400, ['error' => $e->getMessage()]);
+        } catch (\Exception $e) {
+            error_log('Set game status error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to update game status']);
+        }
     }
 
     /** DELETE /games/{id} */
@@ -139,14 +131,19 @@ final class GameController
     {
         Auth::requireManager();
         
-        $pdo = Database::get();
-        $stmt = $pdo->prepare('SELECT * FROM games WHERE id=?');
-        $stmt->execute([$id]);
-        $old = $stmt->fetch();
-        if (!$old) Response::json(404,['error'=>'Game not found']);
+        try {
+            $game = Game::find($id);
+            if (!$game) {
+                Response::json(404, ['error' => 'Game not found']);
+                return;
+            }
 
-        $pdo->prepare('DELETE FROM games WHERE id=?')->execute([$id]);
+            $game->deleteGame();
 
-        Response::json(204,[]);
+            Response::json(204, []);
+        } catch (\Exception $e) {
+            error_log('Delete game error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to delete game']);
+        }
     }
 }

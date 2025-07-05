@@ -2,8 +2,8 @@
 namespace App\Controllers;
 
 use App\Core\Auth;
-use App\Core\Database;
 use App\Core\Response;
+use App\Models\Block;
 
 final class BlockController
 {
@@ -14,27 +14,18 @@ final class BlockController
         Auth::requireNotSelf($id, 'blocking');
         
         $currentUserId = Auth::userId();
-        $pdo = Database::get();
         
-        // Check if user exists
-        $stmt = $pdo->prepare('SELECT id FROM users WHERE id = ?');
-        $stmt->execute([$id]);
-        if (!$stmt->fetch()) {
+        try {
+            Block::blockUser($id, $currentUserId);
+            Response::json(200, ['message' => 'User blocked successfully']);
+        } catch (\InvalidArgumentException $e) {
             Response::json(404, ['error' => 'User not found']);
+        } catch (\RuntimeException $e) {
+            Response::json(409, ['error' => $e->getMessage()]);
+        } catch (\Exception $e) {
+            error_log('Block user error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to block user']);
         }
-        
-        // Check if user is already blocked
-        $stmt = $pdo->prepare('SELECT 1 FROM blocklist WHERE blocked_user_id = ?');
-        $stmt->execute([$id]);
-        if ($stmt->fetch()) {
-            Response::json(409, ['error' => 'User already blocked']);
-        }
-        
-        // Block the user
-        $stmt = $pdo->prepare('INSERT INTO blocklist (blocked_user_id, blocker_user_id, blocked_at) VALUES (?, ?, NOW())');
-        $stmt->execute([$id, $currentUserId]);
-        
-        Response::json(200, ['message' => 'User blocked successfully']);
     }
     
     /** DELETE /users/{id}/block */
@@ -43,20 +34,15 @@ final class BlockController
         Auth::requireManager();
         Auth::requireNotSelf($id, 'unblocking');
         
-        $pdo = Database::get();
-        
-        // Check if user is blocked
-        $stmt = $pdo->prepare('SELECT 1 FROM blocklist WHERE blocked_user_id = ?');
-        $stmt->execute([$id]);
-        if (!$stmt->fetch()) {
-            Response::json(404, ['error' => 'User is not blocked']);
+        try {
+            Block::unblockUser($id);
+            Response::json(200, ['message' => 'User unblocked successfully']);
+        } catch (\RuntimeException $e) {
+            Response::json(404, ['error' => $e->getMessage()]);
+        } catch (\Exception $e) {
+            error_log('Unblock user error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to unblock user']);
         }
-        
-        // Unblock the user
-        $stmt = $pdo->prepare('DELETE FROM blocklist WHERE blocked_user_id = ?');
-        $stmt->execute([$id]);
-        
-        Response::json(200, ['message' => 'User unblocked successfully']);
     }
         
     /** GET /blocked-users */
@@ -64,22 +50,12 @@ final class BlockController
     {
         Auth::requireManager();
         
-        $pdo = Database::get();
-        $stmt = $pdo->prepare('
-            SELECT 
-                u.id,
-                u.name,
-                u.email,
-                b.blocked_at,
-                blocker.name as blocked_by_name
-            FROM blocklist b
-            JOIN users u ON b.blocked_user_id = u.id
-            JOIN users blocker ON b.blocker_user_id = blocker.id
-            ORDER BY b.blocked_at DESC
-        ');
-        $stmt->execute();
-        $blockedUsers = $stmt->fetchAll();
-        
-        Response::json(200, $blockedUsers);
+        try {
+            $blockedUsers = Block::getBlockedUsers();
+            Response::json(200, $blockedUsers);
+        } catch (\Exception $e) {
+            error_log('List blocked users error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to retrieve blocked users']);
+        }
     }
 }

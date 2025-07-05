@@ -2,21 +2,27 @@
 namespace App\Controllers;
 
 use App\Core\Auth;
-use App\Core\Database;
 use App\Core\Response;
+use App\Models\User;
 
 final class UserController
 {
     /** GET /users/{id} */
     public function get(int $id): void
     {
-        $pdo = Database::get();
-        $stmt = $pdo->prepare(
-          'SELECT id,name,email,photo,role_id,created_at FROM users WHERE id=?');
-        $stmt->execute([$id]);
-        $u = $stmt->fetch();
-        $u ?: Response::json(404,['error'=>'Not found']);
-        Response::json(200,$u);
+        try {
+            $user = User::find($id);
+            if (!$user) {
+                Response::json(404, ['error' => 'User not found']);
+                return;
+            }
+
+            $userData = $user->getProfileData();
+            Response::json(200, $userData);
+        } catch (\Exception $e) {
+            error_log('Get user error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to retrieve user']);
+        }
     }
 
     /** PATCH /users/{id}  body:{ "name":"New" } */
@@ -24,14 +30,36 @@ final class UserController
     {
         Auth::requireSelfOrManager($id);
 
-        $data = json_decode(file_get_contents('php://input'),true);
-        if (empty($data['name'])) Response::json(400,['error'=>'name required']);
+        $data = json_decode(file_get_contents('php://input'), true);
+        
+        // Validate JSON data
+        if ($data === null) {
+            Response::json(400, ['error' => 'Invalid JSON data']);
+            return;
+        }
 
-        $pdo = Database::get();
-        $pdo->prepare('UPDATE users SET name=? WHERE id=?')
-            ->execute([$data['name'],$id]);
+        // Validate name
+        if (!isset($data['name']) || !is_string($data['name']) || trim($data['name']) === '') {
+            Response::json(400, ['error' => 'Name is required']);
+            return;
+        }
 
-        Response::json(200,['name'=>$data['name']]);
+        try {
+            $user = User::find($id);
+            if (!$user) {
+                Response::json(404, ['error' => 'User not found']);
+                return;
+            }
+
+            $user->updateName($data['name']);
+
+            Response::json(200, ['name' => trim($data['name'])]);
+        } catch (\InvalidArgumentException $e) {
+            Response::json(400, ['error' => $e->getMessage()]);
+        } catch (\Exception $e) {
+            error_log('Update user error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to update user']);
+        }
     }
 
     /** GET /users */
@@ -39,9 +67,13 @@ final class UserController
     {
         Auth::requireManager();
         
-        $rows = Database::get()->query(
-          'SELECT id,name,email,photo,role_id,created_at FROM users')->fetchAll();
-        Response::json(200,$rows);
+        try {
+            $users = User::getAllUsers();
+            Response::json(200, $users);
+        } catch (\Exception $e) {
+            error_log('List users error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to retrieve users']);
+        }
     }
 
     /** PUT /users/{id}/role  body:{ "role":2 } */
@@ -50,19 +82,38 @@ final class UserController
         Auth::requireAdmin();
         Auth::requireNotSelf($id, 'role change');
         
-        $data = json_decode(file_get_contents('php://input'),true);
-        $role = (int)($data['role']??0);
-        if (!in_array($role,[1,2,3],true))
-            Response::json(400,['error'=>'Bad role']);
+        $data = json_decode(file_get_contents('php://input'), true);
+        
+        // Validate JSON data
+        if ($data === null) {
+            Response::json(400, ['error' => 'Invalid JSON data']);
+            return;
+        }
 
-        $pdo = Database::get();
-        $old = $pdo->prepare('SELECT role_id FROM users WHERE id=?');
-        $old->execute([$id]);
-        $oldRole = $old->fetchColumn() ?: Response::json(404,['error'=>'User?']);
+        // Validate role
+        if (!isset($data['role']) || !is_numeric($data['role'])) {
+            Response::json(400, ['error' => 'Role is required']);
+            return;
+        }
 
-        $pdo->prepare('UPDATE users SET role_id=? WHERE id=?')
-            ->execute([$role,$id]);
-        Response::json(200,['role'=>$role]);
+        $role = (int)$data['role'];
+
+        try {
+            $user = User::find($id);
+            if (!$user) {
+                Response::json(404, ['error' => 'User not found']);
+                return;
+            }
+
+            $user->setRole($role);
+
+            Response::json(200, ['role' => $role]);
+        } catch (\InvalidArgumentException $e) {
+            Response::json(400, ['error' => $e->getMessage()]);
+        } catch (\Exception $e) {
+            error_log('Set user role error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to update user role']);
+        }
     }
 
     /** DELETE /users/{id} */
@@ -70,14 +121,20 @@ final class UserController
     {
         Auth::requireAdmin();
         
-        $pdo = Database::get();
-        $stmt = $pdo->prepare('SELECT * FROM users WHERE id=?');
-        $stmt->execute([$id]);
-        $old = $stmt->fetch();
-        if (!$old) Response::json(404,['error'=>'Not found']);
+        try {
+            $user = User::find($id);
+            if (!$user) {
+                Response::json(404, ['error' => 'User not found']);
+                return;
+            }
 
-        $pdo->prepare('DELETE FROM users WHERE id=?')->execute([$id]);
-        Response::json(204,[]);
+            $user->deleteUser();
+
+            Response::json(204, []);
+        } catch (\Exception $e) {
+            error_log('Delete user error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to delete user']);
+        }
     }
 
     /** GET /users/{id}/role */
@@ -85,16 +142,17 @@ final class UserController
     {
         Auth::requireSelfOrManager($id);
 
-        $pdo  = Database::get();
-        $stmt = $pdo->prepare('SELECT role_id FROM users WHERE id = ?');
-        $stmt->execute([$id]);
-        $role = $stmt->fetchColumn();
+        try {
+            $user = User::find($id);
+            if (!$user) {
+                Response::json(404, ['error' => 'User not found']);
+                return;
+            }
 
-        if ($role === false) {
-            Response::json(404, ['error' => 'User not found']);
+            Response::json(200, ['role' => $user->getUserRole()]);
+        } catch (\Exception $e) {
+            error_log('Get user role error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to retrieve user role']);
         }
-
-        Response::json(200, ['role' => (int)$role]);
     }
-
 }

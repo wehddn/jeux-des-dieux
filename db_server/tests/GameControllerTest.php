@@ -66,13 +66,40 @@ class GameControllerTest extends BaseApiTest
 
         [$status, $json] = $this->post('/games', $gameData, $this->withUserAuth());
 
-        // The controller doesn't explicitly validate name, but empty name should be handled
-        // Based on the controller code, it will accept null name, so we expect success
-        $this->assertEquals(201, $status);
-        
-        if (isset($json['gameId'])) {
-            $this->createdGameIds[] = $json['gameId'];
-        }
+        // Missing name should return 400 Bad Request
+        $this->assertEquals(400, $status);
+        $this->assertArrayHasKey('error', $json);
+        $this->assertEquals('Game name is required', $json['error']);
+    }
+
+    public function testCreateGameEmptyName()
+    {
+        $gameData = [
+            'name' => '',
+            'isPrivate' => false
+        ];
+
+        [$status, $json] = $this->post('/games', $gameData, $this->withUserAuth());
+
+        // Empty name should return 400 Bad Request
+        $this->assertEquals(400, $status);
+        $this->assertArrayHasKey('error', $json);
+        $this->assertEquals('Game name is required', $json['error']);
+    }
+
+    public function testCreateGameWhitespaceName()
+    {
+        $gameData = [
+            'name' => '   ',
+            'isPrivate' => false
+        ];
+
+        [$status, $json] = $this->post('/games', $gameData, $this->withUserAuth());
+
+        // Whitespace-only name should return 400 Bad Request
+        $this->assertEquals(400, $status);
+        $this->assertArrayHasKey('error', $json);
+        $this->assertEquals('Game name is required', $json['error']);
     }
 
     public function testCreateGameWithoutAuth()
