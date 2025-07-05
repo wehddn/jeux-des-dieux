@@ -16,6 +16,7 @@ class Router
         'POST' => [
             '#^/friends$#'                      => ['FriendController', 'sendRequest'],
             '#^/games$#'                        => ['GameController', 'create'],
+            '#^/games/(\d+)/join$#'             => ['GameController', 'join'],
             '#^/users/(\d+)/block$#'            => ['BlockController', 'blockUser'],
         ],
         'GET' => [

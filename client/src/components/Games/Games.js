@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
-import { getGamesList } from "../../bd/Games";
+import { getGamesList, joinGame } from "../../bd/Games";
 import { getUser } from "../../bd/Users";
 
 const CreateGameModal = React.lazy(() => import("./CreateGameModal"));
@@ -39,11 +39,18 @@ function Games() {
     closePasswordModal();
   };
 
-  const joinRoom = (room) => {
-    if (room.password) {
+  const joinRoom = async (room) => {
+    if (room.is_private) {
       openPasswordModal(room);
     } else {
-      navigate(`/room/${room.id}`);
+      try {
+        await joinGame(room.id);
+        navigate(`/room/${room.id}`);
+      } catch (error) {
+        console.error("Error joining public game:", error);
+        // Still navigate even if join fails (might already be a player)
+        navigate(`/room/${room.id}`);
+      }
     }
   };
 
@@ -109,9 +116,9 @@ function Games() {
                 <img
                   className="game-status-icon"
                   src={
-                    room.password ? `/img/games/fermer.png` : `/img/games/ouver.png`
+                    room.is_private ? `/img/games/fermer.png` : `/img/games/ouver.png`
                   }
-                  alt={room.password ? "closed" : "open"}
+                  alt={room.is_private ? "closed" : "open"}
                 />
               </td>
               <td>{room.name}</td>

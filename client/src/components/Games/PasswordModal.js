@@ -1,34 +1,22 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
-import { getGame } from "../../bd/Games";
-import { useUserAuth } from "../../context/UserAuthContext";
+import { joinGame } from "../../bd/Games";
 
 Modal.setAppElement("#root");
 
 function PasswordModal({ isOpen, onRequestClose, room, onPasswordCorrect }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { authenticateRoom } = useUserAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
     try {
-      const gameData = await getGame(room);
-
-      if (gameData) {
-        if (gameData.password === password) {
-          authenticateRoom(room.id);
-          onPasswordCorrect();
-        } else {
-          setError("Mot de passe incorrect. Veuillez réessayer.");
-        }
-      } else {
-        setError("Jeu introuvable.");
-      }
+      await joinGame(room.id, password);
+      onPasswordCorrect();
     } catch (error) {
-      console.error("Erreur lors de la vérification du mot de passe:", error);
-      setError("Erreur lors de la vérification du mot de passe. Veuillez réessayer.");
+      setError(error.message || "Erreur lors de la vérification du mot de passe. Veuillez réessayer.");
     }
   };
 

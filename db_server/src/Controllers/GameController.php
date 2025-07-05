@@ -146,4 +146,43 @@ final class GameController
             Response::json(500, ['error' => 'Failed to delete game']);
         }
     }
+
+    /** POST /games/{id}/join   body:{ "password":"secret" } */
+    public function join(int $id): void
+    {
+        $uid = Auth::userId();
+        
+        try {
+            $game = Game::find($id);
+            if (!$game) {
+                Response::json(404, ['error' => 'Game not found']);
+                return;
+            }
+
+            // Check if game is private and requires password
+            if ($game->isPrivate()) {
+                $data = json_decode(file_get_contents('php://input'), true);
+                $password = $data['password'] ?? '';
+                
+                if (!$game->verifyPassword($password)) {
+                    Response::json(403, ['error' => 'Invalid password']);
+                    return;
+                }
+            }
+
+            // Check if user is already a player
+            if ($game->hasPlayer($uid)) {
+                Response::json(200, ['message' => 'Already a player in this game']);
+                return;
+            }
+
+            // Add user to the game
+            $game->addPlayer($uid);
+
+            Response::json(200, ['message' => 'Successfully joined the game']);
+        } catch (\Exception $e) {
+            error_log('Join game error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to join game']);
+        }
+    }
 }

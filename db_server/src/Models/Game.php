@@ -61,7 +61,7 @@ final class Game extends Model
     public static function getAllGames(): array
     {
         $stmt = self::db()->query(
-            'SELECT g.id, g.name, g.status, u.name AS creator, g.created_at
+            'SELECT g.id, g.name, g.status, g.is_private, u.name AS creator, g.created_at
              FROM games g 
              JOIN users u ON u.id = g.created_by
              ORDER BY g.created_at DESC'
@@ -76,7 +76,7 @@ final class Game extends Model
     {
         // Get game basic info
         $stmt = self::db()->prepare(
-            'SELECT g.id, g.name, g.status, u.name AS creator, g.created_at
+            'SELECT g.id, g.name, g.status, g.is_private, u.name AS creator, g.created_at
              FROM games g 
              JOIN users u ON u.id = g.created_by
              WHERE g.id = ?'
@@ -212,5 +212,22 @@ final class Game extends Model
     public static function getValidStatuses(): array
     {
         return self::VALID_STATUSES;
+    }
+
+    /**
+     * Verify password for private game
+     */
+    public function verifyPassword(string $password): bool
+    {
+        if (!$this->isPrivate()) {
+            return true; // No password required for public games
+        }
+        
+        $hashedPassword = $this->get('password');
+        if (empty($hashedPassword)) {
+            return empty($password); // No password set, allow if no password provided
+        }
+        
+        return password_verify($password, $hashedPassword);
     }
 }

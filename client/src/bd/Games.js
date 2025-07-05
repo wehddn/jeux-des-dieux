@@ -60,3 +60,23 @@ export const getGame = async (gameId) => {
     throw new Error("API error");
   }
 };
+
+export const joinGame = async (gameId, password = '') => {
+  try {
+    const response = await fetch(`${API_URL}/games/${gameId}/join`, {
+      method: "POST",
+      headers: getAuthHeaders({ "Content-Type": "application/json" }),
+      body: JSON.stringify({ password }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Error joining game");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error joining game:", error);
+    throw error;
+  }
+};
