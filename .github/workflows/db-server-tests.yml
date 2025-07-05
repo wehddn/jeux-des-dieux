@@ -84,6 +84,13 @@ jobs:
         (15, 'friend3', 'friend3@friend3.friend3', '$FRIEND3_HASH', 'photo_1.png', 1);
         "
 
+    - name: Start PHP server
+      run: |
+        cd db_server
+        php -S localhost:5000 index.php &
+        sleep 3
+        echo "PHP server started on localhost:5000"
+
     - name: Run tests
       run: |
         cd db_server
