@@ -116,6 +116,22 @@ class BlockControllerTest extends BaseApiTest
         $this->assertEquals(['error' => 'User already blocked'], $json);
     }
 
+    public function testManagerCannotBlockAdmin()
+    {
+        $adminUserId = 1;
+        [$status, $json] = $this->post("/users/{$adminUserId}/block", [], $this->withManagerAuth());
+        $this->assertEquals(403, $status);
+        $this->assertEquals(['error' => 'Cannot block administrator'], $json);
+    }
+
+    public function testManagerCannotUnblockAdmin()
+    {
+        $adminUserId = 1;
+        [$status, $json] = $this->delete("/users/{$adminUserId}/block", null, $this->withManagerAuth());
+        $this->assertEquals(403, $status);
+        $this->assertEquals(['error' => 'Cannot unblock administrator'], $json);
+    }
+
     protected function tearDown(): void
     {
         // Clean up: ensure test user is unblocked after each test

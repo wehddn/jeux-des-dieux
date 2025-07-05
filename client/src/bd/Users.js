@@ -249,11 +249,29 @@ const blockUser = async (userId) => {
       body: JSON.stringify({ user_id: userId }),
     });
     if (!response.ok) {
-      throw new Error('Error blocking user');
+      const errorData = await response.json().catch(() => ({}));
+      
+      if (response.status === 403) {
+        throw new Error(errorData.error || 'You do not have permission to block this user');
+      } else if (response.status === 404) {
+        throw new Error('User not found');
+      } else if (response.status === 409) {
+        throw new Error(errorData.error || 'User is already blocked');
+      } else {
+        throw new Error(errorData.error || 'Error blocking user');
+      }
     }
     return await response.json();
   } catch (error) {
     console.error('Error in blockUser:', error);
+    
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw new Error('Network error: Unable to connect to server');
+    }
+    
+    if (error.message !== 'API error') {
+      throw error;
+    }
     throw new Error('API error');
   }
 };
@@ -265,11 +283,28 @@ const unblockUser = async (userId) => {
       headers: getAuthHeaders(),
     });
     if (!response.ok) {
-      throw new Error('Error unblocking user');
+      const errorData = await response.json().catch(() => ({}));
+      
+      if (response.status === 403) {
+        throw new Error(errorData.error || 'You do not have permission to unblock this user');
+      } else if (response.status === 404) {
+        throw new Error(errorData.error || 'User not found or not blocked');
+      } else {
+        throw new Error(errorData.error || 'Error unblocking user');
+      }
     }
+    
     return await response.json();
   } catch (error) {
     console.error('Error in unblockUser:', error);
+    
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw new Error('Network error: Unable to connect to server');
+    }
+    
+    if (error.message !== 'API error') {
+      throw error;
+    }
     throw new Error('API error');
   }
 };

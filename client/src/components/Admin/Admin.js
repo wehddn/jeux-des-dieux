@@ -140,7 +140,20 @@ const Admin = () => {
       setBlockedUsers(blockedList || []);
     } catch (error) {
       console.error('Error toggling block status:', error);
-      alert('Error updating user block status');
+      
+      if (error.message.includes('permission')) {
+        alert('You do not have permission to perform this action');
+      } else if (error.message.includes('not found')) {
+        alert('User not found');
+      } else if (error.message.includes('already blocked')) {
+        alert('User is already blocked');
+      } else if (error.message.includes('not blocked')) {
+        alert('User is not currently blocked');
+      } else if (error.message.includes('Network error')) {
+        alert('Network error: Unable to connect to server');
+      } else {
+        alert('Error updating user block status: ' + error.message);
+      }
     }
   };
 
@@ -365,12 +378,21 @@ const Admin = () => {
                         </span>
                       </td>
                       <td>
-                        <button
-                          className={`btn ${blocked ? 'btn-unblock' : 'btn-block'}`}
-                          onClick={() => handleBlockToggle(user.id)}
-                        >
-                          {blocked ? 'Unblock' : 'Block'}
-                        </button>
+                        {(() => {
+                          const isTargetAdmin = user.role_id === ROLES.ADMIN;
+                          const canBlock = isAdmin || !isTargetAdmin; 
+                          
+                          return (
+                            <button
+                              className={`btn ${blocked ? 'btn-unblock' : 'btn-block'}`}
+                              onClick={() => handleBlockToggle(user.id)}
+                              disabled={!canBlock}
+                              title={!canBlock ? 'Cannot block administrator' : ''}
+                            >
+                              {blocked ? 'Unblock' : 'Block'}
+                            </button>
+                          );
+                        })()}
                         {isAdmin && (
                           <>
                             <button

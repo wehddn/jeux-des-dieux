@@ -67,6 +67,11 @@
   font-size: 12px;
   color: white;
 }
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #6c757d !important;
+}
 .btn-view {
   background-color: #007bff;
 }
