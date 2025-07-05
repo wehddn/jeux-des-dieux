@@ -87,13 +87,42 @@ jobs:
     - name: Start PHP server
       run: |
         cd db_server
-        php -S localhost:5000 index.php &
-        sleep 3
-        echo "PHP server started on localhost:5000"
+        # Start PHP server with error logging
+        php -S localhost:5000 index.php > server.log 2>&1 &
+        SERVER_PID=$!
+        sleep 5
+        echo "PHP server started on localhost:5000 (PID: $SERVER_PID)"
+        
+        # Test if server is responding
+        curl -f http://localhost:5000/ || echo "Server health check failed"
+        
+        # Show any server errors
+        if [ -f server.log ]; then
+          echo "=== Server Log ==="
+          cat server.log
+          echo "=================="
+        fi
 
     - name: Run tests
       run: |
         cd db_server
+        # Show environment for debugging
+        echo "=== Environment Check ==="
+        echo "Database connection test..."
+        php -r "
+        try {
+          \$pdo = new PDO('mysql:host=127.0.0.1;port=3306;dbname=jeux_des_dieux_test', 'root', 'root');
+          echo 'Database connection: OK' . PHP_EOL;
+          \$stmt = \$pdo->query('SELECT COUNT(*) as count FROM users');
+          \$result = \$stmt->fetch();
+          echo 'Users in database: ' . \$result['count'] . PHP_EOL;
+        } catch (Exception \$e) {
+          echo 'Database connection failed: ' . \$e->getMessage() . PHP_EOL;
+        }
+        "
+        echo "=========================="
+        
+        # Run the actual tests
         php vendor/bin/phpunit tests --coverage-text --coverage-clover=coverage.xml
 
     - name: Upload coverage reports
