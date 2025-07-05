@@ -79,7 +79,18 @@ async function deleteGameFromDB(gameId) {
       throw new Error("Error deleting game from DB");
     }
 
-    return await response.json();
+    // Check if response has content before parsing JSON
+    const text = await response.text();
+    if (text.trim() === '') {
+      return { success: true }; // Return success for empty response
+    }
+    
+    try {
+      return JSON.parse(text);
+    } catch (jsonError) {
+      console.error("Invalid JSON response:", text);
+      return { success: true }; // Assume success if we can't parse JSON but got 200
+    }
   } catch (error) {
     console.error("Error in deleteGameFromDB:", error);
     throw new Error("API error");
