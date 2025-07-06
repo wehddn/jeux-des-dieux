@@ -5,7 +5,30 @@ require_once 'BaseApiTest.php';
 
 class BlockControllerTest extends BaseApiTest
 {
-    private $targetUserId = 12; // test2@test2.test2
+    private $targetUserId;
+    private $adminUserId;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        
+        // Get user IDs by email to make tests database-independent
+        $this->targetUserId = $this->getUserIdByEmail('test2@test2.test2');
+        $this->adminUserId = $this->getUserIdByEmail('admin@admin.admin');
+        
+        // Ensure clean state: unblock all test users before each test
+        try {
+            $this->delete("/users/{$this->targetUserId}/block", null, $this->withAdminAuth());
+        } catch (Exception $e) {
+            // Ignore errors if user is already unblocked
+        }
+        
+        try {
+            $this->delete("/users/{$this->adminUserId}/block", null, $this->withAdminAuth());
+        } catch (Exception $e) {
+            // Ignore errors if user is already unblocked
+        }
+    }
 
     // Run unblock tests first to ensure clean state
     public function testUnblockUserWithoutAuth()
@@ -118,28 +141,53 @@ class BlockControllerTest extends BaseApiTest
 
     public function testManagerCannotBlockAdmin()
     {
-        $adminUserId = 1;
-        [$status, $json] = $this->post("/users/{$adminUserId}/block", [], $this->withManagerAuth());
+        [$status, $json] = $this->post("/users/{$this->adminUserId}/block", [], $this->withManagerAuth());
         $this->assertEquals(403, $status);
         $this->assertEquals(['error' => 'Cannot block administrator'], $json);
     }
 
     public function testManagerCannotUnblockAdmin()
     {
-        $adminUserId = 1;
-        [$status, $json] = $this->delete("/users/{$adminUserId}/block", null, $this->withManagerAuth());
+        [$status, $json] = $this->delete("/users/{$this->adminUserId}/block", null, $this->withManagerAuth());
         $this->assertEquals(403, $status);
         $this->assertEquals(['error' => 'Cannot unblock administrator'], $json);
     }
 
+    /**
+     * Helper method to get user ID by email
+     */
+    private function getUserIdByEmail(string $email): int
+    {
+        [$status, $json] = $this->get("/users", $this->withAdminAuth());
+        
+        if ($status !== 200 || !isset($json)) {
+            throw new Exception("Failed to fetch users list");
+        }
+        
+        foreach ($json as $user) {
+            if ($user['email'] === $email) {
+                return $user['id'];
+            }
+        }
+        
+        throw new Exception("User with email $email not found");
+    }
+
     protected function tearDown(): void
     {
-        // Clean up: ensure test user is unblocked after each test
+        // Clean up: ensure all test users are unblocked after each test
         try {
             $this->delete("/users/{$this->targetUserId}/block", null, $this->withAdminAuth());
         } catch (Exception $e) {
             // Ignore errors in cleanup
         }
+        
+        try {
+            $this->delete("/users/{$this->adminUserId}/block", null, $this->withAdminAuth());
+        } catch (Exception $e) {
+            // Ignore errors in cleanup
+        }
+        
         parent::tearDown();
     }
 }

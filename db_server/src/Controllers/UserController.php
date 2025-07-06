@@ -130,7 +130,7 @@ final class UserController
 
             $user->deleteUser();
 
-            Response::json(200, ['message' => 'User deleted successfully']);
+            Response::json(204, []);
         } catch (\Exception $e) {
             error_log('Delete user error: ' . $e->getMessage());
             Response::json(500, ['error' => 'Failed to delete user']);
