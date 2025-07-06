@@ -28,6 +28,7 @@ class Router
             '#^/friends/(\d+)/list$#'           => ['FriendController', 'list'],
             '#^/games$#'                        => ['GameController', 'list'],
             '#^/games/(\d+)$#'                  => ['GameController', 'detail'],
+            '#^/admin/games$#'                  => ['GameController', 'adminList'],
             '#^/users/(\d+)/role$#'             => ['UserController', 'getRole'],
             '#^/audit$#'                        => ['AuditController', 'list'],
             '#^/audit/record$#'                 => ['AuditController', 'getByRecord'],
@@ -37,6 +38,7 @@ class Router
         'PUT' => [
             '#^/users/(\d+)$#'                  => ['UserController', 'updateUser'],
             '#^/users/(\d+)/role$#'             => ['UserController', 'setRole'],
+            '#^/games/(\d+)$#'                  => ['GameController', 'update'],
             '#^/games/(\d+)/players$#'          => ['GameController', 'setPlayers'],
             '#^/games/(\d+)/status$#'           => ['GameController', 'setStatus'],
             '#^/friends/accept$#'               => ['FriendController', 'acceptRequest'],

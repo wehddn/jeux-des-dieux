@@ -230,4 +230,30 @@ final class Game extends Model
         
         return password_verify($password, $hashedPassword);
     }
+
+    /**
+     * Get all games with creator information for admin panel
+     */
+    public static function getAllGamesForAdmin(): array
+    {
+        $stmt = self::db()->prepare('
+            SELECT 
+                g.id,
+                g.name,
+                g.status,
+                g.is_private,
+                g.created_at,
+                g.created_by,
+                u.name as creator_name,
+                u.email as creator_email,
+                COUNT(gp.user_id) as player_count
+            FROM games g
+            LEFT JOIN users u ON g.created_by = u.id
+            LEFT JOIN game_players gp ON g.id = gp.game_id
+            GROUP BY g.id, g.name, g.status, g.is_private, g.created_at, g.created_by, u.name, u.email
+            ORDER BY g.created_at DESC
+        ');
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }
