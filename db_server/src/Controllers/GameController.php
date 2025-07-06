@@ -185,4 +185,89 @@ final class GameController
             Response::json(500, ['error' => 'Failed to join game']);
         }
     }
+
+    /** PUT /games/{id}   body:{ "name":"New Name", "status":"in_progress" } */
+    public function update(int $id): void
+    {
+        Auth::requireManager();
+        
+        try {
+            $game = Game::find($id);
+            if (!$game) {
+                Response::json(404, ['error' => 'Game not found']);
+                return;
+            }
+
+            $data = json_decode(file_get_contents('php://input'), true);
+            
+            if ($data === null) {
+                Response::json(400, ['error' => 'Invalid JSON data']);
+                return;
+            }
+
+            $updateData = [];
+            
+            if (isset($data['name'])) {
+                if (!is_string($data['name']) || trim($data['name']) === '') {
+                    Response::json(400, ['error' => 'Game name must be a non-empty string']);
+                    return;
+                }
+                $updateData['name'] = trim($data['name']);
+            }
+
+            if (isset($data['status'])) {
+                if (!in_array($data['status'], Game::getValidStatuses())) {
+                    Response::json(400, ['error' => 'Invalid status']);
+                    return;
+                }
+                $updateData['status'] = $data['status'];
+            }
+
+            if (isset($data['is_private'])) {
+                $updateData['is_private'] = (bool)$data['is_private'];
+            }
+
+            if (isset($data['password'])) {
+                if (is_string($data['password']) && !empty(trim($data['password']))) {
+                    $updateData['password'] = password_hash(trim($data['password']), PASSWORD_DEFAULT);
+                } else {
+                    $updateData['password'] = null;
+                }
+            }
+
+            if (empty($updateData)) {
+                Response::json(400, ['error' => 'No valid fields to update']);
+                return;
+            }
+
+            $game->update($updateData);
+
+            $updatedGame = Game::find($id);
+            Response::json(200, [
+                'id' => $updatedGame->id(),
+                'name' => $updatedGame->name(),
+                'status' => $updatedGame->status(),
+                'is_private' => $updatedGame->isPrivate(),
+                'created_by' => $updatedGame->creatorId(),
+                'created_at' => $updatedGame->createdAt()
+            ]);
+        } catch (\Exception $e) {
+            error_log('Update game error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to update game']);
+        }
+    }
+
+    /** GET /admin/games - Get all games for admin panel */
+    public function adminList(): void
+    {
+        Auth::requireManager();
+        
+        try {
+            $games = Game::getAllGamesForAdmin();
+            Response::json(200, $games);
+        } catch (\Exception $e) {
+            error_log('Admin list games error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to retrieve games']);
+        }
+    }
 }

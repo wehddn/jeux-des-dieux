@@ -5,9 +5,6 @@ final class Audit extends Model
 {
     protected const TABLE = 'audit_log';
 
-    /**
-     * Get audit logs with pagination and optional table filter
-     */
     public static function getAuditLogs(int $limit = 50, int $offset = 0, ?string $table = null): array
     {
         $whereClause = '';
@@ -30,9 +27,6 @@ final class Audit extends Model
         return $stmt->fetchAll();
     }
 
-    /**
-     * Get total count of audit logs with optional table filter
-     */
     public static function getAuditLogsCount(?string $table = null): int
     {
         $whereClause = '';
@@ -49,9 +43,6 @@ final class Audit extends Model
         return (int) $stmt->fetch()['total'];
     }
 
-    /**
-     * Get audit logs for a specific record
-     */
     public static function getLogsByRecord(string $table, string $recordId): array
     {
         $sql = "SELECT a.*, u.name as changed_by_name 
@@ -65,9 +56,6 @@ final class Audit extends Model
         return $stmt->fetchAll();
     }
 
-    /**
-     * Create a new audit log entry
-     */
     public static function log(string $table, string $recordId, string $action, ?array $oldValues = null, ?array $newValues = null, ?int $changedBy = null): void
     {
         $data = [
@@ -83,7 +71,6 @@ final class Audit extends Model
         self::create($data);
     }
 
-    // Getter methods for easier access
     public function getTableName(): string { return $this->get('table_name'); }
     public function getRecordId(): string { return $this->get('record_id'); }
     public function getAction(): string { return $this->get('action'); }
@@ -97,4 +84,18 @@ final class Audit extends Model
     }
     public function getChangedBy(): ?int { return $this->get('changed_by'); }
     public function getChangedAt(): string { return $this->get('changed_at'); }
+
+    public static function deleteLog(int $id): bool
+    {
+        $stmt = self::db()->prepare('DELETE FROM audit_log WHERE id = ?');
+        $result = $stmt->execute([$id]);
+        return $result && $stmt->rowCount() > 0;
+    }
+
+    public static function clearAllLogs(): int
+    {
+        $stmt = self::db()->prepare('DELETE FROM audit_log');
+        $stmt->execute();
+        return $stmt->rowCount();
+    }
 }

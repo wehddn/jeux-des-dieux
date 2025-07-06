@@ -10,7 +10,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     return <Navigate to="/" />;
   }
 
-  // Check if user has required role or higher (both should be numeric)
+  // Vérifier si l'utilisateur a le rôle requis ou supérieur (les deux doivent être numériques)
   if (requiredRole && !hasMinimumRole(user.role, requiredRole)) {
     console.log("Access denied. User role ID:", user.role, "Required:", requiredRole);
     return <Navigate to="/no-access" />;

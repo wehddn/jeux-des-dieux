@@ -20,7 +20,6 @@ final class Database
             self::$instance = new PDO($dsn, $_ENV['DB_USER'], $_ENV['DB_PASS'], [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                // persistent соединение → меньше расходов на коннект
                 PDO::ATTR_PERSISTENT         => true,
             ]);
         }

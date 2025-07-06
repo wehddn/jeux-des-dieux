@@ -1,12 +1,12 @@
 <?php
-// In development, allow all origins ( actually localhost )
-// For production deployment, specify allowed origins : 
+// En développement, autoriser toutes les origines (en fait localhost)
+// Pour le déploiement en production, spécifier les origines autorisées :
 // header('Access-Control-Allow-Origin: https://futuredomain.com');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-// Обрабатываем preflight OPTIONS запросы
+// Traiter les requêtes preflight OPTIONS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
     exit;
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-// Загружаем переменные окружения
+// Charger les variables d'environnement
 $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
@@ -26,7 +26,7 @@ use App\Core\Response;
 try {
     Router::dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 } catch (\Throwable $e) {
-    // централизованный ловец исключений
+    // Gestionnaire centralisé d'exceptions
     error_log('Unhandled exception: ' . $e->getMessage());
     Response::json(500, ['error' => 'Internal Server Error']);
 }

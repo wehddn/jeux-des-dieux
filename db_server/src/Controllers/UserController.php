@@ -10,6 +10,8 @@ final class UserController
     /** GET /users/{id} */
     public function get(int $id): void
     {
+        Auth::requireSelfOrManager($id);
+        
         try {
             $user = User::find($id);
             if (!$user) {
@@ -153,6 +155,148 @@ final class UserController
         } catch (\Exception $e) {
             error_log('Get user role error: ' . $e->getMessage());
             Response::json(500, ['error' => 'Failed to retrieve user role']);
+        }
+    }
+
+    /** POST /users - Create new user (admin only) */
+    public function create(): void
+    {
+        Auth::requireAdmin();
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        
+        if ($data === null) {
+            Response::json(400, ['error' => 'Invalid JSON data']);
+            return;
+        }
+
+        if (!isset($data['name']) || !is_string($data['name']) || trim($data['name']) === '') {
+            Response::json(400, ['error' => 'Name is required']);
+            return;
+        }
+
+        if (!isset($data['email']) || !is_string($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            Response::json(400, ['error' => 'Valid email is required']);
+            return;
+        }
+
+        if (!isset($data['password']) || !is_string($data['password']) || strlen($data['password']) < 6) {
+            Response::json(400, ['error' => 'Password must be at least 6 characters long']);
+            return;
+        }
+
+        $roleId = isset($data['role_id']) ? (int)$data['role_id'] : 1;
+        if (!in_array($roleId, [1, 2, 3])) {
+            Response::json(400, ['error' => 'Invalid role ID']);
+            return;
+        }
+
+        try {
+            $userId = User::createUser(
+                trim($data['name']),
+                strtolower(trim($data['email'])),
+                $data['password'],
+                $roleId
+            );
+
+            $newUser = User::find($userId);
+            if ($newUser) {
+                Response::json(201, [
+                    'message' => 'User created successfully',
+                    'user' => $newUser->getProfileData()
+                ]);
+            } else {
+                Response::json(201, ['message' => 'User created successfully', 'id' => $userId]);
+            }
+        } catch (\Exception $e) {
+            error_log('Create user error: ' . $e->getMessage());
+            
+            if (strpos($e->getMessage(), 'Email already exists') !== false) {
+                Response::json(409, ['error' => 'A user with this email already exists']);
+            } elseif (strpos($e->getMessage(), 'Invalid role') !== false) {
+                Response::json(400, ['error' => 'Invalid role ID']);
+            } else {
+                Response::json(500, ['error' => 'Failed to create user']);
+            }
+        }
+    }
+
+    /** PUT /users/{id} - Update user data (admin only) */
+    public function updateUser(int $id): void
+    {
+        Auth::requireAdmin();
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        
+        if ($data === null) {
+            Response::json(400, ['error' => 'Invalid JSON data']);
+            return;
+        }
+
+        try {
+            $user = User::find($id);
+            if (!$user) {
+                Response::json(404, ['error' => 'User not found']);
+                return;
+            }
+
+            $updateData = [];
+
+            if (isset($data['name'])) {
+                if (!is_string($data['name']) || trim($data['name']) === '') {
+                    Response::json(400, ['error' => 'Name must be a non-empty string']);
+                    return;
+                }
+                $updateData['name'] = trim($data['name']);
+            }
+
+            if (isset($data['email'])) {
+                if (!is_string($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                    Response::json(400, ['error' => 'Valid email is required']);
+                    return;
+                }
+                
+                $email = strtolower(trim($data['email']));
+                
+                $existingUser = User::findByEmail($email);
+                if ($existingUser && $existingUser->id() !== $id) {
+                    Response::json(409, ['error' => 'Email already exists']);
+                    return;
+                }
+                
+                $updateData['email'] = $email;
+            }
+
+            if (isset($data['role_id'])) {
+                $roleId = (int)$data['role_id'];
+                if (!User::isValidRole($roleId)) {
+                    Response::json(400, ['error' => 'Invalid role ID']);
+                    return;
+                }
+                $updateData['role_id'] = $roleId;
+            }
+
+            if (isset($data['password'])) {
+                if (!is_string($data['password']) || strlen($data['password']) < 6) {
+                    Response::json(400, ['error' => 'Password must be at least 6 characters long']);
+                    return;
+                }
+                $updateData['password'] = password_hash($data['password'], PASSWORD_ARGON2ID);
+            }
+
+            if (!empty($updateData)) {
+                $user->update($updateData);
+            }
+
+            $updatedUser = User::find($id);
+            Response::json(200, [
+                'message' => 'User updated successfully',
+                'user' => $updatedUser->getProfileData()
+            ]);
+
+        } catch (\Exception $e) {
+            error_log('Update user error: ' . $e->getMessage());
+            Response::json(500, ['error' => 'Failed to update user']);
         }
     }
 }

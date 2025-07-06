@@ -16,6 +16,17 @@ final class BlockController
         $currentUserId = Auth::userId();
         
         try {
+            $targetUser = \App\Models\User::find($id);
+            if (!$targetUser) {
+                Response::json(404, ['error' => 'User not found']);
+                return;
+            }
+            
+            if ($targetUser->role() === \App\Models\User::ROLE_ADMIN) {
+                Response::json(403, ['error' => 'Cannot block administrator']);
+                return;
+            }
+            
             Block::blockUser($id, $currentUserId);
             Response::json(200, ['message' => 'User blocked successfully']);
         } catch (\InvalidArgumentException $e) {
@@ -35,6 +46,17 @@ final class BlockController
         Auth::requireNotSelf($id, 'unblocking');
         
         try {
+            $targetUser = \App\Models\User::find($id);
+            if (!$targetUser) {
+                Response::json(404, ['error' => 'User not found']);
+                return;
+            }
+            
+            if ($targetUser->role() === \App\Models\User::ROLE_ADMIN) {
+                Response::json(403, ['error' => 'Cannot unblock administrator']);
+                return;
+            }
+            
             Block::unblockUser($id);
             Response::json(200, ['message' => 'User unblocked successfully']);
         } catch (\RuntimeException $e) {

@@ -3,7 +3,6 @@ namespace App\Core;
 
 class Router
 {
-    // Public routes that don't require authentication
     private const PUBLIC_ROUTES = [
         'POST' => [
             '#^/auth/register$#'                => ['AuthController', 'register'],
@@ -11,13 +10,13 @@ class Router
         ],
     ];
 
-    // Protected routes that require authentication
     private const PROTECTED_ROUTES = [
         'POST' => [
             '#^/friends$#'                      => ['FriendController', 'sendRequest'],
             '#^/games$#'                        => ['GameController', 'create'],
             '#^/games/(\d+)/join$#'             => ['GameController', 'join'],
             '#^/users/(\d+)/block$#'            => ['BlockController', 'blockUser'],
+            '#^/users$#'                        => ['UserController', 'create'],
         ],
         'GET' => [
             '#^/users/(\d+)$#'                  => ['UserController', 'get'],
@@ -27,6 +26,7 @@ class Router
             '#^/friends/(\d+)/list$#'           => ['FriendController', 'list'],
             '#^/games$#'                        => ['GameController', 'list'],
             '#^/games/(\d+)$#'                  => ['GameController', 'detail'],
+            '#^/admin/games$#'                  => ['GameController', 'adminList'],
             '#^/users/(\d+)/role$#'             => ['UserController', 'getRole'],
             '#^/audit$#'                        => ['AuditController', 'list'],
             '#^/audit/record$#'                 => ['AuditController', 'getByRecord'],
@@ -34,7 +34,9 @@ class Router
 
         ],
         'PUT' => [
+            '#^/users/(\d+)$#'                  => ['UserController', 'updateUser'],
             '#^/users/(\d+)/role$#'             => ['UserController', 'setRole'],
+            '#^/games/(\d+)$#'                  => ['GameController', 'update'],
             '#^/games/(\d+)/players$#'          => ['GameController', 'setPlayers'],
             '#^/games/(\d+)/status$#'           => ['GameController', 'setStatus'],
             '#^/friends/accept$#'               => ['FriendController', 'acceptRequest'],
@@ -48,6 +50,8 @@ class Router
             '#^/games/(\d+)$#'                  => ['GameController', 'delete'],
             '#^/users/(\d+)/block$#'            => ['BlockController', 'unblockUser'],
             '#^/friends$#'                      => ['FriendController', 'removeFriendship'],
+            '#^/audit/(\d+)$#'                  => ['AuditController', 'delete'],
+            '#^/audit/clear$#'                  => ['AuditController', 'clear'],
         ],
     ];
 
@@ -55,18 +59,14 @@ class Router
     {
         $path = parse_url($uri, PHP_URL_PATH);
         
-        // Отладка
         error_log("Original URI: $uri");
-        
         error_log("Final path: $path");
         error_log("Method: $method");
         
-        // First, try public routes (no authentication required)
         if (self::tryRoutes(self::PUBLIC_ROUTES, $method, $path, false)) {
             return;
         }
         
-        // Then try protected routes (authentication required)
         if (self::tryRoutes(self::PROTECTED_ROUTES, $method, $path, true)) {
             return;
         }
@@ -81,10 +81,9 @@ class Router
             if (preg_match($regex, $path, $matches)) {
                 error_log("Controller: $ctrl, Action: $action");
                 
-                // Check authentication if required
                 if ($requireAuth && !Auth::check()) {
                     Response::json(401, ['error' => 'Unauthorized']);
-                    return true; // Route was matched, but auth failed
+                    return true;
                 }
                 
                 array_shift($matches);

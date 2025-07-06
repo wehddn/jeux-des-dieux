@@ -376,23 +376,4 @@ class UserControllerTest extends BaseApiTest
         $this->assertEquals('User not found', $roleResponse['error']);
     }
 
-    /**
-     * Helper method to get user ID by email
-     */
-    private function getUserIdByEmail(string $email): ?int
-    {
-        [$status, $response] = $this->get('/users', $this->withAdminAuth());
-        
-        if ($status !== 200 || !is_array($response)) {
-            return null;
-        }
-
-        foreach ($response as $user) {
-            if ($user['email'] === $email) {
-                return (int)$user['id'];
-            }
-        }
-
-        return null;
-    }
 }

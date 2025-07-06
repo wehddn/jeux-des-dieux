@@ -5,9 +5,6 @@ final class Block extends Model
 {
     protected const TABLE = 'blocklist';
 
-    /**
-     * Check if a user is blocked
-     */
     public static function isUserBlocked(int $userId): bool
     {
         $stmt = self::db()->prepare('SELECT 1 FROM blocklist WHERE blocked_user_id = ?');
@@ -15,17 +12,12 @@ final class Block extends Model
         return $stmt->fetch() !== false;
     }
 
-    /**
-     * Block a user
-     */
     public static function blockUser(int $userId, int $blockerUserId): void
     {
-        // Check if user exists first
         if (!User::find($userId)) {
             throw new \InvalidArgumentException('User not found');
         }
 
-        // Check if already blocked
         if (self::isUserBlocked($userId)) {
             throw new \RuntimeException('User already blocked');
         }
@@ -37,12 +29,8 @@ final class Block extends Model
         ]);
     }
 
-    /**
-     * Unblock a user
-     */
     public static function unblockUser(int $userId): void
     {
-        // Check if user is actually blocked
         if (!self::isUserBlocked($userId)) {
             throw new \RuntimeException('User is not blocked');
         }
@@ -51,9 +39,6 @@ final class Block extends Model
         $stmt->execute([$userId]);
     }
 
-    /**
-     * Get list of all blocked users with details
-     */
     public static function getBlockedUsers(): array
     {
         $stmt = self::db()->prepare('
@@ -72,9 +57,6 @@ final class Block extends Model
         return $stmt->fetchAll();
     }
 
-    /**
-     * Get block record for a specific user
-     */
     public static function getBlockRecord(int $userId): ?array
     {
         $stmt = self::db()->prepare('
@@ -91,7 +73,6 @@ final class Block extends Model
         return $stmt->fetch() ?: null;
     }
 
-    // Getter methods
     public function getBlockedUserId(): int { return $this->get('blocked_user_id'); }
     public function getBlockerUserId(): int { return $this->get('blocker_user_id'); }
     public function getBlockedAt(): string { return $this->get('blocked_at'); }

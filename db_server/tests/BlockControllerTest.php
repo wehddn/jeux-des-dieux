@@ -5,7 +5,30 @@ require_once 'BaseApiTest.php';
 
 class BlockControllerTest extends BaseApiTest
 {
-    private $targetUserId = 12; // test2@test2.test2
+    private $targetUserId;
+    private $adminUserId;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        
+        // Get user IDs by email to make tests database-independent
+        $this->targetUserId = $this->getUserIdByEmail('test2@test2.test2', true);
+        $this->adminUserId = $this->getUserIdByEmail('admin@admin.admin', true);
+        
+        // Ensure clean state: unblock all test users before each test
+        try {
+            $this->delete("/users/{$this->targetUserId}/block", null, $this->withAdminAuth());
+        } catch (Exception $e) {
+            // Ignore errors if user is already unblocked
+        }
+        
+        try {
+            $this->delete("/users/{$this->adminUserId}/block", null, $this->withAdminAuth());
+        } catch (Exception $e) {
+            // Ignore errors if user is already unblocked
+        }
+    }
 
     // Run unblock tests first to ensure clean state
     public function testUnblockUserWithoutAuth()
@@ -116,14 +139,35 @@ class BlockControllerTest extends BaseApiTest
         $this->assertEquals(['error' => 'User already blocked'], $json);
     }
 
+    public function testManagerCannotBlockAdmin()
+    {
+        [$status, $json] = $this->post("/users/{$this->adminUserId}/block", [], $this->withManagerAuth());
+        $this->assertEquals(403, $status);
+        $this->assertEquals(['error' => 'Cannot block administrator'], $json);
+    }
+
+    public function testManagerCannotUnblockAdmin()
+    {
+        [$status, $json] = $this->delete("/users/{$this->adminUserId}/block", null, $this->withManagerAuth());
+        $this->assertEquals(403, $status);
+        $this->assertEquals(['error' => 'Cannot unblock administrator'], $json);
+    }
+
     protected function tearDown(): void
     {
-        // Clean up: ensure test user is unblocked after each test
+        // Clean up: ensure all test users are unblocked after each test
         try {
             $this->delete("/users/{$this->targetUserId}/block", null, $this->withAdminAuth());
         } catch (Exception $e) {
             // Ignore errors in cleanup
         }
+        
+        try {
+            $this->delete("/users/{$this->adminUserId}/block", null, $this->withAdminAuth());
+        } catch (Exception $e) {
+            // Ignore errors in cleanup
+        }
+        
         parent::tearDown();
     }
 }
