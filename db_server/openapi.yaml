@@ -1,0 +1,1234 @@
+openapi: 3.0.3
+info:
+  title: Jeux des Dieux API
+  description: |
+    API REST pour le jeu de cartes stratégique "Jeux des Dieux". 
+    Cette API gère l'authentification, les utilisateurs, les parties, 
+    les relations d'amitié et l'administration.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:5000
+    description: Serveur de développement local
+
+tags:
+  - name: Auth
+    description: Authentification et autorisation
+  - name: Users
+    description: Gestion des utilisateurs
+  - name: Friends
+    description: Système d'amitié
+  - name: Games
+    description: Gestion des parties
+  - name: Admin
+    description: Administration et modération
+  - name: Audit
+    description: Logs et audit
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "john@example.com"
+        photo:
+          type: string
+          example: "photo_1.png"
+        role_id:
+          type: integer
+          enum: [1, 2, 3]
+          description: "1=user, 2=manager, 3=admin"
+          example: 1
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-01-01T12:00:00Z"
+          
+    Game:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Partie épique"
+        status:
+          type: string
+          enum: ["waiting", "in_progress", "finished"]
+          example: "waiting"
+        is_private:
+          type: boolean
+          example: false
+        created_by:
+          type: integer
+          example: 1
+        creator:
+          type: string
+          example: "John Doe"
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-01-01T12:00:00Z"
+        players:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              name:
+                type: string
+                example: "John Doe"
+                
+    Friend:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "John Doe"
+          
+    FriendRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        sender_id:
+          type: integer
+          example: 1
+        receiver_id:
+          type: integer
+          example: 2
+        status:
+          type: string
+          enum: ["pending", "accepted", "declined"]
+          example: "pending"
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-01-01T12:00:00Z"
+        sender_name:
+          type: string
+          example: "John Doe"
+          
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        table_name:
+          type: string
+          example: "users"
+        record_id:
+          type: string
+          example: "1"
+        action:
+          type: string
+          enum: ["INSERT", "UPDATE", "DELETE"]
+          example: "UPDATE"
+        old_values:
+          type: object
+          nullable: true
+        new_values:
+          type: object
+          nullable: true
+        changed_at:
+          type: string
+          format: date-time
+          example: "2024-01-01T12:00:00Z"
+          
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Error message"
+          
+    Success:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Operation successful"
+
+paths:
+  # ========== AUTHENTICATION ==========
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Inscription d'un nouvel utilisateur
+      description: Créer un nouveau compte utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+                password:
+                  type: string
+                  minLength: 6
+                  example: "password123"
+                name:
+                  type: string
+                  example: "John Doe"
+      responses:
+        '201':
+          description: Utilisateur créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: Données invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Email déjà existant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Connexion utilisateur
+      description: Authentification et récupération du token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+                password:
+                  type: string
+                  example: "password123"
+      responses:
+        '200':
+          description: Connexion réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '401':
+          description: Identifiants invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Compte bloqué
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Account blocked"
+                  redirect:
+                    type: string
+                    example: "blocked"
+
+  # ========== USERS ==========
+  /users:
+    get:
+      tags: [Users]
+      summary: Liste des utilisateurs
+      description: Récupérer la liste de tous les utilisateurs (Manager/Admin uniquement)
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Liste des utilisateurs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          description: Non autorisé
+        '403':
+          description: Accès refusé (rôle insuffisant)
+          
+    post:
+      tags: [Users]
+      summary: Créer un utilisateur
+      description: Créer un nouvel utilisateur (Admin uniquement)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name:
+                  type: string
+                  example: "John Doe"
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+                password:
+                  type: string
+                  minLength: 6
+                  example: "password123"
+                role_id:
+                  type: integer
+                  enum: [1, 2, 3]
+                  default: 1
+                  example: 1
+      responses:
+        '201':
+          description: Utilisateur créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '403':
+          description: Accès refusé (Admin requis)
+
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: Détails d'un utilisateur
+      description: Récupérer les informations d'un utilisateur spécifique
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Informations utilisateur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Utilisateur introuvable
+          
+    patch:
+      tags: [Users]
+      summary: Modifier un utilisateur
+      description: Mettre à jour les informations d'un utilisateur
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "New Name"
+                email:
+                  type: string
+                  format: email
+                  example: "newemail@example.com"
+                password:
+                  type: string
+                  minLength: 6
+                  example: "newpassword123"
+      responses:
+        '200':
+          description: Utilisateur mis à jour
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User updated successfully"
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Données invalides
+        '409':
+          description: Email déjà existant
+          
+    delete:
+      tags: [Users]
+      summary: Supprimer un utilisateur
+      description: Supprimer un utilisateur (Admin uniquement)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '204':
+          description: Utilisateur supprimé
+        '403':
+          description: Accès refusé
+        '404':
+          description: Utilisateur introuvable
+
+  /users/{id}/role:
+    get:
+      tags: [Users]
+      summary: Rôle d'un utilisateur
+      description: Récupérer le rôle d'un utilisateur
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Rôle utilisateur
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  role:
+                    type: integer
+                    enum: [1, 2, 3]
+                    example: 1
+                    
+    put:
+      tags: [Users]
+      summary: Modifier le rôle d'un utilisateur
+      description: Changer le rôle d'un utilisateur (Admin uniquement)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role]
+              properties:
+                role:
+                  type: integer
+                  enum: [1, 2, 3]
+                  example: 2
+      responses:
+        '200':
+          description: Rôle mis à jour
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  role:
+                    type: integer
+                    example: 2
+        '403':
+          description: Accès refusé
+
+  /users/{id}/block:
+    post:
+      tags: [Admin]
+      summary: Bloquer un utilisateur
+      description: Bloquer un utilisateur (Manager/Admin uniquement)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Utilisateur bloqué
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '403':
+          description: Accès refusé
+        '404':
+          description: Utilisateur introuvable
+          
+    delete:
+      tags: [Admin]
+      summary: Débloquer un utilisateur
+      description: Débloquer un utilisateur (Manager/Admin uniquement)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Utilisateur débloqué
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '403':
+          description: Accès refusé
+
+  /blocked-users:
+    get:
+      tags: [Admin]
+      summary: Liste des utilisateurs bloqués
+      description: Récupérer la liste des utilisateurs bloqués (Manager/Admin uniquement)
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Liste des utilisateurs bloqués
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: "John Doe"
+                    email:
+                      type: string
+                      example: "john@example.com"
+                    blocked_at:
+                      type: string
+                      format: date-time
+                      example: "2024-01-01T12:00:00Z"
+                    blocked_by_name:
+                      type: string
+                      example: "Admin User"
+
+  # ========== FRIENDS ==========
+  /friends:
+    post:
+      tags: [Friends]
+      summary: Envoyer une demande d'amitié
+      description: Envoyer une demande d'amitié à un utilisateur
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [receiver_id]
+              properties:
+                receiver_id:
+                  type: integer
+                  example: 2
+      responses:
+        '201':
+          description: Demande envoyée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: Données invalides
+        '404':
+          description: Utilisateur introuvable
+        '409':
+          description: Demande déjà existante
+          
+    delete:
+      tags: [Friends]
+      summary: Supprimer une amitié
+      description: Supprimer une relation d'amitié (Admin uniquement)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user1_id, user2_id]
+              properties:
+                user1_id:
+                  type: integer
+                  example: 1
+                user2_id:
+                  type: integer
+                  example: 2
+      responses:
+        '200':
+          description: Amitié supprimée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '403':
+          description: Accès refusé (Admin requis)
+
+  /friends/accept:
+    put:
+      tags: [Friends]
+      summary: Accepter une demande d'amitié
+      description: Accepter une demande d'amitié reçue
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [request_id]
+              properties:
+                request_id:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: Demande acceptée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '404':
+          description: Demande introuvable
+
+  /friends/decline:
+    put:
+      tags: [Friends]
+      summary: Refuser une demande d'amitié
+      description: Refuser une demande d'amitié reçue
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [request_id]
+              properties:
+                request_id:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: Demande refusée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '404':
+          description: Demande introuvable
+
+  /friends/{id}/non-friends:
+    get:
+      tags: [Friends]
+      summary: Utilisateurs non-amis
+      description: Récupérer la liste des utilisateurs qui ne sont pas amis avec l'utilisateur spécifié
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Liste des non-amis
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /friends/{id}/pending-requests:
+    get:
+      tags: [Friends]
+      summary: Demandes d'amitié en attente
+      description: Récupérer les demandes d'amitié en attente pour un utilisateur
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Demandes en attente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FriendRequest'
+
+  /friends/{id}/list:
+    get:
+      tags: [Friends]
+      summary: Liste des amis
+      description: Récupérer la liste des amis d'un utilisateur
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Liste des amis
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Friend'
+
+  # ========== GAMES ==========
+  /games:
+    get:
+      tags: [Games]
+      summary: Liste des parties
+      description: Récupérer la liste de toutes les parties
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Liste des parties
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game'
+                  
+    post:
+      tags: [Games]
+      summary: Créer une partie
+      description: Créer une nouvelle partie de jeu
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  example: "Ma partie épique"
+                isPrivate:
+                  type: boolean
+                  default: false
+                  example: false
+                password:
+                  type: string
+                  description: "Requis si isPrivate est true"
+                  example: "secret123"
+      responses:
+        '201':
+          description: Partie créée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gameId:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: "Ma partie épique"
+                  status:
+                    type: string
+                    example: "waiting"
+        '400':
+          description: Données invalides
+
+  /games/{id}:
+    get:
+      tags: [Games]
+      summary: Détails d'une partie
+      description: Récupérer les détails d'une partie spécifique
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Détails de la partie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '404':
+          description: Partie introuvable
+          
+    put:
+      tags: [Games]
+      summary: Modifier une partie
+      description: Modifier les informations d'une partie (créateur/manager/admin uniquement)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Nouveau nom"
+                isPrivate:
+                  type: boolean
+                  example: true
+                password:
+                  type: string
+                  example: "newpassword"
+      responses:
+        '200':
+          description: Partie mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '403':
+          description: Accès refusé
+        '404':
+          description: Partie introuvable
+          
+    delete:
+      tags: [Games]
+      summary: Supprimer une partie
+      description: Supprimer une partie (Manager/Admin uniquement)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '204':
+          description: Partie supprimée
+        '403':
+          description: Accès refusé
+        '404':
+          description: Partie introuvable
+
+  /games/{id}/join:
+    post:
+      tags: [Games]
+      summary: Rejoindre une partie
+      description: Rejoindre une partie existante
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  description: "Requis pour les parties privées"
+                  example: "secret123"
+      responses:
+        '200':
+          description: Partie rejointe avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '403':
+          description: Mot de passe incorrect
+        '404':
+          description: Partie introuvable
+
+  /games/{id}/players:
+    put:
+      tags: [Games]
+      summary: Gérer les joueurs d'une partie
+      description: Ajouter ou retirer des joueurs d'une partie (créateur/manager/admin uniquement)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                add:
+                  type: array
+                  items:
+                    type: integer
+                  example: [2, 3]
+                remove:
+                  type: array
+                  items:
+                    type: integer
+                  example: [4]
+      responses:
+        '200':
+          description: Joueurs mis à jour
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  changes:
+                    type: object
+                    properties:
+                      added:
+                        type: array
+                        items:
+                          type: integer
+                        example: [2, 3]
+                      removed:
+                        type: array
+                        items:
+                          type: integer
+                        example: [4]
+        '403':
+          description: Accès refusé
+
+  /games/{id}/status:
+    put:
+      tags: [Games]
+      summary: Modifier le statut d'une partie
+      description: Changer le statut d'une partie (créateur/manager/admin uniquement)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: ["waiting", "in_progress", "finished"]
+                  example: "in_progress"
+      responses:
+        '200':
+          description: Statut mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '400':
+          description: Statut invalide
+        '403':
+          description: Accès refusé
+
+  /admin/games:
+    get:
+      tags: [Admin]
+      summary: Liste des parties (Admin)
+      description: Récupérer la liste complète des parties avec informations administratives
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Liste administrative des parties
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  allOf:
+                    - $ref: '#/components/schemas/Game'
+                    - type: object
+                      properties:
+                        creator_name:
+                          type: string
+                          example: "John Doe"
+                        creator_email:
+                          type: string
+                          example: "john@example.com"
+                        player_count:
+                          type: integer
+                          example: 3
+        '403':
+          description: Accès refusé (Manager/Admin requis)
+
+  # ========== AUDIT ==========
+  /audit:
+    get:
+      tags: [Audit]
+      summary: Logs d'audit
+      description: Récupérer les logs d'audit (Admin uniquement)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+          example: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          example: 0
+        - name: table
+          in: query
+          schema:
+            type: string
+          example: "users"
+          description: "Filtrer par table spécifique"
+      responses:
+        '200':
+          description: Logs d'audit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  logs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditLog'
+                  total:
+                    type: integer
+                    example: 150
+                  limit:
+                    type: integer
+                    example: 50
+                  offset:
+                    type: integer
+                    example: 0
+        '403':
+          description: Accès refusé (Admin requis)
+
+  /audit/record:
+    get:
+      tags: [Audit]
+      summary: Logs pour un enregistrement spécifique
+      description: Récupérer les logs d'audit pour un enregistrement spécifique (Admin uniquement)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: table
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "users"
+        - name: record_id
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "1"
+      responses:
+        '200':
+          description: Logs pour l'enregistrement
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditLog'
+        '400':
+          description: Paramètres manquants
+        '403':
+          description: Accès refusé (Admin requis)
+
+  /audit/{id}:
+    delete:
+      tags: [Audit]
+      summary: Supprimer un log d'audit
+      description: Supprimer un log d'audit spécifique (Admin uniquement)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '204':
+          description: Log supprimé
+        '403':
+          description: Accès refusé (Admin requis)
+        '404':
+          description: Log introuvable
+
+  /audit/clear:
+    delete:
+      tags: [Audit]
+      summary: Vider les logs d'audit
+      description: Supprimer tous les logs d'audit (Admin uniquement)
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Logs vidés
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '403':
+          description: Accès refusé (Admin requis)
+
+# Codes d'erreur communs
+responses:
+  UnauthorizedError:
+    description: Token d'authentification manquant ou invalide
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Error'
+          
+  ForbiddenError:
+    description: Accès refusé - permissions insuffisantes
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Error'
+          
+  NotFoundError:
+    description: Ressource introuvable
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Error'
+          
+  ValidationError:
+    description: Erreur de validation des données
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Error'
