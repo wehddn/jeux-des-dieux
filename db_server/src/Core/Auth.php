@@ -26,7 +26,6 @@ final class Auth
         }
     }
 
-    /** Check if current user is a manager (role_id >= 2) */
     public static function requireManager(): void
     {
         if (!self::check() || self::$user['role_id'] < 2) {
@@ -34,7 +33,6 @@ final class Auth
         }
     }
 
-    /** Check if current user is an admin (role_id >= 3) */
     public static function requireAdmin(): void
     {
         if (!self::check() || self::$user['role_id'] < 3) {
@@ -42,7 +40,6 @@ final class Auth
         }
     }
 
-    /** Check if current user owns the resource or is a manager+ */
     public static function requireOwnerOrManager(int $ownerId): void
     {
         if (!self::check()) {
@@ -55,7 +52,6 @@ final class Auth
         }
     }
 
-    /** Check if current user can access another user's data */
     public static function requireSelfOrManager(int $userId): void
     {
         if (!self::check()) {
@@ -68,13 +64,11 @@ final class Auth
         }
     }
 
-    /** Get current user ID safely */
     public static function userId(): int
     {
         return self::$user['id'] ?? 0;
     }
 
-    /** Prevent users from targeting themselves (for role changes, blocking, etc.) */
     public static function requireNotSelf(int $targetUserId, string $action = 'this action'): void
     {
         if (!self::check()) {
@@ -86,7 +80,6 @@ final class Auth
         }
     }
 
-    /** запускается из Front Controller до Router::dispatch() */
     public static function bootstrap(): void
     {
         $hdr = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
@@ -94,7 +87,7 @@ final class Auth
         
         if (!preg_match('/Bearer\s+(.+)/', $hdr, $m)) {
             error_log("No Bearer token found");
-            return;                             // гость
+            return;
         }
 
         try {

@@ -5,19 +5,16 @@ final class Game extends Model
 {
     protected const TABLE = 'games';
 
-    // Status constants
     public const STATUS_WAITING = 'waiting';
     public const STATUS_IN_PROGRESS = 'in_progress';
     public const STATUS_FINISHED = 'finished';
 
-    // Valid status array
     private const VALID_STATUSES = [
         self::STATUS_WAITING,
         self::STATUS_IN_PROGRESS,
         self::STATUS_FINISHED
     ];
 
-    // Getter methods
     public function id(): int { return $this->get('id'); }
     public function name(): string { return $this->get('name'); }
     public function creatorId(): int { return $this->get('created_by'); }
@@ -30,12 +27,10 @@ final class Game extends Model
      */
     public static function createGame(string $name, int $creatorId, bool $isPrivate = false, ?string $password = null): self
     {
-        // Validate user exists
         if (!User::find($creatorId)) {
             throw new \InvalidArgumentException('Creator user not found');
         }
 
-        // Hash password if provided for private game
         $passwordHash = null;
         if ($isPrivate && !empty($password)) {
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);

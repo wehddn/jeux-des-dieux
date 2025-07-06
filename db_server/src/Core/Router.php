@@ -3,7 +3,6 @@ namespace App\Core;
 
 class Router
 {
-    // Public routes that don't require authentication
     private const PUBLIC_ROUTES = [
         'POST' => [
             '#^/auth/register$#'                => ['AuthController', 'register'],
@@ -11,7 +10,6 @@ class Router
         ],
     ];
 
-    // Protected routes that require authentication
     private const PROTECTED_ROUTES = [
         'POST' => [
             '#^/friends$#'                      => ['FriendController', 'sendRequest'],
@@ -67,12 +65,10 @@ class Router
         error_log("Final path: $path");
         error_log("Method: $method");
         
-        // First, try public routes (no authentication required)
         if (self::tryRoutes(self::PUBLIC_ROUTES, $method, $path, false)) {
             return;
         }
         
-        // Then try protected routes (authentication required)
         if (self::tryRoutes(self::PROTECTED_ROUTES, $method, $path, true)) {
             return;
         }
@@ -87,10 +83,9 @@ class Router
             if (preg_match($regex, $path, $matches)) {
                 error_log("Controller: $ctrl, Action: $action");
                 
-                // Check authentication if required
                 if ($requireAuth && !Auth::check()) {
                     Response::json(401, ['error' => 'Unauthorized']);
-                    return true; // Route was matched, but auth failed
+                    return true;
                 }
                 
                 array_shift($matches);

@@ -11,13 +11,13 @@ export function UserAuthContextProvider({ children }) {
     JSON.parse(localStorage.getItem("authenticatedRooms")) || []
   );
 
-  // При инициализации проверяем наличие токена в localStorage
+  // Lors de l'initialisation, nous vérifions la présence du token dans localStorage
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
         const decodedUser = jwtDecode(token);
-        // JWT использует 'sub' для user ID, преобразуем для удобства
+        // JWT utilise 'sub' pour l'ID utilisateur, nous le convertissons pour plus de commodité
         const user = {
           id: decodedUser.sub,
           role: decodedUser.role,
@@ -33,14 +33,13 @@ export function UserAuthContextProvider({ children }) {
     setLoading(false);
   }, []);
 
-  // Функция логина через API
   async function logIn(email, password) {
     try {
       const response = await axios.post("http://localhost:5000/auth/login", { email, password });
       const { token } = response.data;
       localStorage.setItem("token", token);
       const decodedUser = jwtDecode(token);
-      // JWT использует 'sub' для user ID, преобразуем для удобства
+      // JWT utilise 'sub' pour l'ID utilisateur, nous le convertissons pour plus de commodité
       const user = {
         id: decodedUser.sub,
         role: decodedUser.role,
@@ -51,11 +50,9 @@ export function UserAuthContextProvider({ children }) {
       setUser(user);
       return user;
     } catch (error) {
-      console.error("Ошибка логина:", error);
+      console.error("Erreur de connexion:", error);
       
-      // Check if user is blocked
       if (error.response && error.response.data && error.response.data.redirect === 'blocked') {
-        // Throw a special error for blocked users
         const blockedError = new Error("Account blocked");
         blockedError.isBlocked = true;
         throw blockedError;
@@ -68,13 +65,12 @@ export function UserAuthContextProvider({ children }) {
     }
   }
 
-  // Функция регистрации через API
   async function signUp(email, password) {
     try {
       const response = await axios.post("http://localhost:5000/auth/register", { email, password });
       return response.data;
     } catch (error) {
-      console.error("Ошибка регистрации:", error);
+      console.error("Erreur d'inscription:", error);
       const errorMessage = error.response && error.response.data && error.response.data.message
       ? error.response.data.message
       : error.message;
@@ -82,7 +78,6 @@ export function UserAuthContextProvider({ children }) {
     }
   }
 
-  // Функция разлогинивания
   function logOut() {
     setUser(null);
     localStorage.removeItem("token");
@@ -90,7 +85,6 @@ export function UserAuthContextProvider({ children }) {
     localStorage.removeItem("authenticatedRooms");
   }
 
-  // Логика для аутентификации игровых комнат (без изменений)
   function authenticateRoom(roomId) {
     setAuthenticatedRooms((prev) => {
       const updatedRooms = [...prev, roomId];

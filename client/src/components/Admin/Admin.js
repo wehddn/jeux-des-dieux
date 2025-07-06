@@ -104,10 +104,8 @@ const Admin = () => {
     
     setLogsLoading(true);
     try {
-      const auditList = await getAuditLogs(20); // Get last 20 logs
+      const auditList = await getAuditLogs(20); // Récupérer les 20 derniers logs
       console.log('Audit logs:', auditList);
-      console.log('First audit log entry:', auditList.logs[0]); // Debug the structure
-      // Extract the logs array from the response object
       setAuditLogs(auditList.logs || []);
       setShowLogs(true);
     } catch (error) {
@@ -120,7 +118,6 @@ const Admin = () => {
   const handleRoleChange = async (userId, roleId) => {
     try {
       await updateUserRole(userId, parseInt(roleId));
-      // TODO : use role name
       alert(`Role updated to ${roleId}`);
       const userList = await getUsers();
       setUsers(userList);
@@ -407,7 +404,6 @@ const Admin = () => {
   };
 
   if (loading) return <p>Loading...</p>;
-// TODO : get roles from BD for maintenance
   return (
     <main>
       <h1>Admin Panel</h1>
@@ -983,7 +979,6 @@ const Admin = () => {
         </div>
       )}
 
-      {/* Create Game Form */}
       {showCreateGameForm && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -1045,7 +1040,6 @@ const Admin = () => {
         </div>
       )}
 
-      {/* Edit Game Form */}
       {showEditGameForm && editingGame && (
         <div className="modal-overlay">
           <div className="modal-content">

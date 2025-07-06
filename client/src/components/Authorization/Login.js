@@ -25,7 +25,7 @@ const Login = () => {
       navigate("/profile");
     } catch (err) {
       if (err.isBlocked) {
-        // Redirect to blocked page for blocked users
+        // Rediriger vers la page de blocage pour les utilisateurs bloqués
         navigate("/blocked");
       } else {
         setError(err.message);

@@ -83,7 +83,6 @@ final class Audit extends Model
         self::create($data);
     }
 
-    // Getter methods for easier access
     public function getTableName(): string { return $this->get('table_name'); }
     public function getRecordId(): string { return $this->get('record_id'); }
     public function getAction(): string { return $this->get('action'); }

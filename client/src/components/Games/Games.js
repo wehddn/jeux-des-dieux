@@ -48,7 +48,7 @@ function Games() {
         navigate(`/room/${room.id}`);
       } catch (error) {
         console.error("Error joining public game:", error);
-        // Still navigate even if join fails (might already be a player)
+        // Naviguer quand même même si la jointure échoue (pourrait déjà être un joueur)
         navigate(`/room/${room.id}`);
       }
     }

@@ -20,12 +20,10 @@ final class Block extends Model
      */
     public static function blockUser(int $userId, int $blockerUserId): void
     {
-        // Check if user exists first
         if (!User::find($userId)) {
             throw new \InvalidArgumentException('User not found');
         }
 
-        // Check if already blocked
         if (self::isUserBlocked($userId)) {
             throw new \RuntimeException('User already blocked');
         }
@@ -42,7 +40,6 @@ final class Block extends Model
      */
     public static function unblockUser(int $userId): void
     {
-        // Check if user is actually blocked
         if (!self::isUserBlocked($userId)) {
             throw new \RuntimeException('User is not blocked');
         }
@@ -91,7 +88,6 @@ final class Block extends Model
         return $stmt->fetch() ?: null;
     }
 
-    // Getter methods
     public function getBlockedUserId(): int { return $this->get('blocked_user_id'); }
     public function getBlockerUserId(): int { return $this->get('blocker_user_id'); }
     public function getBlockedAt(): string { return $this->get('blocked_at'); }
