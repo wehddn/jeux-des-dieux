@@ -18,14 +18,6 @@ final class Auth
         return !empty(self::$user);
     }
 
-    public static function requireLogin(int $minRole = 1): void
-    {
-        if (!self::check() || self::$user['role_id'] < $minRole) {
-            Response::json( ($minRole > 1 ? 403 : 401),
-                ['error' => ($minRole > 1 ? 'Forbidden' : 'Unauthorized')] );
-        }
-    }
-
     public static function requireManager(): void
     {
         if (!self::check() || self::$user['role_id'] < 2) {

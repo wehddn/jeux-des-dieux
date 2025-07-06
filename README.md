@@ -76,6 +76,8 @@ Le projet est structuré en 3 services principaux :
 - Tests avec PHPUnit
 - Documentation API avec OpenAPI/Swagger
 
+Plus d'informations dans le fichier `db_server/ Backend_documentation.md`
+
 ### 3. **Game Server** (`/game_server/`)
 - Serveur Node.js pour le gameplay en temps réel
 - Communication WebSocket pour les parties
