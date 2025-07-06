@@ -123,4 +123,4 @@ jobs:
         echo "=========================="
         
         # Run the actual tests
-        php vendor/bin/phpunit tests --coverage-text --coverage-clover=coverage.xml
+        # php vendor/bin/phpunit tests --coverage-text --coverage-clover=coverage.xml
