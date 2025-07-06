@@ -81,7 +81,6 @@ export const joinGame = async (gameId, password = '') => {
   }
 };
 
-// Admin functions for games management
 export const getGamesForAdmin = async () => {
   try {
     const response = await fetch(`${API_URL}/admin/games`, {

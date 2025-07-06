@@ -200,7 +200,6 @@ final class GameController
 
             $data = json_decode(file_get_contents('php://input'), true);
             
-            // Validate JSON data
             if ($data === null) {
                 Response::json(400, ['error' => 'Invalid JSON data']);
                 return;
@@ -208,7 +207,6 @@ final class GameController
 
             $updateData = [];
             
-            // Update name if provided
             if (isset($data['name'])) {
                 if (!is_string($data['name']) || trim($data['name']) === '') {
                     Response::json(400, ['error' => 'Game name must be a non-empty string']);
@@ -217,7 +215,6 @@ final class GameController
                 $updateData['name'] = trim($data['name']);
             }
 
-            // Update status if provided
             if (isset($data['status'])) {
                 if (!in_array($data['status'], Game::getValidStatuses())) {
                     Response::json(400, ['error' => 'Invalid status']);
@@ -226,17 +223,14 @@ final class GameController
                 $updateData['status'] = $data['status'];
             }
 
-            // Update is_private if provided
             if (isset($data['is_private'])) {
                 $updateData['is_private'] = (bool)$data['is_private'];
             }
 
-            // Update password if provided
             if (isset($data['password'])) {
                 if (is_string($data['password']) && !empty(trim($data['password']))) {
                     $updateData['password'] = password_hash(trim($data['password']), PASSWORD_DEFAULT);
                 } else {
-                    // Clear password if empty string is provided
                     $updateData['password'] = null;
                 }
             }
@@ -248,7 +242,6 @@ final class GameController
 
             $game->update($updateData);
 
-            // Return updated game data
             $updatedGame = Game::find($id);
             Response::json(200, [
                 'id' => $updatedGame->id(),
