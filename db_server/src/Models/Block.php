@@ -5,9 +5,6 @@ final class Block extends Model
 {
     protected const TABLE = 'blocklist';
 
-    /**
-     * Check if a user is blocked
-     */
     public static function isUserBlocked(int $userId): bool
     {
         $stmt = self::db()->prepare('SELECT 1 FROM blocklist WHERE blocked_user_id = ?');
@@ -15,9 +12,6 @@ final class Block extends Model
         return $stmt->fetch() !== false;
     }
 
-    /**
-     * Block a user
-     */
     public static function blockUser(int $userId, int $blockerUserId): void
     {
         if (!User::find($userId)) {
@@ -35,9 +29,6 @@ final class Block extends Model
         ]);
     }
 
-    /**
-     * Unblock a user
-     */
     public static function unblockUser(int $userId): void
     {
         if (!self::isUserBlocked($userId)) {
@@ -48,9 +39,6 @@ final class Block extends Model
         $stmt->execute([$userId]);
     }
 
-    /**
-     * Get list of all blocked users with details
-     */
     public static function getBlockedUsers(): array
     {
         $stmt = self::db()->prepare('
@@ -69,9 +57,6 @@ final class Block extends Model
         return $stmt->fetchAll();
     }
 
-    /**
-     * Get block record for a specific user
-     */
     public static function getBlockRecord(int $userId): ?array
     {
         $stmt = self::db()->prepare('

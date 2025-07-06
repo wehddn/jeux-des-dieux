@@ -6,16 +6,14 @@ use PDO;
 
 abstract class Model
 {
-    /** Имя таблицы; переопределяется в наследниках */
     protected const TABLE = '';
 
-    /** Вернёт PDO-коннект */
     final protected static function db(): PDO
     {
         return \App\Core\Database::get();
     }
 
-    /** Загрузить одну строку по id */
+    /** Trouver une enregistrement par ID */
     public static function find(int $id): ?static
     {
         $stmt = self::db()->prepare(
@@ -25,7 +23,6 @@ abstract class Model
         return $data ? new static($data) : null;
     }
 
-    /** Создать запись; $fields = ['col'=>val,…] */
     public static function create(array $fields): static
     {
         $cols = array_keys($fields);
@@ -37,14 +34,11 @@ abstract class Model
         return static::find($id);
     }
 
-    /* ---------- экземпляр ---------- */
-
     public function __construct(protected array $attr) {}
 
     public function get(string $k): mixed   { return $this->attr[$k] ?? null; }
     public function toArray(): array        { return $this->attr; }
 
-    /** Обновить выбранные поля и сохранить */
     public function update(array $fields): void
     {
         $sets = [];

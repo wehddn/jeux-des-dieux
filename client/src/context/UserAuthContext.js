@@ -26,7 +26,7 @@ export function UserAuthContextProvider({ children }) {
         };
         setUser(user);
       } catch (error) {
-        console.error("Ошибка декодирования токена:", error);
+        console.error("Erreur de décodage du token:", error);
         localStorage.removeItem("token");
       }
     }

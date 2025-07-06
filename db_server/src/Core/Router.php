@@ -59,9 +59,7 @@ class Router
     {
         $path = parse_url($uri, PHP_URL_PATH);
         
-        // Отладка
         error_log("Original URI: $uri");
-        
         error_log("Final path: $path");
         error_log("Method: $method");
         

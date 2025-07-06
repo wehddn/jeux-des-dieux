@@ -10,7 +10,7 @@ final class Auth
 
     public static function user(): array
     {
-        return self::$user;        // [] если гость
+        return self::$user;
     }
 
     public static function check(): bool
@@ -102,7 +102,6 @@ final class Auth
             ];
             error_log("User authenticated: ID=" . $data->sub . ", Role=" . $data->role);
         } catch (\Throwable $e) {
-            // испорченный/просроченный токен → гость
             error_log("JWT decode error: " . $e->getMessage());
             self::$user = [];
         }

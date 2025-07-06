@@ -5,7 +5,6 @@ final class User extends Model
 {
     protected const TABLE = 'users';
 
-    // Role constants
     public const ROLE_USER = 1;
     public const ROLE_MANAGER = 2;
     public const ROLE_ADMIN = 3;
@@ -16,25 +15,21 @@ final class User extends Model
         self::ROLE_ADMIN
     ];
 
-    /* sugar-методы */
     public function id(): int        { return $this->get('id'); }
     public function role(): int      { return $this->get('role_id'); }
     public function name(): string   { return $this->get('name'); }
 
-    /** Вернёт true, если пароль подходит */
     public function checkPassword(string $plain): bool
     {
         return password_verify($plain, $this->get('password'));
     }
 
-    /** Установить новый пароль (хешуется Argon2id) */
     public function setPassword(string $plain): void
     {
         $hash = password_hash($plain, PASSWORD_ARGON2ID);
         $this->update(['password' => $hash]);
     }
 
-    /** Check if email already exists */
     public static function emailExists(string $email): bool
     {
         $stmt = self::db()->prepare('SELECT id FROM users WHERE email = ?');
@@ -42,7 +37,6 @@ final class User extends Model
         return $stmt->fetch() !== false;
     }
 
-    /** Find user by email for authentication */
     public static function findByEmail(string $email): ?self
     {
         $stmt = self::db()->prepare('SELECT * FROM users WHERE email = ?');
@@ -51,7 +45,6 @@ final class User extends Model
         return $data ? new self($data) : null;
     }
 
-    /** Register a new user */
     public static function register(string $email, string $password, ?string $name = null): self
     {
         // Use email prefix as name if not provided
@@ -67,7 +60,6 @@ final class User extends Model
         ]);
     }
 
-    /** Create a new user (admin function) */
     public static function createUser(string $name, string $email, string $password, int $roleId = self::ROLE_USER): int
     {
         if (!self::isValidRole($roleId)) {
@@ -91,13 +83,11 @@ final class User extends Model
         return $user->id();
     }
 
-    /** Check if user is blocked */
     public function isBlocked(): bool
     {
         return Block::isUserBlocked($this->id());
     }
 
-    /** Get user data for authentication (without password) */
     public function getAuthData(): array
     {
         return [
@@ -108,9 +98,6 @@ final class User extends Model
         ];
     }
 
-    /**
-     * Get user profile data (safe for public viewing)
-     */
     public function getProfileData(): array
     {
         return [
@@ -123,9 +110,6 @@ final class User extends Model
         ];
     }
 
-    /**
-     * Get all users (admin/manager only)
-     */
     public static function getAllUsers(): array
     {
         $stmt = self::db()->query(
@@ -134,9 +118,6 @@ final class User extends Model
         return $stmt->fetchAll();
     }
 
-    /**
-     * Update user name
-     */
     public function updateName(string $name): void
     {
         $name = trim($name);
@@ -147,9 +128,6 @@ final class User extends Model
         $this->update(['name' => $name]);
     }
 
-    /**
-     * Set user role
-     */
     public function setRole(int $role): void
     {
         if (!in_array($role, self::VALID_ROLES, true)) {
@@ -159,59 +137,39 @@ final class User extends Model
         $this->update(['role_id' => $role]);
     }
 
-    /**
-     * Get user role
-     */
     public function getUserRole(): int
     {
         return $this->role();
     }
 
-    /**
-     * Delete user and associated data
-     */
     public function deleteUser(): void
     {
-        // Delete user's games first (if any foreign key constraints exist)
         $stmt = self::db()->prepare('DELETE FROM games WHERE created_by = ?');
         $stmt->execute([$this->id()]);
 
-        // Delete user's game participations
         $stmt = self::db()->prepare('DELETE FROM game_players WHERE user_id = ?');
         $stmt->execute([$this->id()]);
 
-        // Delete user's friend requests
         $stmt = self::db()->prepare('DELETE FROM friend_requests WHERE sender_id = ? OR receiver_id = ?');
         $stmt->execute([$this->id(), $this->id()]);
 
-        // Delete user's block records
         $stmt = self::db()->prepare('DELETE FROM blocklist WHERE blocked_user_id = ? OR blocker_user_id = ?');
         $stmt->execute([$this->id(), $this->id()]);
 
-        // Delete the user itself
         $stmt = self::db()->prepare('DELETE FROM users WHERE id = ?');
         $stmt->execute([$this->id()]);
     }
 
-    /**
-     * Get valid roles
-     */
     public static function getValidRoles(): array
     {
         return self::VALID_ROLES;
     }
 
-    /**
-     * Check if role is valid
-     */
     public static function isValidRole(int $role): bool
     {
         return in_array($role, self::VALID_ROLES, true);
     }
 
-    /**
-     * Get role name
-     */
     public function getRoleName(): string
     {
         switch ($this->role()) {

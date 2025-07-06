@@ -5,37 +5,28 @@ final class FriendRequest extends Model
 {
     protected const TABLE = 'friend_requests';
 
-    // Status constants
     public const STATUS_PENDING = 'pending';
     public const STATUS_ACCEPTED = 'accepted';
     public const STATUS_DECLINED = 'declined';
 
-    // Getter methods
     public function senderId(): int { return $this->get('sender_id'); }
     public function receiverId(): int { return $this->get('receiver_id'); }
     public function status(): string { return $this->get('status'); }
     public function createdAt(): string { return $this->get('created_at'); }
 
-    // Instance methods
     public function accept(): void { $this->update(['status' => self::STATUS_ACCEPTED]); }
     public function decline(): void { $this->update(['status' => self::STATUS_DECLINED]); }
 
-    /**
-     * Send a friend request
-     */
     public static function sendRequest(int $senderId, int $receiverId): self
     {
-        // Validate users exist
         if (!User::find($senderId) || !User::find($receiverId)) {
             throw new \InvalidArgumentException('User not found');
         }
 
-        // Cannot send request to yourself
         if ($senderId === $receiverId) {
             throw new \InvalidArgumentException('Cannot add yourself');
         }
 
-        // Check if request or friendship already exists
         if (self::relationshipExists($senderId, $receiverId)) {
             throw new \RuntimeException('Request or friendship already exists');
         }
@@ -47,9 +38,6 @@ final class FriendRequest extends Model
         ]);
     }
 
-    /**
-     * Check if any relationship exists between two users
-     */
     public static function relationshipExists(int $userId1, int $userId2): bool
     {
         $stmt = self::db()->prepare(
@@ -60,9 +48,6 @@ final class FriendRequest extends Model
         return $stmt->fetch() !== false;
     }
 
-    /**
-     * Find pending request from specific sender to receiver
-     */
     public static function findPendingRequest(int $senderId, int $receiverId): ?self
     {
         $stmt = self::db()->prepare(
@@ -74,9 +59,6 @@ final class FriendRequest extends Model
         return $data ? new self($data) : null;
     }
 
-    /**
-     * Get users who are not friends and have no pending requests
-     */
     public static function getNonFriends(int $userId): array
     {
         $sql = "
@@ -95,9 +77,6 @@ final class FriendRequest extends Model
         return $stmt->fetchAll();
     }
 
-    /**
-     * Get pending friend requests for a user (as receiver)
-     */
     public static function getPendingRequests(int $userId): array
     {
         $stmt = self::db()->prepare(
@@ -110,9 +89,6 @@ final class FriendRequest extends Model
         return $stmt->fetchAll();
     }
 
-    /**
-     * Get list of friends for a user
-     */
     public static function getFriends(int $userId): array
     {
         $sql = "
@@ -128,9 +104,6 @@ final class FriendRequest extends Model
         return $stmt->fetchAll();
     }
 
-    /**
-     * Find friendship/request between two users (any status)
-     */
     public static function findBetweenUsers(int $userId1, int $userId2): ?self
     {
         $stmt = self::db()->prepare(
@@ -142,9 +115,6 @@ final class FriendRequest extends Model
         return $data ? new self($data) : null;
     }
 
-    /**
-     * Remove friendship/request between two users
-     */
     public static function removeBetweenUsers(int $userId1, int $userId2): bool
     {
         if ($userId1 === $userId2) {
