@@ -10,6 +10,8 @@ final class UserController
     /** GET /users/{id} */
     public function get(int $id): void
     {
+        Auth::requireSelfOrManager($id);
+        
         try {
             $user = User::find($id);
             if (!$user) {
