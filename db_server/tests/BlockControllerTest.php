@@ -13,8 +13,8 @@ class BlockControllerTest extends BaseApiTest
         parent::setUp();
         
         // Get user IDs by email to make tests database-independent
-        $this->targetUserId = $this->getUserIdByEmail('test2@test2.test2');
-        $this->adminUserId = $this->getUserIdByEmail('admin@admin.admin');
+        $this->targetUserId = $this->getUserIdByEmail('test2@test2.test2', true);
+        $this->adminUserId = $this->getUserIdByEmail('admin@admin.admin', true);
         
         // Ensure clean state: unblock all test users before each test
         try {
@@ -151,26 +151,6 @@ class BlockControllerTest extends BaseApiTest
         [$status, $json] = $this->delete("/users/{$this->adminUserId}/block", null, $this->withManagerAuth());
         $this->assertEquals(403, $status);
         $this->assertEquals(['error' => 'Cannot unblock administrator'], $json);
-    }
-
-    /**
-     * Helper method to get user ID by email
-     */
-    private function getUserIdByEmail(string $email): int
-    {
-        [$status, $json] = $this->get("/users", $this->withAdminAuth());
-        
-        if ($status !== 200 || !isset($json)) {
-            throw new Exception("Failed to fetch users list");
-        }
-        
-        foreach ($json as $user) {
-            if ($user['email'] === $email) {
-                return $user['id'];
-            }
-        }
-        
-        throw new Exception("User with email $email not found");
     }
 
     protected function tearDown(): void

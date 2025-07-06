@@ -8,18 +8,27 @@ class FriendControllerTest extends BaseApiTest
     private $friend1Token;
     private $friend2Token;
     private $friend3Token;
-    private $friend1Id = 13;
-    private $friend2Id = 14;
-    private $friend3Id = 15;
+    private $friend1Id;
+    private $friend2Id;
+    private $friend3Id;
 
     protected function setUp(): void
     {
         parent::setUp();
         
-        // Setup test friend users and get their tokens
-        $this->friend1Token = $this->getTokenForUser('friend1@friend1.friend1', 'friend1');
-        $this->friend2Token = $this->getTokenForUser('friend2@friend2.friend2', 'friend2');
-        $this->friend3Token = $this->getTokenForUser('friend3@friend3.friend3', 'friend3');
+        // Setup test friend users and get their tokens and IDs
+        $friend1Data = $this->getTokenAndIdForUser('friend1@friend1.friend1', 'friend1');
+        $friend2Data = $this->getTokenAndIdForUser('friend2@friend2.friend2', 'friend2');
+        $friend3Data = $this->getTokenAndIdForUser('friend3@friend3.friend3', 'friend3');
+        
+        $this->friend1Token = $friend1Data['token'];
+        $this->friend1Id = $friend1Data['id'];
+        
+        $this->friend2Token = $friend2Data['token'];
+        $this->friend2Id = $friend2Data['id'];
+        
+        $this->friend3Token = $friend3Data['token'];
+        $this->friend3Id = $friend3Data['id'];
     }
 
     protected function tearDown(): void
@@ -27,39 +36,6 @@ class FriendControllerTest extends BaseApiTest
         // Clear all test friendships after each test
         $this->clearTestFriendships();
         parent::tearDown();
-    }
-
-    /**
-     * Get token for specific user credentials
-     */
-    private function getTokenForUser(string $email, string $password): string
-    {
-        $ch = curl_init($this->baseUrl . '/auth/login');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-            'email' => $email,
-            'password' => $password
-        ]));
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $body = substr($response, $header_size);
-        curl_close($ch);
-        
-        if ($httpCode !== 200) {
-            throw new Exception("Login failed with HTTP $httpCode for $email");
-        }
-        
-        $data = json_decode($body, true);
-        if (!isset($data['token'])) {
-            throw new Exception("No token returned from login for $email");
-        }
-        
-        return $data['token'];
     }
 
     /**

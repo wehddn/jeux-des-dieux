@@ -21,7 +21,7 @@ abstract class BaseApiTest extends TestCase
     /**
      * Get token for specific user credentials
      */
-    private function getTokenForUser(string $email, string $password): string
+    protected function getTokenForUser(string $email, string $password): string
     {
         $ch = curl_init($this->baseUrl . '/auth/login');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -49,6 +49,46 @@ abstract class BaseApiTest extends TestCase
         }
         
         return $data['token'];
+    }
+
+    /**
+     * Get token and user ID for specific user credentials
+     */
+    protected function getTokenAndIdForUser(string $email, string $password): array
+    {
+        $ch = curl_init($this->baseUrl . '/auth/login');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+            'email' => $email,
+            'password' => $password
+        ]));
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $body = substr($response, $header_size);
+        curl_close($ch);
+        
+        if ($httpCode !== 200) {
+            throw new Exception("Login failed with HTTP $httpCode for $email");
+        }
+        
+        $data = json_decode($body, true);
+        if (!isset($data['token'])) {
+            throw new Exception("No token returned from login for $email");
+        }
+        
+        // Decode JWT to get user ID
+        $token = $data['token'];
+        $payload = json_decode(base64_decode(str_replace('_', '/', str_replace('-', '+', explode('.', $token)[1]))), true);
+        
+        return [
+            'token' => $token,
+            'id' => $payload['sub']
+        ];
     }
 
     /**
@@ -207,6 +247,35 @@ abstract class BaseApiTest extends TestCase
         }
         $authHeaders = ['Authorization: Bearer ' . $this->managerToken];
         return array_merge($authHeaders, $additionalHeaders);
+    }
+
+    /**
+     * Get user ID by email address
+     * @param string $email The email address to search for
+     * @param bool $throwIfNotFound If true, throws exception when user not found; if false, returns null
+     */
+    protected function getUserIdByEmail(string $email, bool $throwIfNotFound = false): ?int
+    {
+        [$status, $response] = $this->get('/users', $this->withAdminAuth());
+        
+        if ($status !== 200 || !is_array($response)) {
+            if ($throwIfNotFound) {
+                throw new Exception("Failed to fetch users list");
+            }
+            return null;
+        }
+
+        foreach ($response as $user) {
+            if ($user['email'] === $email) {
+                return (int)$user['id'];
+            }
+        }
+
+        if ($throwIfNotFound) {
+            throw new Exception("User with email $email not found");
+        }
+        
+        return null;
     }
 
     /**
